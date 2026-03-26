@@ -863,7 +863,6 @@ const COURSES=[
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────
-let db=firebase_init_placeholder,auth_placeholder,firestoreDb_placeholder;
 let loaded=false,stream=null,liveOn=false,liveAF=null,fps=0,fpsi=null;
 let samples=[],currentWeek=1,activeCourse=null,selectedCourseTemp=null;
 let currentUser=null,currentUserRole=null,currentUserName=null;
@@ -892,20 +891,34 @@ function saveFirebaseConfig(){
     showSetupErr('Please fill in at least API Key, Auth Domain and Project ID.');return;
   }
   localStorage.setItem('gaposa_fb_cfg',JSON.stringify(cfg));
-  initFirebase(cfg);
+  document.getElementById('firebase-setup').style.display='none';
+  document.getElementById('ld').style.display='flex';
+  waitForFirebaseAndInit(cfg);
 }
 
 function initFirebase(cfg){
   try{
-    if(firebase.apps.length)firebase.apps[0].delete().catch(()=>{});
-    appFirebase=firebase.initializeApp(cfg);
-    authFB=firebase.auth();
-    dbFB=firebase.firestore();
-    document.getElementById('firebase-setup').style.display='none';
-    document.getElementById('ld').style.display='flex';
+    // Delete any existing Firebase apps first to avoid duplicate app error
+    if(typeof firebase === 'undefined'){
+      showSetupErr('Firebase SDK not loaded. Please check your internet connection and reload the page.');
+      return;
+    }
+    // Initialize or reuse existing app
+    try{
+      if(firebase.apps && firebase.apps.length>0){
+        appFirebase=firebase.apps[0];
+      } else {
+        appFirebase=firebase.initializeApp(cfg);
+      }
+    }catch(initErr){
+      // If already initialized with different config, delete and reinitialize
+      appFirebase=firebase.initializeApp(cfg,'gaposa-eee');
+    }
+    authFB=firebase.auth(appFirebase);
+    dbFB=firebase.firestore(appFirebase);
     bootApp();
   }catch(e){
-    showSetupErr('Firebase error: '+e.message+'\n\nPlease check your config values and try again.');
+    showSetupErr('Firebase error: '+e.message+'. Please check your config values and try again.');
   }
 }
 
@@ -1754,12 +1767,24 @@ window.addEventListener('load',()=>{
       });
       document.getElementById('firebase-setup').style.display='none';
       document.getElementById('ld').style.display='flex';
-      initFirebase(cfg);
-    }catch(e){localStorage.removeItem('gaposa_fb_cfg');}
+      // Wait for Firebase SDK to be ready before initializing
+      waitForFirebaseAndInit(cfg);
+    }catch(e){
+      localStorage.removeItem('gaposa_fb_cfg');
+      document.getElementById('firebase-setup').style.display='flex';
+    }
   }
   // else setup screen stays visible
   renderCourseList();
 });
+
+function waitForFirebaseAndInit(cfg){
+  if(typeof firebase !== 'undefined' && firebase.app){
+    initFirebase(cfg);
+  } else {
+    setTimeout(()=>waitForFirebaseAndInit(cfg), 100);
+  }
+}
 </script>
 </body>
 </html>
