@@ -295,6 +295,7 @@ select.inp option{background:#fff;}
 .lwrn{border-left:3px solid var(--amber);}.lwrn .lm{color:var(--amber);}
 
 /* MODAL */
+.mbg.open{display:flex !important;}
 .mbg{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mbg.open{opacity:1;pointer-events:all;}
 .mbox{background:#fff;border-radius:20px 20px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));width:100%;max-width:520px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);max-height:88vh;overflow-y:auto;}
@@ -630,6 +631,17 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 
   <!-- ADMIN TAB -->
   <div class="pane" id="p-admin">
+    <!-- Session Manager Card -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session & Semester</span></div>
+      <div class="card-body">
+        <div style="background:var(--teal-l);border:1.5px solid var(--teal-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--teal);margin-bottom:12px;line-height:1.6;">
+          Current: <b id="admin-sess-display">--</b> · <b id="admin-sem-display">--</b>
+        </div>
+        <button class="enroll-btn" onclick="openSessionManager()" style="background:linear-gradient(135deg,var(--teal),#0e7490);margin-bottom:6px">🗓️ Change Session / Semester</button>
+        <button class="enroll-btn" onclick="openArchive()" style="background:linear-gradient(135deg,var(--purple),#5b21b6)">🗂️ View Historical Records</button>
+      </div>
+    </div>
     <div class="stats">
       <div class="stat s1"><div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">All levels</div></div>
       <div class="stat s2"><div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">With records</div></div>
@@ -834,6 +846,15 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 setInterval(updateWeekDisplay, 60000); // update week every minute
+setInterval(async()=>{
+  // Live sync: reload session settings every 60s so lecturer sees HOD changes instantly
+  if(dbFB&&activeSession){
+    const prev=activeSession+'||'+activeSemester;
+    await loadActiveSessionFromDB();
+    const curr=activeSession+'||'+activeSemester;
+    if(prev!==curr){updateClock();updateWeekDisplay();addLog('info','Session updated by HOD: '+activeSession+' '+activeSemester);}
+  }
+},60000);
 
 // ── FULL EEE COURSE LIST (from official document) ─────────────────
 const COURSES = [
@@ -1010,6 +1031,26 @@ let activeCourse=null,selCourseTemp=null;
 let currentUser=null,currentUserRole=null,currentUserName=null;
 let students=[],weeklyData={};
 let appFB=null,authFB=null,dbFB=null;
+// ── ACTIVE SESSION STATE (loaded from Firestore, set by HOD) ──────
+let activeSession='';   // e.g. "2024/2025"
+let activeSemester='';  // e.g. "1st Semester"
+function getAcademicSession(){ return activeSession||_autoSession(); }
+function getSemester(){ return activeSemester||_autoSemester(); }
+function _autoSession(){
+  const now=new Date(),m=now.getMonth()+1,y=now.getFullYear();
+  const s=m>=8?y:y-1; return s+'/'+(s+1);
+}
+function _autoSemester(){
+  const m=new Date().getMonth()+1;
+  return (m>=8||m<=1)?'1st Semester':'2nd Semester';
+}
+async function loadActiveSessionFromDB(){
+  try{
+    const d=await dbFB.collection('settings').doc('academic').get();
+    if(d.exists&&d.data().session){ activeSession=d.data().session; activeSemester=d.data().semester||_autoSemester(); }
+    else{ activeSession=_autoSession(); activeSemester=_autoSemester(); }
+  }catch(e){ activeSession=_autoSession(); activeSemester=_autoSemester(); }
+}
 
 // ── INIT FIREBASE ─────────────────────────────────────────────────
 function initFirebase(){
@@ -1059,6 +1100,7 @@ async function bootApp(){
   }
 
   mk(3);bar(90,'Loading student database...');
+  await loadActiveSessionFromDB();
   await loadStudents();
   bar(100,'Ready!');
   loaded=true;buildMatcher();
@@ -1151,20 +1193,153 @@ function showMainApp(){
   document.getElementById('session-bar').style.display='flex';
   document.getElementById('main-nav').style.display='flex';
   document.getElementById('main-body').style.display='block';
-  document.getElementById('hdr-user').textContent=currentUserName+' ('+currentUserRole+')';
+  const roleLabel=currentUserRole==='admin'?'HOD / Administrator':'Lecturer';
+  document.getElementById('hdr-user').textContent=currentUserName+' ('+roleLabel+')';
   document.getElementById('bcam').disabled=false;
   if(currentUserRole==='admin'){
     document.getElementById('nt-admin').style.display='flex';
+    document.getElementById('nt-enroll').style.display='flex';
   } else {
-    // Hide admin-only controls from lecturers
+    // Lecturers: hide enroll tab and admin-only controls
+    document.getElementById('nt-enroll').style.display='none';
     const ca=document.getElementById('btn-clearall');
     if(ca)ca.style.display='none';
   }
-  setS('Models loaded ✓ — select a course, then tap Start Camera.','ok');
   updateClock();updateWeekDisplay();
   renderList();refreshAdminDashboard();
+  // Show welcome overlay
+  showWelcome();
 }
 
+
+// ── WELCOME OVERLAY ───────────────────────────────────────────────
+function showWelcome(){
+  const roleLabel=currentUserRole==='admin'?'HOD / Administrator':'Lecturer';
+  document.getElementById('wlc-name').textContent='Welcome, '+currentUserName;
+  document.getElementById('wlc-role').textContent=roleLabel+' — EEE Department';
+  document.getElementById('wlc-session').textContent=getAcademicSession()+' · '+getSemester()+' · Week '+currentWeek;
+  const wl=document.getElementById('mwelcome');
+  wl.classList.add('open');
+  setTimeout(()=>{wl.classList.remove('open');},3500);
+}
+
+// ── SESSION MANAGEMENT (HOD only) ─────────────────────────────────
+function openSessionManager(){
+  if(currentUserRole!=='admin'){alert('Only the HOD can change academic session.');return;}
+  document.getElementById('sm-session').value=activeSession||_autoSession();
+  document.getElementById('sm-sem').value=activeSemester||_autoSemester();
+  openM('msession');
+}
+async function saveSessionSettings(){
+  const sess=document.getElementById('sm-session').value.trim();
+  const sem=document.getElementById('sm-sem').value;
+  if(!sess){alert('Enter a valid session e.g. 2024/2025');return;}
+  const semChanged=(sem!==activeSemester)&&activeSemester!=='';
+  try{
+    await dbFB.collection('settings').doc('academic').set({session:sess,semester:sem,updatedBy:currentUserName,updatedAt:new Date().toISOString()});
+    const prevSem=activeSemester;
+    activeSession=sess; activeSemester=sem;
+    if(semChanged){
+      // Reset week counter on semester change
+      manualWeekOffset=0;
+      localStorage.setItem('weekOffset','0');
+      addLog('warn','Semester changed from '+prevSem+' to '+sem+' — week reset to 1');
+    }
+    updateClock();updateWeekDisplay();
+    closeM('msession');
+    setAdminSt('✓ Session updated to '+sess+' · '+sem+(semChanged?' · Week reset to 1':''),'ok');
+    addLog('ok','Session set: '+sess+' '+sem+' by '+currentUserName);
+  }catch(e){alert('Save failed: '+e.message);}
+}
+
+// ── ARCHIVE / HISTORY VIEWER (HOD only) ───────────────────────────
+async function openArchive(){
+  if(currentUserRole!=='admin'){alert('Only the HOD can view historical records.');return;}
+  // Build session list from existing weekly data keys
+  await loadWeeklyData();
+  const sessions=new Set();
+  Object.values(weeklyData).forEach(d=>Object.keys(d).forEach(k=>{
+    const parts=k.split('_');
+    if(parts.length>=4){
+      // key format: CODE_YEAR1_YEAR2_SEM_SEM_wkN
+      // extract session from key: find pattern YYYY_YYYY
+      const m=k.match(/(\d{4}_\d{4})/);
+      const sm=k.match(/(1st_Semester|2nd_Semester)/);
+      if(m&&sm) sessions.add(m[1].replace('_','/')+'||'+sm[1].replace('_',' '));
+    }
+  }));
+  const sel=document.getElementById('arch-session');
+  sel.innerHTML='<option value="">— Select Session —</option>';
+  [...sessions].sort().reverse().forEach(s=>{
+    const [sess,sem]=s.split('||');
+    const opt=document.createElement('option');
+    opt.value=s; opt.textContent=sess+' · '+sem;
+    sel.appendChild(opt);
+  });
+  // Also add current session
+  const cur=activeSession+'||'+activeSemester;
+  if(![...sessions].includes(cur)){
+    const opt=document.createElement('option');
+    opt.value=cur; opt.textContent=activeSession+' · '+activeSemester+' (current)';
+    sel.insertBefore(opt,sel.children[1]);
+  }
+  document.getElementById('arch-results').innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session and course above to view records</div>';
+  openM('marchive');
+}
+async function loadArchiveData(){
+  const sessVal=document.getElementById('arch-session').value;
+  const courseCode=document.getElementById('arch-course').value.trim().toUpperCase();
+  if(!sessVal){alert('Select a session.');return;}
+  const [sess,sem]=sessVal.split('||');
+  await loadWeeklyData();
+  // filter students that have any record for this session+sem
+  const sessKey=sess.replace('/','_')+'_'+sem.replace(' ','_');
+  const matchStudents=students.filter(u=>{
+    if(!weeklyData[u.matric])return false;
+    return Object.keys(weeklyData[u.matric]).some(k=>k.includes(sessKey)&&(!courseCode||k.startsWith(courseCode.replace(' ','_'))));
+  });
+  if(!matchStudents.length){
+    document.getElementById('arch-results').innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">No records found for this selection</div>';
+    return;
+  }
+  // Build summary table
+  let html='<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px">'+sess+' · '+sem+(courseCode?' · '+courseCode:'')+'</div>';
+  html+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">';
+  html+='<tr style="background:var(--navy);color:#fff"><th style="padding:6px 8px;text-align:left">Name</th><th style="padding:6px 8px">Matric</th><th style="padding:6px 8px">Level</th><th style="padding:6px 8px">Present</th><th style="padding:6px 8px">%</th></tr>';
+  matchStudents.forEach((u,i)=>{
+    let present=0,total=0;
+    for(let w=1;w<=MAX_WEEKS;w++){
+      const k=(courseCode?courseCode.replace(' ','_'):'')+( courseCode?'_':'' )+sessKey+'_wk'+w;
+      const allKeys=Object.keys(weeklyData[u.matric]||{}).filter(key=>key.includes(sessKey)&&key.endsWith('_wk'+w)&&(!courseCode||key.startsWith(courseCode.replace(' ','_'))));
+      allKeys.forEach(key=>{total++;if(weeklyData[u.matric][key].status==='P')present++;});
+    }
+    const pct=total>0?Math.round(present/total*100):0;
+    const bg=i%2===0?'#f8faff':'#fff';
+    const pctCol=pct<75?'var(--red)':pct>=75?'var(--green)':'var(--amber)';
+    html+=`<tr style="background:${bg}"><td style="padding:5px 8px;font-weight:600">${u.name}</td><td style="padding:5px 8px;font-family:monospace">${u.matric}</td><td style="padding:5px 8px">${u.level}</td><td style="padding:5px 8px;text-align:center">${present}/${total}</td><td style="padding:5px 8px;text-align:center;font-weight:800;color:${pctCol}">${pct}%</td></tr>`;
+  });
+  html+='</table></div>';
+  document.getElementById('arch-results').innerHTML=html;
+}
+async function exportArchiveCSV(){
+  const sessVal=document.getElementById('arch-session').value;
+  if(!sessVal){alert('Select a session first.');return;}
+  const [sess,sem]=sessVal.split('||');
+  await loadWeeklyData();
+  const sessKey=sess.replace('/','_')+'_'+sem.replace(' ','_');
+  let csv='THE GATEWAY POLYTECHNIC SAAPADE\nDEPARTMENT OF ELECTRICAL & ELECTRONIC ENGINEERING TECHNOLOGY\n';
+  csv+=`HISTORICAL ATTENDANCE REPORT\nSession:,${sess}\nSemester:,${sem}\nExported By:,${currentUserName}\n\n`;
+  csv+='Matric,Name,Level,Option,Course,Week,Status,Date\n';
+  students.forEach(u=>{
+    Object.entries(weeklyData[u.matric]||{}).forEach(([k,v])=>{
+      if(k.includes(sessKey)) csv+=`"${u.matric}","${u.name}","${u.level}","${u.option||'General'}","${k}","${v.week}","${v.status}","${v.date||''}"\n`;
+    });
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`GAPOSA_EEE_ARCHIVE_${sess.replace('/','_')}_${sem.replace(' ','_')}.csv`;
+  a.click();
+}
 // ── FIREBASE OPERATIONS ───────────────────────────────────────────
 async function loadStudents(){
   try{
@@ -1672,6 +1847,8 @@ async function exportWeeklyCSV(){
 async function refreshAdminDashboard(){
   if(currentUserRole!=='admin')return;
   document.getElementById('a-total').textContent=students.length;
+  document.getElementById('admin-sess-display').textContent=getAcademicSession();
+  document.getElementById('admin-sem-display').textContent=getSemester();
   await loadWeeklyData();
   const codes=new Set();let sessions=0;
   Object.values(weeklyData).forEach(d=>Object.keys(d).forEach(k=>{const p=k.split('_wk');if(p.length===2){codes.add(p[0]);sessions++;}}));
@@ -1775,8 +1952,8 @@ function addLog(type,msg){
   d.className='lr '+cls;
   d.innerHTML='<span class="lt">['+t+']</span><span class="lm">'+msg+'</span>';a.prepend(d);
 }
-function openM(id){document.getElementById(id).classList.add('open');}
-function closeM(id){document.getElementById(id).classList.remove('open');}
+function openM(id){const el=document.getElementById(id);el.style.display='flex';el.classList.add('open');}
+function closeM(id){const el=document.getElementById(id);el.style.display='none';el.classList.remove('open');}
 
 // ── STARTUP ───────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
@@ -1815,6 +1992,66 @@ window.addEventListener('load',()=>{
     <button class="mbtn s" style="flex:1" onclick="saveCorrection()">Save ✓</button>
   </div>
 </div></div>
+
+
+<!-- WELCOME MODAL -->
+<div class="mbg" id="mwelcome" style="z-index:9999">
+  <div class="mbox" style="text-align:center;padding:28px 24px">
+    <div style="font-size:48px;margin-bottom:8px">👋</div>
+    <div style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:6px" id="wlc-name">Welcome</div>
+    <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px" id="wlc-role">Lecturer</div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:18px" id="wlc-session">--</div>
+    <div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:16px">
+      The Gateway Polytechnic, Saapade<br>EEE Attendance System
+    </div>
+    <button class="mbtn s" onclick="closeM('mwelcome')" style="width:100%">Let's Go →</button>
+  </div>
+</div>
+
+<!-- SESSION MANAGER MODAL -->
+<div class="mbg" id="msession">
+  <div class="mbox">
+    <div class="mico w">🗓️</div>
+    <div class="mtt w">Set Academic Session</div>
+    <div class="mb">
+      <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b);margin-bottom:14px;line-height:1.5">
+        ⚠ Changing semester will reset the week counter to Week 1 for all users.
+      </div>
+      <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Academic Session</label>
+      <input class="inp" id="sm-session" placeholder="e.g. 2024/2025" style="margin-bottom:12px;font-family:'JetBrains Mono';font-weight:700;font-size:15px">
+      <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Semester</label>
+      <select class="inp" id="sm-sem" style="margin-bottom:16px">
+        <option value="1st Semester">1st Semester</option>
+        <option value="2nd Semester">2nd Semester</option>
+      </select>
+      <div style="font-size:11px;color:var(--txt3);line-height:1.5">This setting is saved to the cloud and takes effect immediately for all logged-in lecturers.</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="mbtn e" style="flex:1" onclick="closeM('msession')">Cancel</button>
+      <button class="mbtn s" style="flex:1" onclick="saveSessionSettings()">Save & Apply ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHIVE MODAL -->
+<div class="mbg" id="marchive">
+  <div class="mbox" style="max-height:85vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:17px;font-weight:900;color:var(--navy)">🗂️ Historical Records</div>
+      <button class="smbtn" onclick="closeM('marchive')">Close</button>
+    </div>
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Academic Session · Semester</label>
+    <select class="inp" id="arch-session" style="margin-bottom:10px" onchange="loadArchiveData()">
+      <option value="">— Select Session —</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Filter by Course Code (optional)</label>
+    <input class="inp" id="arch-course" placeholder="e.g. EEC 111 — leave blank for all" style="margin-bottom:10px" oninput="loadArchiveData()">
+    <div id="arch-results" style="margin-bottom:12px">
+      <div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session above to view records</div>
+    </div>
+    <button class="enroll-btn" onclick="exportArchiveCSV()" style="background:linear-gradient(135deg,var(--green),#047857)">📥 Export This Archive as CSV</button>
+  </div>
+</div>
 
 </body>
 </html>
