@@ -565,7 +565,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       <div class="card-hdr">
         <div class="card-hdr-ico" style="background:var(--blue-l)"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--blue)"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
         <span class="card-ttl">Enroll Student</span>
-        <span class="cbadge" style="background:var(--orange-l);color:var(--orange);border-color:var(--orange-b)">2 SAMPLES</span>
+        <span class="cbadge" style="background:var(--orange-l);color:var(--orange);border-color:var(--orange-b)">5 SAMPLES</span>
       </div>
       <div class="card-body">
         <div style="background:var(--green-l);border:1.5px solid var(--green-b);border-radius:var(--rs);padding:10px 13px;margin-bottom:12px;font-size:12px;color:var(--green);font-weight:600;line-height:1.5;">
@@ -579,12 +579,12 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           <video id="evid" autoplay muted playsinline webkit-playsinline></video>
         </div>
         <div class="prog-w">
-          <div class="prog-l"><span>Face Samples</span><span id="slbl">0 / 2</span></div>
+          <div class="prog-l"><span>Face Samples</span><span id="slbl">0 / 5</span></div>
           <div class="prog-t"><div class="prog-f" id="sprog" style="width:0%"></div></div>
         </div>
-        <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div></div>
+        <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div><div class="sdot" id="sd2">3</div><div class="sdot" id="sd3">4</div><div class="sdot" id="sd4">5</div></div>
         <button class="cap-btn" id="bcap" onclick="capSample()" disabled>📷 &nbsp;Tap to Capture Face Sample</button>
-        <div class="st" id="ereg">Start camera on Scan tab first, then capture 2 samples.</div>
+        <div class="st" id="ereg">Start camera on Scan tab first, then capture 5 samples from different angles.</div>
         <hr>
         <div class="fr">
           <label class="lbl">Matric Number</label>
@@ -621,7 +621,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <hr>
         <div class="sh">
           <div class="shtt">👥 Enrolled (<span id="ecnt">0</span>)</div>
-          <button class="smbtn" style="color:var(--red)" onclick="confirmClearAll()">Clear All</button>
+          <button class="smbtn" style="color:var(--red)" id="btn-clearall" onclick="confirmClearAll()">Clear All</button>
         </div>
         <div id="elist"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students enrolled yet</div></div>
       </div>
@@ -660,6 +660,16 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <hr>
         <div class="sh" style="margin-bottom:8px"><div class="shtt">👨‍🏫 Registered Lecturers</div></div>
         <div id="lec-list"></div>
+      </div>
+    </div>
+    <!-- Bulk Export -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">📊</div><span class="card-ttl">Full Semester Export</span></div>
+      <div class="card-body">
+        <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:12px;line-height:1.6;">
+          Export attendance % for <b>all students across all courses</b> in one CSV — ready for end-of-semester processing.
+        </div>
+        <button class="enroll-btn" onclick="exportFullSemesterCSV()" style="background:linear-gradient(135deg,var(--green),#047857)">📥 Export Full Semester Report</button>
       </div>
     </div>
     <!-- Course Summary -->
@@ -734,7 +744,7 @@ const FB_CFG = {
 
 const MDL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
 const MAX_WEEKS = 15;
-const SAMPLES_NEEDED = 2;
+const SAMPLES_NEEDED = 5;
 const ATT_THRESHOLD = 75;
 
 // ── ACADEMIC SESSION & SEMESTER ────────────────────────────────────
@@ -760,7 +770,7 @@ function getSemester() {
 // Semester 1 starts: 1st Monday of October each year
 // Semester 2 starts: 1st Monday of March each year
 // Lecturer can manually adjust with +/- buttons
-let manualWeekOffset = 0; // manual adjustment
+let manualWeekOffset = parseInt(localStorage.getItem('weekOffset')||'0');
 
 function getSemesterStartDate() {
   const now = new Date();
@@ -802,6 +812,7 @@ function updateWeekDisplay() {
 
 function changeWeek(d) {
   manualWeekOffset += d;
+  localStorage.setItem('weekOffset', manualWeekOffset);
   currentWeek = Math.max(1, Math.min(MAX_WEEKS, calcAutoWeek()));
   document.getElementById('wk-num').textContent = currentWeek;
   document.getElementById('wk-detail').textContent = `Week ${currentWeek} of ${MAX_WEEKS} · (manually adjusted)`;
@@ -1142,7 +1153,13 @@ function showMainApp(){
   document.getElementById('main-body').style.display='block';
   document.getElementById('hdr-user').textContent=currentUserName+' ('+currentUserRole+')';
   document.getElementById('bcam').disabled=false;
-  if(currentUserRole==='admin')document.getElementById('nt-admin').style.display='flex';
+  if(currentUserRole==='admin'){
+    document.getElementById('nt-admin').style.display='flex';
+  } else {
+    // Hide admin-only controls from lecturers
+    const ca=document.getElementById('btn-clearall');
+    if(ca)ca.style.display='none';
+  }
   setS('Models loaded ✓ — select a course, then tap Start Camera.','ok');
   updateClock();updateWeekDisplay();
   renderList();refreshAdminDashboard();
@@ -1506,20 +1523,93 @@ async function renderWeeklyGrid(){
     const isWarn=pct<ATT_THRESHOLD&&currentWeek>=3;
     if(isWarn)warnings.push({name:u.name,matric:u.matric,pct});
     const pctCol=isWarn?'var(--red)':pct>=75?'var(--green)':'var(--amber)';
+    const safeName=u.name.replace(/'/g,"&#39;");
+    const nameClick=currentUserRole==='admin'?` onclick="openCorrection('${u.matric}','${safeName}')" style="cursor:pointer"`:'';
+    const pencil=currentUserRole==='admin'?'<span style="font-size:8px;color:var(--blue);margin-left:3px;">✏</span>':'';
+    const pctCell=currentUserRole==='admin'
+      ?`<div style="font-size:10px;font-weight:900;color:${pctCol};width:48px;text-align:center;flex-shrink:0;">${pct}%${isWarn?' ⚠':''}</div>`
+      :`<div style="width:48px;flex-shrink:0;"></div>`;
     return `<div style="display:flex;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-      <div style="font-size:11px;font-weight:600;width:100px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.name}</div>
+      <div style="font-size:11px;font-weight:600;width:100px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"${nameClick}>${u.name}${pencil}</div>
       <div style="font-size:9px;color:var(--txt3);font-family:'JetBrains Mono';width:95px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;">${u.matric}</div>
       <div style="display:flex;gap:3px;flex:1;">${cells}</div>
-      <div style="font-size:10px;font-weight:900;color:${pctCol};width:48px;text-align:center;flex-shrink:0;">${pct}%${isWarn?' ⚠':''}</div>
+      ${pctCell}
     </div>`;
   }).join('');
   updateWarningBanner(warnings);
 }
 
+
+
+// ── BULK EXPORT — All courses, all students (HOD only) ────────────
+async function exportFullSemesterCSV(){
+  if(currentUserRole!=='admin'){alert('Only the HOD can do a full export.');return;}
+  await loadStudents();await loadWeeklyData();
+  const now=new Date();
+  let csv='THE GATEWAY POLYTECHNIC SAAPADE\n';
+  csv+='DEPARTMENT OF ELECTRICAL & ELECTRONIC ENGINEERING TECHNOLOGY\n';
+  csv+='FULL SEMESTER ATTENDANCE REPORT\n';
+  csv+=`Academic Session:,${getAcademicSession()}\nSemester:,${getSemester()}\nExported By:,${currentUserName}\nExport Date:,${now.toLocaleDateString('en-GB')} ${now.toTimeString().slice(0,5)}\n\n`;
+  // Group students by level
+  const levels=['ND 1','ND 2','HND 1','HND 2'];
+  for(const lvl of levels){
+    const lvlStudents=students.filter(u=>u.level===lvl);
+    if(!lvlStudents.length)continue;
+    csv+=`\n=== ${lvl} ===\n`;
+    csv+='Matric,Name,Option';
+    // Get all course keys for this level
+    const lvlCourses=COURSES.filter(c2=>c2.level===lvl&&c2.sem===(getSemester().includes('1st')?1:2));
+    lvlCourses.forEach(c2=>csv+=`,${c2.code}`);
+    csv+='\n';
+    lvlStudents.forEach(u=>{
+      csv+=`"${u.matric}","${u.name}","${u.option||'General'}"`;
+      lvlCourses.forEach(c2=>{
+        const baseKey=c2.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+        let present=0;
+        for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+        const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
+        csv+=`,${pct}%`;
+      });
+      csv+='\n';
+    });
+  }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`GAPOSA_EEE_FULL_${getAcademicSession().replace('/','_')}_${getSemester().replace(/\s/g,'_')}.csv`;
+  a.click();addLog('info','Full semester CSV exported by '+currentUserName);
+}
+// ── ATTENDANCE CORRECTION (Admin/HOD only) ────────────────────────
+function openCorrection(matric,name){
+  if(currentUserRole!=='admin'){alert('Only the HOD can correct attendance.');return;}
+  if(!activeCourse){alert('Select a course first.');return;}
+  document.getElementById('corr-name').textContent=name+' ('+matric+')';
+  document.getElementById('corr-matric').value=matric;
+  document.getElementById('corr-week').value=currentWeek;
+  document.getElementById('corr-status').value='P';
+  openM('mcorr');
+}
+async function saveCorrection(){
+  const matric=document.getElementById('corr-matric').value;
+  const week=parseInt(document.getElementById('corr-week').value);
+  const status=document.getElementById('corr-status').value;
+  if(!matric||!week||!status){alert('Fill all fields.');return;}
+  const key=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+week;
+  const now=new Date();
+  const entry={status,time:now.toTimeString().slice(0,8),date:now.toLocaleDateString('en-GB'),week,session:getAcademicSession(),semester:getSemester(),correctedBy:currentUserName,correctedAt:now.toISOString()};
+  if(!weeklyData[matric])weeklyData[matric]={};
+  weeklyData[matric][key]=entry;
+  try{
+    await saveWeekly(matric,weeklyData[matric]);
+    addLog('warn','CORRECTION: '+matric+' Wk'+week+' set to '+status+' by '+currentUserName);
+    closeM('mcorr');renderWeeklyGrid();
+    setS('✓ Attendance corrected for Week '+week,'ok');
+  }catch(e){alert('Save failed: '+e.message);}
+}
 function updateWarningBanner(warnings){
   const b=document.getElementById('warn-banner');
   const l=document.getElementById('warn-list');
-  if(!warnings.length){b.classList.remove('show');document.getElementById('a-warn').textContent='0';return;}
+  // Only HOD sees the warning banner — lecturers are not shown who is at risk
+  if(currentUserRole!=='admin'||!warnings.length){b.classList.remove('show');document.getElementById('a-warn').textContent=warnings.length||'0';return;}
   b.classList.add('show');
   l.innerHTML=warnings.map(w=>`<div class="wb-item"><span>${w.name} — <span class="mono">${w.matric}</span></span><span class="wb-pct">${w.pct}% ⚠</span></div>`).join('');
   document.getElementById('a-warn').textContent=warnings.length;
@@ -1635,11 +1725,12 @@ function renderList(){
     <div class="ei">
       <div class="ein">${i+1}</div>
       <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
-      <button class="edel" onclick="deleteStudent('${u.matric}')">✕</button>
+      ${currentUserRole==='admin'?`<button class="edel" onclick="deleteStudent('${u.matric}')">✕</button>`:''}
     </div>`).join('');
 }
 
 async function deleteStudent(matric){
+  if(currentUserRole!=='admin'){alert('Only the HOD can delete students.');return;}
   if(!confirm('Remove '+matric+' and all their attendance records?'))return;
   try{
     await dbFB.collection('students').doc(matric).delete();
@@ -1652,6 +1743,7 @@ async function deleteStudent(matric){
 }
 
 async function confirmClearAll(){
+  if(currentUserRole!=='admin'){alert('Only the HOD can clear all data.');return;}
   if(!confirm('Delete ALL students and attendance data permanently?'))return;
   if(!confirm('FINAL WARNING — This cannot be undone. Continue?'))return;
   for(const u of students){
@@ -1701,5 +1793,28 @@ window.addEventListener('load',()=>{
   renderCourseList();
 });
 </script>
+
+<!-- CORRECTION MODAL (HOD only) -->
+<div class="mbg" id="mcorr"><div class="mbox">
+  <div class="mico w">✏️</div>
+  <div class="mtt w">Correct Attendance</div>
+  <div class="mb">
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px" id="corr-name"></div>
+    <input type="hidden" id="corr-matric">
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Week Number</label>
+    <input class="inp" id="corr-week" type="number" min="1" max="15" style="margin-bottom:10px">
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Set Status</label>
+    <select class="inp" id="corr-status" style="margin-bottom:14px">
+      <option value="P">P — Present</option>
+      <option value="A">A — Absent</option>
+    </select>
+    <div style="font-size:10px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b)">⚠ Correction is logged with your name and timestamp for audit purposes.</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="mbtn e" style="flex:1" onclick="closeM('mcorr')">Cancel</button>
+    <button class="mbtn s" style="flex:1" onclick="saveCorrection()">Save ✓</button>
+  </div>
+</div></div>
+
 </body>
 </html>
