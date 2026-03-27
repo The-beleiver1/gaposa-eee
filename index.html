@@ -333,6 +333,19 @@ select.inp option{background:#fff;}
 
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
+
+/* ── DESKTOP CENTERED LAYOUT ─────────────────────────────────────── */
+@media (min-width: 600px) {
+  body { align-items: center; background: #d0d8f0; }
+  header, .session-bar, .nav, .body {
+    max-width: 480px;
+    width: 100%;
+  }
+  header { border-radius: 0; }
+  #login-screen .login-card { max-width: 420px; }
+  #student-portal > div { max-width: 480px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -430,14 +443,16 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         🎓 Students — enter your <b>matric number</b> to enroll your face in the attendance system. You only do this <b>once</b>.
       </div>
       <label class="llbl">Matric Number</label>
-      <input class="linp" id="st-matric" placeholder="Enter your matric number" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkStudentMasterList(this.value)">
+      <input class="linp" id="st-matric" placeholder="e.g. 22010611009" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkStudentMasterList(this.value)">
       <div id="st-matric-status" style="font-size:11px;margin-top:5px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
+      <!-- CHANGE 1+3: Show found student info with Yes/No confirmation -->
       <div id="st-details-block" style="display:none">
-        <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:9px;padding:10px 13px;font-size:12px;color:#059669;margin:10px 0;line-height:1.6;" id="st-details-display"></div>
-        <label class="llbl">Confirm Your Full Name</label>
-        <input class="linp" id="st-name-confirm" placeholder="Type your name exactly as registered" autocomplete="name">
-        <div style="font-size:11px;color:#94a3b8;margin-top:4px;margin-bottom:12px">This must match what the HOD uploaded in the master list.</div>
-        <button class="lbtn" style="background:linear-gradient(135deg,#d97706,#92400e)" onclick="doStudentLogin()">Continue to Enrollment →</button>
+        <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:9px;padding:12px 14px;font-size:13px;color:#059669;margin:10px 0;line-height:1.8;" id="st-details-display"></div>
+        <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:10px;text-align:center;">Is this you?</div>
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <button class="lbtn" style="background:linear-gradient(135deg,#059669,#047857);flex:1" onclick="doStudentLogin()">✅ Yes, Continue →</button>
+          <button class="lbtn" style="background:linear-gradient(135deg,#dc2626,#991b1b);flex:1" onclick="resetStudentForm()">✕ Not Me</button>
+        </div>
       </div>
     </div>
 
@@ -479,7 +494,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
   </div>
   <div class="nav-item" id="nt-weekly" onclick="goTab('weekly')">
     <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-    Register
+    Attendance
   </div>
   <div class="nav-item" id="nt-enroll" onclick="goTab('enroll')">
     <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -628,6 +643,8 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         </div>
         <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div><div class="sdot" id="sd2">3</div><div class="sdot" id="sd3">4</div><div class="sdot" id="sd4">5</div></div>
         <button class="cap-btn" id="bcap" onclick="capSample()" disabled>📷 &nbsp;Tap to Capture Face Sample</button>
+        <!-- CHANGE 5: Retake in enroll tab -->
+        <button class="btn bo" id="bretake" onclick="enrollRetake()" style="margin-bottom:10px;display:none;">🔄 Retake Samples</button>
         <div class="st" id="ereg">Start camera on Scan tab first, then capture 5 samples from different angles.</div>
         <hr>
         <div class="fr">
@@ -844,6 +861,8 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <!-- Buttons -->
     <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:15px;background:linear-gradient(135deg,#1a56db,#1a3a6b);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:10px;">▶ Start Camera</button>
     <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:16px;background:linear-gradient(135deg,#d97706,#92400e);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:10px;opacity:.4;">📷 Tap to Capture Face Sample</button>
+    <!-- CHANGE 5: Retake button (student portal) -->
+    <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:12px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:rgba(255,255,255,.8);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;display:none;">🔄 Retake / Start Over</button>
     <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:15px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:16px;opacity:.4;">🎓 Submit &amp; Complete Enrollment</button>
 
     <div style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;line-height:1.6;">
@@ -1417,6 +1436,10 @@ function showMainApp(){
   }
   updateClock();updateWeekDisplay();
   renderList();refreshAdminDashboard();
+  // CHANGE 9: Load lecturer courses after login
+  if (currentUserRole !== 'admin') {
+    loadLecturerCourses().then(() => addLog('info', 'Lecturer course filter ready'));
+  }
   // Show welcome overlay
   showWelcome();
 }
@@ -1554,7 +1577,15 @@ async function exportArchiveCSV(){
 async function loadStudents(){
   try{
     const snap=await dbFB.collection('students').get();
-    students=snap.docs.map(d=>({...d.data(),descriptors:d.data().descriptors.map(a=>new Float32Array(Object.values(a)))}));
+    students=snap.docs.map(d=>{
+      const sd=d.data();
+      const descs=(sd.descriptors||[]).map(a=>{
+        if(Array.isArray(a))return new Float32Array(a);
+        if(a instanceof Object)return new Float32Array(Object.values(a));
+        return new Float32Array(a);
+      });
+      return {...sd,descriptors:descs};
+    }); // CHANGE 4: handle both array and object descriptor formats
     addLog('info',students.length+' students loaded');
   }catch(e){addLog('err','Load students: '+e.message);students=[];}
 }
@@ -2098,19 +2129,37 @@ async function renderLecturerList(){
     const snap=await dbFB.collection('users').where('role','==','lecturer').get();
     const el=document.getElementById('lec-list');
     if(snap.empty){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
+    // CHANGE 8: Show delete button for each lecturer
     el.innerHTML=snap.docs.map(d=>{
       const u=d.data();
+      const uid=d.id;
       const courseCount=(u.assignedCourses||[]).length;
+      const courses=(u.assignedCourses||[]).slice(0,3).map(c=>c.split('_')[0]).join(', ');
       return `<div class="ei">
         <div class="ein">L</div>
         <div class="eii">
           <div class="ein2">${u.name}</div>
-          <div class="eim">${u.email} · <span style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned</span></div>
+          <div class="eim">${u.email}</div>
+          <div class="eim" style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned${courses?' · '+courses+(courseCount>3?' …':''):''}</div>
         </div>
+        <button class="edel" onclick="deleteLecturer('${uid}','${u.name.replace(/'/g,"\'")}')" title="Remove lecturer">✕</button>
       </div>`;
     }).join('');
   }catch(e){addLog('err','Load lecturers: '+e.message);}
 }
+
+// ── DELETE LECTURER (HOD only) — CHANGE 8 ───────────────────────
+async function deleteLecturer(uid, name) {
+  if (currentUserRole !== 'admin') { alert('Only the HOD can remove lecturers.'); return; }
+  if (!confirm('Remove lecturer account for ' + name + '?\nThis will delete their login. Attendance records are preserved.')) return;
+  try {
+    await dbFB.collection('users').doc(uid).delete();
+    addLog('warn', 'Lecturer removed: ' + name + ' (' + uid + ')');
+    renderLecturerList(); // refresh
+    setAdminSt('✓ Lecturer account removed: ' + name, 'warn');
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
 function setAdminSt(m,t=''){const b=document.getElementById('admin-st');b.textContent=m;b.className='st '+t;}
 
 // ── LIST & STATS ──────────────────────────────────────────────────
@@ -2122,8 +2171,43 @@ function renderList(){
     <div class="ei">
       <div class="ein">${i+1}</div>
       <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
-      ${currentUserRole==='admin'?`<button class="edel" onclick="deleteStudent('${u.matric}')">✕</button>`:''}
+      ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button class="edel" style="background:var(--blue-l);color:var(--blue)" onclick="editStudent('${u.matric}','${u.name.replace(/'/g,"\\'")}','${u.level}','${(u.option||'').replace(/'/g,"\\'")}')">✏️</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
     </div>`).join('');
+}
+
+
+// ── EDIT STUDENT (HOD only) — CHANGE 6 ───────────────────────────
+function editStudent(matric, name, level, option) {
+  if (currentUserRole !== 'admin') { alert('Only the HOD can edit students.'); return; }
+  document.getElementById('edit-matric').value = matric;
+  document.getElementById('edit-name').value = name;
+  document.getElementById('edit-level').value = level;
+  updateEditOption();
+  document.getElementById('edit-option').value = option || '';
+  openM('medit');
+}
+function updateEditOption() {
+  const lv = document.getElementById('edit-level').value;
+  const isHND = lv === 'HND 1' || lv === 'HND 2';
+  document.getElementById('edit-opt-row').style.display = isHND ? 'block' : 'none';
+}
+async function saveEditStudent() {
+  const matric = document.getElementById('edit-matric').value;
+  const name = document.getElementById('edit-name').value.trim();
+  const level = document.getElementById('edit-level').value;
+  const option = document.getElementById('edit-option').value;
+  const isHND = level === 'HND 1' || level === 'HND 2';
+  if (!name) { alert('Enter student name.'); return; }
+  if (isHND && !option) { alert('Select specialisation option for HND.'); return; }
+  const programme = isHND ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
+  try {
+    await dbFB.collection('students').doc(matric).update({ name, level, option: isHND ? option : '', programme });
+    const idx = students.findIndex(u => u.matric === matric);
+    if (idx >= 0) { students[idx].name = name; students[idx].level = level; students[idx].option = isHND ? option : ''; students[idx].programme = programme; }
+    buildMatcher(); renderList();
+    closeM('medit');
+    addLog('ok', 'Edited: ' + matric + ' → ' + name + ' / ' + level);
+  } catch(e) { alert('Save failed: ' + e.message); }
 }
 
 async function deleteStudent(matric){
@@ -2363,6 +2447,12 @@ let spStream = null, spSamples = [], spStudentData = null;
 const SP_SAMPLES_NEEDED = 2;
 
 async function checkStudentMasterList(val) {
+  // CHANGE 1: Try anonymous auth if not signed in (so Firestore rules allow reads)
+  try {
+    if (!authFB.currentUser) {
+      await authFB.signInAnonymously().catch(() => {});
+    }
+  } catch(e) {}
   const statusEl = document.getElementById('st-matric-status');
   const detailsEl = document.getElementById('st-details-block');
   val = val.trim();
@@ -2426,6 +2516,33 @@ async function doStudentLogin() {
   addLog('info', 'Student portal opened for: ' + spStudentData.matric);
 }
 
+
+
+function spRetake() {
+  // CHANGE 5: Clear samples and restart student portal enrollment
+  spSamples = [];
+  spUpdateProgress();
+  // Reset dots
+  for(let i=0;i<2;i++){
+    const dot=document.getElementById('sp-dot'+i);
+    if(dot){dot.innerHTML=i+1;dot.style.border='2px dashed rgba(255,255,255,.3)';dot.style.boxShadow='';}
+  }
+  document.getElementById('sp-cap-btn').disabled=false;
+  document.getElementById('sp-cap-btn').style.opacity='1';
+  document.getElementById('sp-save-btn').disabled=true;
+  document.getElementById('sp-save-btn').style.opacity='.4';
+  document.getElementById('sp-retake-btn').style.display='none';
+  document.getElementById('sp-status').textContent='Samples cleared — capture again.';
+  document.getElementById('sp-status').style.background='';
+  document.getElementById('sp-status').style.color='rgba(255,255,255,.8)';
+}
+function resetStudentForm() {
+  spStudentData = null;
+  document.getElementById('st-matric').value = '';
+  document.getElementById('st-matric-status').style.display = 'none';
+  document.getElementById('st-details-block').style.display = 'none';
+  document.getElementById('lerr').style.display = 'none';
+}
 async function spToggleCam() {
   const btn = document.getElementById('sp-cam-btn');
   if (spStream) {
@@ -2485,6 +2602,8 @@ async function spCapture() {
     dot.style.border = '2px solid #34d399';
     dot.style.boxShadow = '0 0 0 3px rgba(52,211,153,.25)';
     spUpdateProgress();
+    // CHANGE 5: Show retake button after first sample
+    document.getElementById('sp-retake-btn').style.display = 'block';
     if (spSamples.length >= SP_SAMPLES_NEEDED) {
       document.getElementById('sp-cap-btn').disabled = true;
       document.getElementById('sp-cap-btn').style.opacity = '.4';
@@ -2513,7 +2632,7 @@ async function spSaveEnrollment() {
     const programme = (level === 'HND 1' || level === 'HND 2') ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
     await dbFB.collection('students').doc(matric).set({
       matric, name, level, option: option || '', programme,
-      descriptors: spSamples.map(d => Array.from(d).map(Number)),
+      descriptors: spSamples.map(d => Array.from(d, v => +v)),  // CHANGE 4: plain number arrays, no nesting
       enrolledAt: new Date().toISOString(),
       enrolledByStudent: true
     });
@@ -2585,6 +2704,38 @@ window.addEventListener('load',()=>{
   renderCourseList();
 });
 </script>
+
+
+<!-- EDIT STUDENT MODAL (HOD only) - CHANGE 6 -->
+<div class="mbg" id="medit"><div class="mbox">
+  <div class="mico w">✏️</div>
+  <div class="mtt w">Edit Student Info</div>
+  <div class="mb">
+    <input type="hidden" id="edit-matric">
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Full Name</label>
+    <input class="inp" id="edit-name" placeholder="Surname Firstname" style="margin-bottom:10px">
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Level</label>
+    <select class="inp" id="edit-level" onchange="updateEditOption()" style="margin-bottom:10px">
+      <option value="ND 1">ND 1</option>
+      <option value="ND 2">ND 2</option>
+      <option value="HND 1">HND 1</option>
+      <option value="HND 2">HND 2</option>
+    </select>
+    <div id="edit-opt-row" style="display:none;margin-bottom:10px">
+      <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Specialisation Option</label>
+      <select class="inp" id="edit-option">
+        <option value="">— Select Option —</option>
+        <option value="Power and Machines">Power and Machines</option>
+        <option value="Electronics and Telecommunication">Electronics &amp; Telecommunication</option>
+      </select>
+    </div>
+    <div style="font-size:10px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b)">⚠ This updates name/level only. Face data is unchanged.</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="mbtn e" style="flex:1" onclick="closeM('medit')">Cancel</button>
+    <button class="mbtn s" style="flex:1" onclick="saveEditStudent()">Save ✓</button>
+  </div>
+</div></div>
 
 <!-- CORRECTION MODAL (HOD only) -->
 <div class="mbg" id="mcorr"><div class="mbox">
