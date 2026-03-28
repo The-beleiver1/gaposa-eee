@@ -219,7 +219,33 @@ header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:10px 
 .bl{background:var(--amber-l);color:var(--amber);border:1px solid var(--amber-b);}
 .mono{font-family:'JetBrains Mono';font-size:10px;}
 
-/* FORM */
+/* ADMIN TABS */
+.atab{flex:1;padding:10px 4px;background:transparent;border:none;color:rgba(255,255,255,.45);font-family:'Outfit',sans-serif;font-size:9px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;border-bottom:3px solid transparent;}
+.atab span{display:block;}
+.atab.active{color:#60a5fa;border-bottom-color:#60a5fa;background:rgba(96,165,250,.08);}
+.apane{display:none;}.apane.active{display:block;}
+.alvl-tab{padding:6px 12px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.alvl-tab.active{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;border-color:transparent;}
+/* STUDENT CARD */
+.stu-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px;}
+.stu-thumb{width:46px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--blue);overflow:hidden;}
+.stu-info{flex:1;min-width:0;}
+.stu-name{font-size:13px;font-weight:800;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stu-meta{font-size:10px;color:var(--txt3);margin-top:2px;font-family:'JetBrains Mono';}
+.stu-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;margin-top:4px;display:inline-block;}
+.stu-actions{display:flex;gap:5px;flex-shrink:0;}
+.stu-btn{border:none;border-radius:7px;padding:6px 9px;font-size:12px;cursor:pointer;font-weight:800;transition:all .18s;}
+.stu-btn:active{transform:scale(.9);}
+/* LEVEL GROUP HEADER */
+.lvl-grp-hdr{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+.lvl-grp-hdr:first-child{margin-top:0;}
+/* AT-RISK ROW */
+.risk-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--red-l);border:1px solid var(--red-b);margin-bottom:5px;}
+.risk-pct{font-size:13px;font-weight:900;color:var(--red);width:38px;flex-shrink:0;text-align:center;}
+.risk-info{flex:1;min-width:0;}
+.risk-name{font-size:12px;font-weight:700;color:var(--txt);}
+.risk-sub{font-size:10px;color:var(--txt3);}
+
 .fr{margin-bottom:13px;}
 .lbl{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);margin-bottom:6px;}
 .inp{width:100%;padding:13px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;outline:none;transition:all .2s;-webkit-appearance:none;appearance:none;}
@@ -667,10 +693,22 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         </div>
         <button class="enroll-btn" id="breg" onclick="doEnroll()" disabled>🎓 &nbsp;Enroll Student &amp; Save to Cloud</button>
         <hr>
-        <div class="sh">
+        <div class="sh" style="margin-bottom:8px">
           <div class="shtt">👥 Enrolled (<span id="ecnt">0</span>)</div>
-          <button class="smbtn" style="color:var(--red)" id="btn-clearall" onclick="confirmClearAll()">Clear All</button>
+          <div style="display:flex;gap:6px">
+            <button class="smbtn" onclick="printEnrolledStudents()">🖨️ Print</button>
+            <button class="smbtn" style="color:var(--red)" id="btn-clearall" onclick="confirmClearAll()">Clear All</button>
+          </div>
         </div>
+        <!-- Level filter tabs -->
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;" id="level-tabs">
+          <button onclick="setEnrollTab('all')" id="etab-all" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--blue);background:linear-gradient(135deg,var(--navy),var(--blue));color:white;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">All</button>
+          <button onclick="setEnrollTab('ND 1')" id="etab-ND1" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">ND 1</button>
+          <button onclick="setEnrollTab('ND 2')" id="etab-ND2" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">ND 2</button>
+          <button onclick="setEnrollTab('HND 1')" id="etab-HND1" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 1</button>
+          <button onclick="setEnrollTab('HND 2')" id="etab-HND2" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 2</button>
+        </div>
+        <input class="inp" id="enroll-search" placeholder="🔍 Search name or matric..." oninput="renderList()" style="margin-bottom:8px;font-size:13px;padding:10px 13px;">
         <div id="elist"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students enrolled yet</div></div>
       </div>
     </div>
@@ -678,100 +716,200 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 
   <!-- ADMIN TAB -->
   <div class="pane" id="p-admin">
-    <!-- Session Manager Card -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session & Semester</span></div>
-      <div class="card-body">
-        <div style="background:var(--teal-l);border:1.5px solid var(--teal-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--teal);margin-bottom:12px;line-height:1.6;">
-          Current: <b id="admin-sess-display">--</b> · <b id="admin-sem-display">--</b>
-        </div>
-        <button class="enroll-btn" onclick="openSessionManager()" style="background:linear-gradient(135deg,var(--teal),#0e7490);margin-bottom:6px">🗓️ Change Session / Semester</button>
-        <button class="enroll-btn" onclick="openArchive()" style="background:linear-gradient(135deg,var(--purple),#5b21b6)">🗂️ View Historical Records</button>
-      </div>
-    </div>
-    <div class="stats">
-      <div class="stat s1"><div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">All levels</div></div>
-      <div class="stat s2"><div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">With records</div></div>
-      <div class="stat s3"><div class="sl">Below 75%</div><div class="sv" id="a-warn">0</div><div class="ss">Need attention</div></div>
-      <div class="stat s4"><div class="sl">Sessions</div><div class="sv" id="a-sessions">0</div><div class="ss">Recorded</div></div>
-    </div>
-    <!-- Master Student List Upload -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">📋</div><span class="card-ttl">Master Student List</span><span class="cbadge" id="master-count-badge">0 students</span></div>
-      <div class="card-body">
-        <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:11px 14px;font-size:12px;color:var(--blue);margin-bottom:14px;line-height:1.6;">
-          📌 Upload the official student list here. Students can only self-enroll if their matric number exists in this list. This prevents fake enrollments.<br><br>
-          ✅ <b>Data is permanent</b> — saved to the cloud, never lost on refresh. Uploading again only <b>adds new names</b> without deleting existing ones.
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:6px;">
-          <button class="btn bb" style="font-size:12px;padding:10px" onclick="document.getElementById('csv-upload').click()">📁 Upload / Add New Students</button>
-          <button class="btn bo" style="font-size:12px;padding:10px" onclick="downloadMasterTemplate()">⤓ Template</button>
-        </div>
-        <div style="font-size:11px;color:var(--green);font-weight:600;background:var(--green-l);border:1px solid var(--green-b);border-radius:8px;padding:8px 11px;margin-bottom:10px;line-height:1.5;">
-          🔄 Safe to upload additional CSV files anytime — existing students are never overwritten or removed.
-        </div>
-        <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
-        <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;line-height:1.5;">
-          CSV format: <b>matric,name,level,option</b> &nbsp;|&nbsp; <span style="font-family:'JetBrains Mono';font-size:10px">e.g. 22010611001,Adebola David,ND 1,</span>
-        </div>
-        <!-- Print Master List -->
-        <button class="btn bb" style="width:100%;padding:11px;font-size:13px;margin-bottom:10px" onclick="printMasterList()">🖨️ Print Master List</button>
-        <div class="st" id="master-st"></div>
-        <div class="sh" style="margin-bottom:8px">
-          <div class="shtt">Master List (<span id="master-list-count">0</span>)</div>
-          <div style="display:flex;gap:6px">
-            <button class="smbtn" onclick="filterMasterList()">🔍 Filter</button>
-            <button class="smbtn" style="color:var(--red)" onclick="clearMasterList()">Clear All</button>
-          </div>
-        </div>
-        <input class="inp" id="master-filter" placeholder="Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;">
-        <div id="master-list-body" style="max-height:300px;overflow-y:auto;"></div>
-      </div>
+    <!-- Admin Sub-Tabs -->
+    <div style="display:flex;gap:0;background:var(--navy2);border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:var(--sh2);">
+      <button class="atab active" id="atab-dash" onclick="setAdminTab('dash')">📊<span>Dashboard</span></button>
+      <button class="atab" id="atab-students" onclick="setAdminTab('students')">👥<span>Students</span></button>
+      <button class="atab" id="atab-master" onclick="setAdminTab('master')">📋<span>Master List</span></button>
+      <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')">👨‍🏫<span>Lecturers</span></button>
+      <button class="atab" id="atab-settings" onclick="setAdminTab('settings')">⚙️<span>Settings</span></button>
     </div>
 
-    <!-- Secret Code -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">🔑</div><span class="card-ttl">Department Registration Code</span></div>
-      <div class="card-body">
-        <div style="background:var(--purple-l);border:1.5px solid var(--purple-b);border-radius:var(--rs);padding:11px 14px;font-size:12px;color:var(--purple);margin-bottom:14px;line-height:1.6;">
-          Share this code with lecturers. They enter it when self-registering. Change it anytime to revoke access.
+    <!-- ── DASHBOARD ── -->
+    <div id="apane-dash" class="apane active">
+      <!-- Session banner -->
+      <div style="background:linear-gradient(135deg,var(--teal),#0e7490);border-radius:var(--r);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Current Session</div>
+          <div style="font-size:15px;font-weight:900;color:#fff;margin-top:2px;"><span id="admin-sess-display">--</span> · <span id="admin-sem-display">--</span></div>
         </div>
-        <div class="fr">
-          <label class="lbl">Current Secret Code</label>
-          <div style="display:flex;gap:8px">
-            <input class="inp" id="code-display" placeholder="No code set yet" readonly style="font-family:'JetBrains Mono';font-size:16px;font-weight:700;letter-spacing:2px;background:#fff;">
-            <button class="btn bo" style="flex:none;padding:0 14px" onclick="copyCode()" title="Copy">📋</button>
+        <div style="font-size:24px;">🎓</div>
+      </div>
+      <!-- Stats grid -->
+      <div class="stats" style="margin-bottom:14px;">
+        <div class="stat s1">
+          <div style="font-size:22px;margin-bottom:4px;">👥</div>
+          <div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">All levels enrolled</div>
+        </div>
+        <div class="stat s2">
+          <div style="font-size:22px;margin-bottom:4px;">📚</div>
+          <div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">With attendance</div>
+        </div>
+        <div class="stat s3">
+          <div style="font-size:22px;margin-bottom:4px;">⚠️</div>
+          <div class="sl">Below 75%</div><div class="sv" id="a-warn">0</div><div class="ss">Need attention</div>
+        </div>
+        <div class="stat s4">
+          <div style="font-size:22px;margin-bottom:4px;">📅</div>
+          <div class="sl">Scans This Week</div><div class="sv" id="a-sessions">0</div><div class="ss">Week <span id="a-wknum">--</span></div>
+        </div>
+      </div>
+      <!-- Level breakdown -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--blue-l)">📊</div><span class="card-ttl">Students by Level</span></div>
+        <div class="card-body" style="padding:10px;">
+          <div id="level-breakdown" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+      </div>
+      <!-- At-risk students -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--red-l)">🚨</div>
+          <span class="card-ttl">Students At Risk</span>
+          <span class="cbadge" id="atrisk-badge" style="background:var(--red-l);color:var(--red);border-color:var(--red-b);">0</span>
+          <button class="smbtn" style="margin-left:auto" onclick="exportAtRiskCSV()">⤓ Export</button>
+        </div>
+        <div class="card-body" style="padding:10px;">
+          <div id="atrisk-list" style="max-height:220px;overflow-y:auto;font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Select a course to see at-risk students</div>
+        </div>
+      </div>
+      <!-- Course attendance chart -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">📈</div><span class="card-ttl">Attendance Overview</span></div>
+        <div class="card-body">
+          <div id="course-summary-list" style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Loading...</div>
+        </div>
+      </div>
+      <div class="pb"></div>
+    </div>
+
+    <!-- ── STUDENTS ── -->
+    <div id="apane-students" class="apane">
+      <!-- Search + actions -->
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input class="inp" id="admin-student-search" placeholder="🔍 Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
+        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;" onclick="printAdminStudents()">🖨️</button>
+        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#047857);" onclick="exportFullDB()">⤓ DB</button>
+      </div>
+      <!-- Level tabs -->
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="alvl-tab active" id="alvl-all" onclick="setAdminLevelTab('all')">All</button>
+        <button class="alvl-tab" id="alvl-nd1" onclick="setAdminLevelTab('ND 1')">ND 1</button>
+        <button class="alvl-tab" id="alvl-nd2" onclick="setAdminLevelTab('ND 2')">ND 2</button>
+        <button class="alvl-tab" id="alvl-hnd1" onclick="setAdminLevelTab('HND 1')">HND 1</button>
+        <button class="alvl-tab" id="alvl-hnd2" onclick="setAdminLevelTab('HND 2')">HND 2</button>
+      </div>
+      <div id="admin-student-list"></div>
+      <div class="pb"></div>
+    </div>
+
+    <!-- ── MASTER LIST ── -->
+    <div id="apane-master" class="apane">
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--green-l)">📋</div>
+          <span class="card-ttl">Master Student List</span>
+          <span class="cbadge" id="master-count-badge">0 students</span>
+        </div>
+        <div class="card-body">
+          <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:12px;line-height:1.6;">
+            📌 Upload the official CSV list. Students can only self-enroll if their matric exists here. Uploading again only <b>adds new names</b> — nothing is deleted.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <button class="btn bb" style="font-size:12px;padding:11px" onclick="document.getElementById('csv-upload').click()">📁 Upload CSV</button>
+            <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()">⤓ Template</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#047857);" onclick="printMasterList()">🖨️ Print List</button>
+            <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()">🗑️ Clear All</button>
+          </div>
+          <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
+          <div class="st" id="master-st" style="margin-bottom:10px;"></div>
+          <input class="inp" id="master-filter" placeholder="🔍 Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
+          <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;">Total: <span id="master-list-count">0</span> students</div>
+          <div id="master-list-body" style="max-height:350px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div class="pb"></div>
+    </div>
+
+    <!-- ── LECTURERS ── -->
+    <div id="apane-lecturers" class="apane">
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">🔑</div><span class="card-ttl">Department Registration Code</span></div>
+        <div class="card-body">
+          <div style="background:var(--purple-l);border:1.5px solid var(--purple-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--purple);margin-bottom:12px;line-height:1.5;">
+            Share this code with lecturers for self-registration. Change anytime to revoke access.
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input class="inp" id="code-display" placeholder="No code set yet" readonly style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;letter-spacing:2px;background:#fff;flex:1;">
+            <button class="btn bo" style="flex:none;padding:0 14px;font-size:16px;" onclick="copyCode()" title="Copy">📋</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <input class="inp" id="new-code" placeholder="Set new code e.g. GAPOSA-EEE-2025" autocomplete="off" spellcheck="false" style="flex:1;font-size:13px;">
+            <button class="btn bb" style="flex:none;padding:0 14px;" onclick="saveCode()">Save</button>
+          </div>
+          <div class="st" id="admin-st"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--blue-l)">👨‍🏫</div>
+          <span class="card-ttl">Registered Lecturers</span>
+          <button class="smbtn" style="margin-left:auto" onclick="renderLecturerList()">↻ Refresh</button>
+        </div>
+        <div class="card-body" style="padding:10px;">
+          <div id="lec-list"></div>
+        </div>
+      </div>
+      <div class="pb"></div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div id="apane-settings" class="apane">
+      <!-- Academic session -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()">🗓️ Change Session</button>
+            <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5b21b6);" onclick="openArchive()">🗂️ Historical Records</button>
           </div>
         </div>
-        <div class="fr">
-          <label class="lbl">Set New Code</label>
-          <input class="inp" id="new-code" placeholder="e.g. GAPOSA-EEE-2025" autocomplete="off" spellcheck="false">
-          <div class="hint">Share this via WhatsApp with your lecturers</div>
-        </div>
-        <button class="enroll-btn" onclick="saveCode()" style="margin-bottom:6px">🔑 Save Secret Code</button>
-        <div style="background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--amber);margin-bottom:8px;line-height:1.5;">
-          ⚠ <b>Firestore Rules:</b> Ensure <code>masterlist</code> allows <code>read: if true</code> so students can look up their matric number without logging in. Also enable Anonymous Authentication in Firebase Console.
-        </div>
-        <div class="st" id="admin-st"></div>
-        <hr>
-        <div class="sh" style="margin-bottom:8px"><div class="shtt">👨‍🏫 Registered Lecturers</div></div>
-        <div id="lec-list"></div>
       </div>
-    </div>
-    <!-- Bulk Export -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">📊</div><span class="card-ttl">Full Semester Export</span></div>
-      <div class="card-body">
-        <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:12px;line-height:1.6;">
-          Export attendance % for <b>all students across all courses</b> in one CSV — ready for end-of-semester processing.
+      <!-- Export -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">📥</div><span class="card-ttl">Data Export</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#047857);" onclick="exportFullSemesterCSV()">📊 Full Semester CSV</button>
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
+          </div>
         </div>
-        <button class="enroll-btn" onclick="exportFullSemesterCSV()" style="background:linear-gradient(135deg,var(--green),#047857)">📥 Export Full Semester Report</button>
       </div>
+      <!-- Auto-logout -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--amber-l)">🔒</div><span class="card-ttl">Security</span></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--txt);">Auto-Logout</div>
+              <div style="font-size:11px;color:var(--txt3);">Logs out after 15 min inactivity</div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--green);background:var(--green-l);padding:4px 10px;border-radius:20px;border:1px solid var(--green-b);">Active ✓</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;margin-top:8px;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--txt);">Offline Scan Queue</div>
+              <div style="font-size:11px;color:var(--txt3);">Scans saved locally, sync when online</div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--green);background:var(--green-l);padding:4px 10px;border-radius:20px;border:1px solid var(--green-b);">Active ✓</div>
+          </div>
+          <button class="btn br" style="width:100%;margin-top:12px;padding:12px;" onclick="doLogout()">🚪 Logout Now</button>
+        </div>
+      </div>
+      <div class="pb"></div>
     </div>
-    <!-- Course Summary -->
-    <div class="sh"><div class="shtt">📊 Attendance by Course</div></div>
-    <div id="course-summary-list"></div>
-    <div class="pb"></div>
   </div>
 
   <!-- LOGS TAB -->
@@ -1437,9 +1575,22 @@ function showWelcome(){
   document.getElementById('wlc-name').textContent='Welcome, '+currentUserName;
   document.getElementById('wlc-role').textContent=roleLabel+' — EEE Department';
   document.getElementById('wlc-session').textContent=getAcademicSession()+' · '+getSemester()+' · Week '+currentWeek;
+  // Show assigned courses for lecturers
+  const wlcExtra=document.getElementById('wlc-extra');
+  if(wlcExtra){
+    if(currentUserRole!=='admin'&&lecturerCourses.length){
+      const names=lecturerCourses.slice(0,5).map(k=>{
+        const parts=k.split('_');
+        return parts[0]+(parts[1]?' '+parts[1]:'');
+      });
+      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);">📚 <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
+    } else if(currentUserRole==='admin'){
+      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--teal);background:var(--teal-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--teal-b);">🛡️ Full system access — all courses visible</div>';
+    } else {wlcExtra.innerHTML='';}
+  }
   const wl=document.getElementById('mwelcome');
   wl.classList.add('open');
-  setTimeout(()=>{wl.classList.remove('open');},3500);
+  setTimeout(()=>{wl.classList.remove('open');},4000);
 }
 
 // ── SESSION MANAGEMENT (HOD only) ─────────────────────────────────
@@ -1585,8 +1736,15 @@ async function loadWeeklyData(){
   }catch(e){addLog('err','Load weekly: '+e.message);}
 }
 async function saveWeekly(matric,data){
-  try{await dbFB.collection('weekly').doc(matric).set(data,{merge:true});}
-  catch(e){addLog('err','Save weekly: '+e.message);}
+  try{
+    await dbFB.collection('weekly').doc(matric).set(data,{merge:true});
+  }catch(e){
+    // Queue for later if offline
+    const key=Object.keys(data).pop();
+    offlineQueue.push({matric,data,key,ts:Date.now()});
+    localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+    addLog('warn','Offline: scan queued for '+matric+' (will sync when online)');
+  }
 }
 
 function buildMatcher(){
@@ -1880,11 +2038,20 @@ async function doEnroll(){
   document.getElementById('breg').disabled=true;
   document.getElementById('breg').textContent='Saving to Firebase...';
   try{
+    // Capture a small photo thumbnail from first sample
+    let photoDataUrl='';
+    try{
+      const thumbCanvas=document.createElement('canvas');thumbCanvas.width=80;thumbCanvas.height=80;
+      const det0=newStudent.descriptors[0];
+      const vid2=document.getElementById('evid');
+      if(vid2&&vid2.videoWidth>0){thumbCanvas.getContext('2d').drawImage(vid2,0,0,80,80);photoDataUrl=thumbCanvas.toDataURL('image/jpeg',0.5);}
+    }catch(e){}
     // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
     const cleanDescriptors = newStudent.descriptors.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric,name,level,option:isHND?option:'',programme,
       descriptors:cleanDescriptors,
+      photo:photoDataUrl,
       enrolledBy:currentUserName,enrolledAt:new Date().toISOString()
     });
     students.push(newStudent);
@@ -2094,19 +2261,369 @@ async function exportWeeklyCSV(){
   a.click();addLog('info','CSV exported: '+activeCourse.code);
 }
 
-// ── ADMIN ─────────────────────────────────────────────────────────
+// ── ADMIN TABS ────────────────────────────────────────────────────
+function setAdminTab(tab) {
+  ['dash','students','master','lecturers','settings'].forEach(t => {
+    document.getElementById('atab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('apane-'+t).classList.toggle('active', t===tab);
+  });
+  if(tab==='students') renderAdminStudents();
+  if(tab==='lecturers') renderLecturerList();
+  if(tab==='master') renderMasterList();
+}
+
+// ── ADMIN DASHBOARD ───────────────────────────────────────────────
 async function refreshAdminDashboard(){
   if(currentUserRole!=='admin')return;
   document.getElementById('a-total').textContent=students.length;
   document.getElementById('admin-sess-display').textContent=getAcademicSession();
   document.getElementById('admin-sem-display').textContent=getSemester();
+  document.getElementById('a-wknum').textContent=currentWeek;
   await loadWeeklyData();
+  // Count courses and sessions
   const codes=new Set();let sessions=0;
   Object.values(weeklyData).forEach(d=>Object.keys(d).forEach(k=>{const p=k.split('_wk');if(p.length===2){codes.add(p[0]);sessions++;}}));
   document.getElementById('a-courses').textContent=codes.size;
   document.getElementById('a-sessions').textContent=sessions;
-  loadSecretCode();renderLecturerList();
+  // Level breakdown
+  const levels=['ND 1','ND 2','HND 1','HND 2'];
+  const colors=[`var(--blue)`,`var(--green)`,`var(--purple)`,`var(--amber)`];
+  const bgs=[`var(--blue-l)`,`var(--green-l)`,`var(--purple-l)`,`var(--amber-l)`];
+  const borders=[`var(--blue-b)`,`var(--green-b)`,`var(--purple-b)`,`var(--amber-b)`];
+  const lb=document.getElementById('level-breakdown');
+  lb.innerHTML=levels.map((lvl,i)=>{
+    const cnt=students.filter(u=>u.level===lvl).length;
+    return `<div style="background:${bgs[i]};border:1.5px solid ${borders[i]};border-radius:var(--rs);padding:10px 12px;text-align:center;">
+      <div style="font-size:22px;font-weight:900;color:${colors[i]}">${cnt}</div>
+      <div style="font-size:10px;font-weight:800;color:${colors[i]};text-transform:uppercase;letter-spacing:.8px">${lvl}</div>
+    </div>`;
+  }).join('');
+  // At-risk list — across all courses current week
+  renderAtRiskList();
+  // Course summary
+  renderCourseSummary();
+  loadSecretCode();
 }
+
+function renderAtRiskList(){
+  const el=document.getElementById('atrisk-list');
+  if(!activeCourse){
+    el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Select a course on Scan tab to see at-risk students</div>';
+    document.getElementById('atrisk-badge').textContent='0';return;
+  }
+  const courseStudents=getStudentsForCourse(activeCourse);
+  const baseKey=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+  const atRisk=[];
+  courseStudents.forEach(u=>{
+    let present=0;
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
+    if(pct<ATT_THRESHOLD) atRisk.push({...u,pct,present});
+  });
+  atRisk.sort((a,b)=>a.pct-b.pct);
+  document.getElementById('atrisk-badge').textContent=atRisk.length;
+  if(!atRisk.length){el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ All students above 75% for '+activeCourse.code+'</div>';return;}
+  el.innerHTML=atRisk.map(u=>`
+    <div class="risk-row">
+      <div class="risk-pct">${u.pct}%</div>
+      <div class="risk-info">
+        <div class="risk-name">${u.name}</div>
+        <div class="risk-sub">${u.matric} · ${u.present}/${currentWeek} classes · ${u.level}</div>
+      </div>
+    </div>`).join('');
+}
+
+function exportAtRiskCSV(){
+  if(!activeCourse){alert('Select a course first on the Scan tab.');return;}
+  const courseStudents=getStudentsForCourse(activeCourse);
+  const baseKey=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+  let csv='GAPOSA EEE — Students At Risk Report\n';
+  csv+=`Course:,${activeCourse.code} — ${activeCourse.title}\nSession:,${getAcademicSession()} · ${getSemester()}\nWeek:,${currentWeek}\nExported:,${new Date().toLocaleDateString('en-GB')}\n\n`;
+  csv+='Matric,Name,Level,Option,Present,Total,Attendance%\n';
+  courseStudents.forEach(u=>{
+    let present=0;
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
+    if(pct<ATT_THRESHOLD) csv+=`"${u.matric}","${u.name}","${u.level}","${u.option||'General'}",${present},${currentWeek},${pct}%\n`;
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`AtRisk_${activeCourse.code.replace(/\s/g,'_')}_Wk${currentWeek}.csv`;
+  a.click();addLog('info','At-risk CSV exported');
+}
+
+function renderCourseSummary(){
+  const el=document.getElementById('course-summary-list');
+  if(!activeCourse){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Select a course on Scan tab</div>';return;}
+  const courseStudents=getStudentsForCourse(activeCourse);
+  if(!courseStudents.length){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">No students for this course</div>';return;}
+  const baseKey=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+  let totalPct=0;
+  const rows=courseStudents.map(u=>{
+    let present=0;
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
+    totalPct+=pct;
+    const col=pct<75?'var(--red)':pct>=90?'var(--green)':'var(--amber)';
+    const bg=pct<75?'var(--red-l)':pct>=90?'var(--green-l)':'var(--amber-l)';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+      <div style="font-size:11px;font-weight:600;color:var(--txt);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name.split(' ')[0]}</div>
+      <div style="width:90px;height:7px;background:var(--border);border-radius:4px;overflow:hidden;flex-shrink:0;">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:4px;"></div>
+      </div>
+      <div style="font-size:11px;font-weight:800;color:${col};width:32px;text-align:right;flex-shrink:0;">${pct}%</div>
+    </div>`;
+  }).join('');
+  const avg=courseStudents.length?Math.round(totalPct/courseStudents.length):0;
+  el.innerHTML=`<div style="font-size:11px;font-weight:800;color:var(--navy);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+    ${activeCourse.code} — ${activeCourse.title} &nbsp;|&nbsp; Class avg: <span style="color:${avg<75?'var(--red)':'var(--green)'}">${avg}%</span>
+  </div>${rows}`;
+  // Update below 75% count
+  const warn=courseStudents.filter(u=>{
+    let p=0;for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')p++;}
+    return currentWeek>0&&Math.round(p/currentWeek*100)<ATT_THRESHOLD;
+  }).length;
+  document.getElementById('a-warn').textContent=warn;
+}
+
+// ── ADMIN STUDENTS TAB ────────────────────────────────────────────
+let adminLevelTab='all';
+function setAdminLevelTab(lvl){
+  adminLevelTab=lvl;
+  ['all','nd1','nd2','hnd1','hnd2'].forEach(k=>{
+    const btn=document.getElementById('alvl-'+k);
+    if(!btn)return;
+    const match=(k==='all'?lvl==='all':lvl===k.replace('nd1','ND 1').replace('nd2','ND 2').replace('hnd1','HND 1').replace('hnd2','HND 2'));
+    btn.classList.toggle('active',match);
+  });
+  renderAdminStudents();
+}
+
+function renderAdminStudents(){
+  const el=document.getElementById('admin-student-list');
+  const q=(document.getElementById('admin-student-search')?document.getElementById('admin-student-search').value:'').toLowerCase();
+  const filtered=students.filter(u=>{
+    const lm=adminLevelTab==='all'||u.level===adminLevelTab;
+    const sm=!q||u.name.toLowerCase().includes(q)||u.matric.toLowerCase().includes(q);
+    return lm&&sm;
+  });
+  if(!filtered.length){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px;">No students found</div>';return;}
+  const levels=['ND 1','ND 2','HND 1','HND 2'];
+  let html='';
+  if(adminLevelTab==='all'){
+    levels.forEach(lvl=>{
+      const grp=filtered.filter(u=>u.level===lvl);
+      if(!grp.length)return;
+      html+=`<div class="lvl-grp-hdr"><span>${lvl}</span><span>${grp.length} student${grp.length!==1?'s':''}</span></div>`;
+      html+=grp.map((u,i)=>buildStudentCard(u,i)).join('');
+    });
+  } else {
+    html=filtered.map((u,i)=>buildStudentCard(u,i)).join('');
+  }
+  el.innerHTML=html;
+}
+
+function buildStudentCard(u,i){
+  const initial=u.name?u.name.charAt(0).toUpperCase():'?';
+  const thumb=u.photo?`<img src="${u.photo}" style="width:46px;height:46px;border-radius:10px;object-fit:cover;">`
+    :`<div class="stu-thumb">${initial}</div>`;
+  // Get attendance % for active course if available
+  let pctBadge='';
+  if(activeCourse){
+    const baseKey=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+    let present=0;
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    const pct=currentWeek>0?Math.round(present/currentWeek*100):null;
+    if(pct!==null){
+      const col=pct<75?'var(--red)':pct>=90?'var(--green)':'var(--amber)';
+      const bg=pct<75?'var(--red-l)':pct>=90?'var(--green-l)':'var(--amber-l)';
+      const brd=pct<75?'var(--red-b)':pct>=90?'var(--green-b)':'var(--amber-b)';
+      pctBadge=`<span class="stu-badge" style="color:${col};background:${bg};border:1px solid ${brd}">${pct}% — ${activeCourse.code}</span>`;
+    }
+  }
+  return `<div class="stu-card">
+    ${thumb}
+    <div class="stu-info">
+      <div class="stu-name">${u.name}</div>
+      <div class="stu-meta">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div>
+      ${pctBadge}
+    </div>
+    <div class="stu-actions">
+      <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">📊</button>
+      <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
+      <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
+      <button class="stu-btn" style="background:var(--red-l);color:var(--red);" onclick="deleteStudent('${u.matric}')" title="Delete">✕</button>
+    </div>
+  </div>`;
+}
+
+function printAdminStudents(){
+  const q=(document.getElementById('admin-student-search')?document.getElementById('admin-student-search').value:'').toLowerCase();
+  const filtered=students.filter(u=>{
+    const lm=adminLevelTab==='all'||u.level===adminLevelTab;
+    const sm=!q||u.name.toLowerCase().includes(q)||u.matric.toLowerCase().includes(q);
+    return lm&&sm;
+  });
+  if(!filtered.length){alert('No students to print.');return;}
+  const lvlLabel=adminLevelTab==='all'?'All Levels':adminLevelTab;
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const levels=['ND 1','ND 2','HND 1','HND 2'];
+  let bodyHtml='';
+  if(adminLevelTab==='all'){
+    levels.forEach(lvl=>{
+      const grp=filtered.filter(u=>u.level===lvl);
+      if(!grp.length)return;
+      bodyHtml+=`<tr><td colspan="5" style="background:#1a3a6b;color:white;font-weight:800;padding:8px 10px;font-size:12px">${lvl} — ${grp.length} student(s)</td></tr>`;
+      grp.forEach((u,i)=>{bodyHtml+=`<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;});
+    });
+  } else {
+    filtered.forEach((u,i)=>{bodyHtml+=`<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;});
+  }
+  const html=`<html><head><title>GAPOSA EEE Enrolled Students</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}p{text-align:center;color:#475569;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:16px}th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
+  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even)td{background:#f8faff}
+  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}</style></head><body>
+  <h2>The Gateway Polytechnic, Saapade</h2>
+  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
+  <p><b>Enrolled Students — ${lvlLabel}</b> | Printed: ${dateStr} | Total: ${filtered.length}</p>
+  <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
+  <tbody>${bodyHtml}</tbody></table>
+  <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();w.print();
+  addLog('info','Admin student list printed: '+filtered.length);
+}
+
+// ── INDIVIDUAL STUDENT REPORT ─────────────────────────────────────
+function viewStudentReport(matric){
+  const u=students.find(s=>s.matric===matric);
+  if(!u){alert('Student not found.');return;}
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Build attendance data across all courses
+  const data=weeklyData[matric]||{};
+  // Group by course
+  const courses={};
+  Object.entries(data).forEach(([k,v])=>{
+    const parts=k.match(/^(.+)_(\d{4}_\d{4})_(.+)_wk(\d+)$/);
+    if(!parts)return;
+    const code=parts[1].replace(/_/g,' ');
+    if(!courses[code])courses[code]={present:0,absent:0,weeks:[]};
+    if(v.status==='P'){courses[code].present++;courses[code].weeks.push({w:parts[4],time:v.time||'--',date:v.date||'--'});}
+    else courses[code].absent++;
+  });
+  let courseRows='';
+  Object.entries(courses).forEach(([code,d])=>{
+    const total=d.present+d.absent;
+    const pct=total>0?Math.round(d.present/total*100):0;
+    const col=pct<75?'#dc2626':pct>=90?'#059669':'#d97706';
+    courseRows+=`<tr><td>${code}</td><td>${d.present}</td><td>${d.absent}</td><td>${total}</td><td style="font-weight:800;color:${col}">${pct}%</td><td style="font-size:10px;color:#94a3b8">${pct<75?'⚠ Below 75%':'✓ OK'}</td></tr>`;
+  });
+  const html=`<html><head><title>Student Report — ${u.name}</title>
+  <style>body{font-family:Arial,sans-serif;padding:24px;max-width:700px;margin:0 auto}
+  h2{color:#1a3a6b;margin-bottom:4px}p{color:#475569;font-size:13px;margin-bottom:3px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:800}
+  table{width:100%;border-collapse:collapse;margin-top:16px}
+  th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
+  td{padding:8px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}
+  .footer{margin-top:24px;font-size:11px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:12px}
+  </style></head><body>
+  <h2>${u.name}</h2>
+  <p><b>Matric:</b> ${u.matric} &nbsp;|&nbsp; <b>Level:</b> ${u.level}${u.option?' · '+u.option:''}</p>
+  <p><b>Programme:</b> ${u.programme||'EEE'} &nbsp;|&nbsp; <b>Session:</b> ${getAcademicSession()} · ${getSemester()}</p>
+  <p><b>Report Generated:</b> ${dateStr}</p>
+  <table><thead><tr><th>Course</th><th>Present</th><th>Absent</th><th>Total</th><th>Att%</th><th>Status</th></tr></thead>
+  <tbody>${courseRows||'<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:16px">No attendance records yet</td></tr>'}</tbody></table>
+  <div class="footer">GAPOSA EEE Face-ID Attendance System — Individual Student Report</div>
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();w.print();
+  addLog('info','Student report printed: '+u.name);
+}
+
+// ── STUDENT FACE UPDATE (HOD only) ────────────────────────────────
+let faceUpdateMatric=null;
+function updateStudentFace(matric){
+  if(currentUserRole!=='admin'){alert('Only the HOD can update face data.');return;}
+  const u=students.find(s=>s.matric===matric);
+  if(!u){alert('Student not found.');return;}
+  if(!confirm('Update face data for '+u.name+'?\n\nThis will replace their current face samples. Make sure the student is present.')){return;}
+  faceUpdateMatric=matric;
+  // Reuse enroll tab camera — switch to enroll tab
+  document.getElementById('rmatric').value=u.matric;
+  document.getElementById('rname').value=u.name;
+  document.getElementById('rlevel').value=u.level;
+  updateOptionRow();
+  if(u.option)document.getElementById('roption').value=u.option;
+  // Clear existing samples
+  samples=[];
+  for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);s.innerHTML=String(i+1);s.classList.remove('done');}
+  document.getElementById('slbl').textContent='0 / '+SAMPLES_NEEDED;
+  document.getElementById('sprog').style.width='0%';
+  document.getElementById('breg').disabled=true;
+  document.getElementById('breg').textContent='📷 Update Face Data';
+  setER('Capture '+SAMPLES_NEEDED+' new face samples for '+u.name,'info');
+  // Navigate to enroll tab
+  goTab('enroll');
+  addLog('info','Face update initiated for: '+u.name);
+}
+
+// ── FULL DB EXPORT ────────────────────────────────────────────────
+async function exportFullDB(){
+  if(currentUserRole!=='admin'){alert('HOD only.');return;}
+  await loadWeeklyData();
+  let csv='GAPOSA EEE — Full Database Backup\n';
+  csv+=`Session:,${getAcademicSession()}\nSemester:,${getSemester()}\nExported:,${new Date().toLocaleDateString('en-GB')} ${new Date().toTimeString().slice(0,5)}\nTotal Students:,${students.length}\n\n`;
+  csv+='=== ENROLLED STUDENTS ===\n';
+  csv+='Matric,Name,Level,Option,Programme,EnrolledBy,EnrolledAt\n';
+  students.forEach(u=>{csv+=`"${u.matric}","${u.name}","${u.level}","${u.option||''}","${u.programme||''}","${u.enrolledBy||''}","${u.enrolledAt||''}"\n`;});
+  csv+='\n=== ATTENDANCE RECORDS ===\n';
+  csv+='Matric,Name,Level,CourseKey,Week,Status,Time,Date\n';
+  students.forEach(u=>{
+    const d=weeklyData[u.matric]||{};
+    Object.entries(d).forEach(([k,v])=>{
+      csv+=`"${u.matric}","${u.name}","${u.level}","${k}","${v.week||''}","${v.status||''}","${v.time||''}","${v.date||''}"\n`;
+    });
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`GAPOSA_EEE_FullBackup_${getAcademicSession().replace('/','_')}_${new Date().toLocaleDateString('en-GB').replace(/\//g,'-')}.csv`;
+  a.click();addLog('ok','Full DB backup exported: '+students.length+' students');
+}
+
+// ── AUTO-LOGOUT (15 min inactivity) ──────────────────────────────
+let _idleTimer=null;
+function resetIdleTimer(){
+  clearTimeout(_idleTimer);
+  _idleTimer=setTimeout(()=>{
+    if(currentUser){
+      addLog('warn','Auto-logout: 15 min inactivity');
+      alert('You have been logged out due to 15 minutes of inactivity.');
+      doLogout();
+    }
+  },15*60*1000);
+}
+['click','keydown','touchstart','mousemove'].forEach(evt=>document.addEventListener(evt,resetIdleTimer,true));
+
+// ── OFFLINE SCAN QUEUE ────────────────────────────────────────────
+let offlineQueue=JSON.parse(localStorage.getItem('offlineQueue')||'[]');
+async function flushOfflineQueue(){
+  if(!offlineQueue.length)return;
+  addLog('info','Flushing '+offlineQueue.length+' offline scan(s)...');
+  const failed=[];
+  for(const item of offlineQueue){
+    try{
+      await dbFB.collection('weekly').doc(item.matric).set(item.data,{merge:true});
+      addLog('ok','Offline scan synced: '+item.matric+' '+item.key);
+    }catch(e){failed.push(item);}
+  }
+  offlineQueue=failed;
+  localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+  if(!failed.length)addLog('ok','All offline scans synced successfully');
+}
+window.addEventListener('online',flushOfflineQueue);
+
+// ── WELCOME MODAL — show assigned courses ─────────────────────────
 
 async function loadSecretCode(){
   try{const d=await dbFB.collection('settings').doc('auth').get();if(d.exists&&d.data().secretCode)document.getElementById('code-display').value=d.data().secretCode;}
@@ -2164,16 +2681,109 @@ async function deleteLecturer(uid, name) {
 function setAdminSt(m,t=''){const b=document.getElementById('admin-st');b.textContent=m;b.className='st '+t;}
 
 // ── LIST & STATS ──────────────────────────────────────────────────
+let activeEnrollTab = 'all';
+
+function setEnrollTab(level) {
+  activeEnrollTab = level;
+  // Update tab styles
+  ['all','ND1','ND2','HND1','HND2'].forEach(k => {
+    const btn = document.getElementById('etab-' + k);
+    if (!btn) return;
+    const isActive = (k === 'all' ? level === 'all' : level === k.replace('ND1','ND 1').replace('ND2','ND 2').replace('HND1','HND 1').replace('HND2','HND 2'));
+    btn.style.background = isActive ? 'linear-gradient(135deg,var(--navy),var(--blue))' : 'var(--bg)';
+    btn.style.color = isActive ? 'white' : 'var(--txt2)';
+    btn.style.borderColor = isActive ? 'var(--blue)' : 'var(--border2)';
+  });
+  renderList();
+}
+
+function printEnrolledStudents() {
+  const filtered = getFilteredEnrolled();
+  if (!filtered.length) { alert('No students to print for the selected filter.'); return; }
+  const levelLabel = activeEnrollTab === 'all' ? 'All Levels' : activeEnrollTab;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Group by level for print
+  const levels = ['ND 1','ND 2','HND 1','HND 2'];
+  let bodyHtml = '';
+  if (activeEnrollTab === 'all') {
+    levels.forEach(lvl => {
+      const group = filtered.filter(u => u.level === lvl);
+      if (!group.length) return;
+      bodyHtml += `<tr><td colspan="5" style="background:#1a3a6b;color:white;font-weight:800;padding:8px 10px;font-size:12px;">${lvl} — ${group.length} student(s)</td></tr>`;
+      group.forEach((u,i) => {
+        bodyHtml += `<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;
+      });
+    });
+  } else {
+    filtered.forEach((u,i) => {
+      bodyHtml += `<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;
+    });
+  }
+  const html = `<html><head><title>GAPOSA EEE Enrolled Students</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}
+  p{text-align:center;color:#475569;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:16px}
+  th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
+  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}
+  tr:nth-child(even)td{background:#f8faff}
+  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}
+  </style></head><body>
+  <h2>The Gateway Polytechnic, Saapade</h2>
+  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
+  <p><b>Enrolled Students — ${levelLabel}</b> &nbsp;|&nbsp; Printed: ${dateStr} &nbsp;|&nbsp; Total: ${filtered.length} student(s)</p>
+  <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
+  <tbody>${bodyHtml}</tbody></table>
+  <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
+  </body></html>`;
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+  addLog('info', 'Enrolled list printed: ' + filtered.length + ' students (' + levelLabel + ')');
+}
+
+function getFilteredEnrolled() {
+  const q = (document.getElementById('enroll-search') ? document.getElementById('enroll-search').value : '').toLowerCase();
+  return students.filter(u => {
+    const levelMatch = activeEnrollTab === 'all' || u.level === activeEnrollTab;
+    const searchMatch = !q || u.name.toLowerCase().includes(q) || u.matric.toLowerCase().includes(q);
+    return levelMatch && searchMatch;
+  });
+}
+
 function renderList(){
   document.getElementById('ecnt').textContent=students.length;
   const el=document.getElementById('elist');
   if(!students.length){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students enrolled yet</div>';return;}
-  el.innerHTML=students.map((u,i)=>`
-    <div class="ei">
-      <div class="ein">${i+1}</div>
-      <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
-      ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${u.matric}')">✏</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
-    </div>`).join('');
+  const filtered = getFilteredEnrolled();
+  if (!filtered.length) {
+    el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students match this filter</div>';return;
+  }
+  // Group by level when showing all
+  let html = '';
+  if (activeEnrollTab === 'all') {
+    const levels = ['ND 1','ND 2','HND 1','HND 2'];
+    levels.forEach(lvl => {
+      const group = filtered.filter(u => u.level === lvl);
+      if (!group.length) return;
+      html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);background:var(--blue-l);padding:5px 12px;border-radius:7px;margin-bottom:5px;border:1px solid var(--blue-b)">${lvl} — ${group.length} student(s)</div>`;
+      html += group.map((u,i) => `
+        <div class="ei">
+          <div class="ein">${i+1}</div>
+          <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
+          ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${u.matric}')">✏</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
+        </div>`).join('');
+    });
+  } else {
+    html = filtered.map((u,i) => `
+      <div class="ei">
+        <div class="ein">${i+1}</div>
+        <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
+        ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${u.matric}')">✏</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
+      </div>`).join('');
+  }
+  el.innerHTML = html;
 }
 
 async function deleteStudent(matric){
@@ -2248,7 +2858,7 @@ function goTab(t){
   });
   if(t==='enroll')syncEnrollCam();
   if(t==='weekly'){loadWeeklyData().then(()=>renderWeeklyGrid());}
-  if(t==='admin')refreshAdminDashboard();
+  if(t==='admin'){refreshAdminDashboard();}
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────
@@ -2809,6 +3419,7 @@ window.addEventListener('load',()=>{
     <div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:16px">
       The Gateway Polytechnic, Saapade<br>EEE Attendance System
     </div>
+    <div id="wlc-extra"></div>
     <button class="mbtn s" onclick="closeM('mwelcome')" style="width:100%">Let's Go →</button>
   </div>
 </div>
