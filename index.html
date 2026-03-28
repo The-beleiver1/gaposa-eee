@@ -435,10 +435,11 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       <div id="st-matric-status" style="font-size:11px;margin-top:5px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
       <div id="st-details-block" style="display:none">
         <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:9px;padding:10px 13px;font-size:12px;color:#059669;margin:10px 0;line-height:1.6;" id="st-details-display"></div>
-        <label class="llbl">Confirm Your Full Name</label>
-        <input class="linp" id="st-name-confirm" placeholder="Type your name exactly as registered" autocomplete="name">
-        <div style="font-size:11px;color:#94a3b8;margin-top:4px;margin-bottom:12px">This must match what the HOD uploaded in the master list.</div>
-        <button class="lbtn" style="background:linear-gradient(135deg,#d97706,#92400e)" onclick="doStudentLogin()">Continue to Enrollment →</button>
+        <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Is this you?</div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;">
+          <button onclick="doStudentLoginYes()" style="flex:1;padding:14px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;cursor:pointer;">✓</button>
+          <button onclick="doStudentLoginNo()" style="flex:1;padding:14px;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;cursor:pointer;">✕</button>
+        </div>
       </div>
     </div>
 
@@ -710,29 +711,11 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           🔄 Safe to upload additional CSV files anytime — existing students are never overwritten or removed.
         </div>
         <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
-        <div style="font-size:11px;color:var(--txt3);margin-bottom:12px;line-height:1.5;">
-          CSV format: <b>matric,name,level,option</b><br>
-          e.g. <span style="font-family:'JetBrains Mono';font-size:10px">22010611001,Adebola David,ND 1,</span>
+        <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;line-height:1.5;">
+          CSV format: <b>matric,name,level,option</b> &nbsp;|&nbsp; <span style="font-family:'JetBrains Mono';font-size:10px">e.g. 22010611001,Adebola David,ND 1,</span>
         </div>
-        <!-- Manual add single student to master list -->
-        <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:800;color:var(--txt2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Add Single Student to Master List</div>
-          <input class="inp" id="ml-matric" placeholder="Matric Number" style="margin-bottom:8px;font-size:13px;" autocomplete="off">
-          <input class="inp" id="ml-name" placeholder="Full Name (Surname Firstname)" style="margin-bottom:8px;font-size:13px;" autocomplete="off">
-          <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <select class="inp" id="ml-level" style="font-size:13px" onchange="updateMlOption()">
-              <option value="">Level</option>
-              <option value="ND 1">ND 1</option><option value="ND 2">ND 2</option>
-              <option value="HND 1">HND 1</option><option value="HND 2">HND 2</option>
-            </select>
-            <select class="inp" id="ml-option" style="font-size:13px;display:none">
-              <option value="">Option</option>
-              <option value="Power and Machines">Power & Machines</option>
-              <option value="Electronics and Telecommunication">Electronics & Telecom</option>
-            </select>
-          </div>
-          <button class="btn bb" style="width:100%;padding:11px;font-size:13px" onclick="addToMasterList()">+ Add to Master List</button>
-        </div>
+        <!-- Print Master List -->
+        <button class="btn bb" style="width:100%;padding:11px;font-size:13px;margin-bottom:10px" onclick="printMasterList()">🖨️ Print Master List</button>
         <div class="st" id="master-st"></div>
         <div class="sh" style="margin-bottom:8px">
           <div class="shtt">Master List (<span id="master-list-count">0</span>)</div>
@@ -1582,9 +1565,10 @@ async function loadStudents(){
     const snap=await dbFB.collection('students').get();
     students=snap.docs.map(d=>{
       const data=d.data();
-      // Handle both plain number arrays and object-keyed arrays from Firebase
+      // Handle string-encoded descriptors (new format), plain arrays, or object-keyed arrays (legacy)
       const descriptors=(data.descriptors||[]).map(a=>{
         if(a instanceof Float32Array) return a;
+        if(typeof a === 'string') return new Float32Array(a.split(',').map(Number));
         if(Array.isArray(a)) return new Float32Array(a);
         return new Float32Array(Object.values(a));
       });
@@ -1896,8 +1880,8 @@ async function doEnroll(){
   document.getElementById('breg').disabled=true;
   document.getElementById('breg').textContent='Saving to Firebase...';
   try{
-    // Convert Float32Array descriptors to plain number arrays (Firebase does not support nested arrays/typed arrays)
-    const cleanDescriptors = newStudent.descriptors.map(d => Array.from(d).map(v => Number(v)));
+    // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
+    const cleanDescriptors = newStudent.descriptors.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric,name,level,option:isHND?option:'',programme,
       descriptors:cleanDescriptors,
@@ -2461,6 +2445,36 @@ function setMasterSt(m, t='') {
   if (b) { b.textContent = m; b.className = 'st ' + t; }
 }
 
+function printMasterList() {
+  if (!masterList.length) { alert('No students in master list yet.'); return; }
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let rows = masterList.map((s,i) =>
+    `<tr><td>${i+1}</td><td style="font-family:monospace">${s.matric}</td><td>${s.name}</td><td>${s.level}</td><td>${s.option||'General'}</td></tr>`
+  ).join('');
+  const html = `<html><head><title>GAPOSA EEE Master Student List</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}
+  p{text-align:center;color:#475569;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:16px}
+  th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
+  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}
+  tr:nth-child(even)td{background:#f8faff}
+  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}
+  </style></head><body>
+  <h2>The Gateway Polytechnic, Saapade</h2>
+  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
+  <p><b>Master Student List</b> &nbsp;|&nbsp; Printed: ${dateStr} &nbsp;|&nbsp; Total: ${masterList.length} students</p>
+  <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
+  </body></html>`;
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+  addLog('info', 'Master list printed: ' + masterList.length + ' students');
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // STUDENT PORTAL — face enrollment from student's own device
 // ═══════════════════════════════════════════════════════════════════
@@ -2538,12 +2552,43 @@ async function doStudentLogin() { doStudentLoginYes(); }
 function spGoBackToLogin() {
   // Stop camera if running
   if (spStream) { spStream.getTracks().forEach(t => t.stop()); spStream = null; }
-  // Reset portal state
+  // Clear all enrollment state
   spSamples = []; spStudentData = null;
-  // Hide portal, show login
-  document.getElementById('student-portal').style.display = 'none';
+  // Reset portal UI
+  const capBtn = document.getElementById('sp-cap-btn');
+  const saveBtn = document.getElementById('sp-save-btn');
+  const camBtn = document.getElementById('sp-cam-btn');
+  const retakeBtn = document.getElementById('sp-retake-btn');
+  if(capBtn){capBtn.disabled=true;capBtn.style.opacity='.4';}
+  if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.4';}
+  if(camBtn){camBtn.textContent='▶ Start Camera';camBtn.disabled=false;camBtn.style.display='';}
+  if(retakeBtn){retakeBtn.style.display='none';}
+  // Reset dots
+  for(let i=0;i<SP_SAMPLES_NEEDED;i++){
+    const dot=document.getElementById('sp-dot'+i);
+    if(dot){dot.innerHTML=String(i+1);dot.style.border='2px dashed rgba(255,255,255,.3)';dot.style.boxShadow='';}
+  }
+  document.getElementById('sp-prog-bar').style.width='0%';
+  document.getElementById('sp-prog-lbl').textContent='0 / '+SP_SAMPLES_NEEDED;
+  document.getElementById('sp-status').textContent='Tap Start Camera to begin enrollment';
+  document.getElementById('sp-status').style.background='';
+  document.getElementById('sp-status').style.color='';
+  // Sign out anonymous auth so student must re-enter matric
+  if(authFB.currentUser && authFB.currentUser.isAnonymous){
+    authFB.signOut().catch(()=>{});
+  }
+  // Hide portal, clear student login fields, show login
+  document.getElementById('student-portal').style.display='none';
+  const matricInput=document.getElementById('st-matric');
+  if(matricInput) matricInput.value='';
+  const statusEl=document.getElementById('st-matric-status');
+  if(statusEl) statusEl.style.display='none';
+  const detailsEl=document.getElementById('st-details-block');
+  if(detailsEl) detailsEl.style.display='none';
+  const nameInput=document.getElementById('st-confirm-name');
+  if(nameInput) nameInput.value='';
   showLogin();
-  addLog('info', 'Student returned to login from enrollment portal');
+  addLog('info','Student returned to login — state cleared');
 }
 
 async function spToggleCam() {
@@ -2654,8 +2699,8 @@ async function spSaveEnrollment() {
   try {
     const { matric, name, level, option } = spStudentData;
     const programme = (level === 'HND 1' || level === 'HND 2') ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
-    // Ensure descriptors are plain number arrays (fix Firebase nested array error)
-    const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v)));
+    // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
+    const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric, name, level, option: option || '', programme,
       descriptors: cleanDescriptors,
