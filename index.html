@@ -34,7 +34,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column;}
+body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#1a3a6b 0%,#0f2547 50%,#1a56db 100%);color:var(--txt);display:flex;flex-direction:column;min-height:100vh;}
+#app-shell{width:100%;max-width:520px;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;box-shadow:0 0 60px rgba(0,0,0,.4);}
 
 /* LOADING */
 #ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(160deg,#1a3a6b,#0f2547,#1a56db);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
@@ -55,7 +56,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);displ
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:7777;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a3a6b,#0f2547);padding:20px;overflow-y:auto;}
+#login-screen{position:fixed;inset:0;z-index:7777;display:none;flex-direction:column;align-items:center;justify-content:center;background:transparent;padding:20px;overflow-y:auto;}
 #login-screen.show{display:flex;}
 .login-card{background:white;border-radius:20px;padding:26px 22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
 .login-logo{width:60px;height:60px;object-fit:contain;border-radius:12px;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:5px;display:block;margin:0 auto 10px;}
@@ -333,23 +334,10 @@ select.inp option{background:#fff;}
 
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
-
-/* ── DESKTOP CENTERED LAYOUT ─────────────────────────────────────── */
-@media (min-width: 600px) {
-  body { align-items: center; background: #d0d8f0; }
-  header, .session-bar, .nav, .body {
-    max-width: 480px;
-    width: 100%;
-  }
-  header { border-radius: 0; }
-  #login-screen .login-card { max-width: 420px; }
-  #student-portal > div { max-width: 480px !important; }
-}
-
 </style>
 </head>
 <body>
-
+<div id="app-shell">
 <!-- LOADING -->
 <div id="ld">
   <div class="ld-ring"></div>
@@ -443,21 +431,20 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         🎓 Students — enter your <b>matric number</b> to enroll your face in the attendance system. You only do this <b>once</b>.
       </div>
       <label class="llbl">Matric Number</label>
-      <input class="linp" id="st-matric" placeholder="e.g. 22010611009" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkStudentMasterList(this.value)">
+      <input class="linp" id="st-matric" placeholder="Enter your matric number" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkStudentMasterList(this.value)">
       <div id="st-matric-status" style="font-size:11px;margin-top:5px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
-      <!-- CHANGE 1+3: Show found student info with Yes/No confirmation -->
       <div id="st-details-block" style="display:none">
-        <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:9px;padding:12px 14px;font-size:13px;color:#059669;margin:10px 0;line-height:1.8;" id="st-details-display"></div>
-        <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:10px;text-align:center;">Is this you?</div>
-        <div style="display:flex;gap:10px;margin-bottom:8px;">
-          <button class="lbtn" style="background:linear-gradient(135deg,#059669,#047857);flex:1" onclick="doStudentLogin()">✅ Yes, Continue →</button>
-          <button class="lbtn" style="background:linear-gradient(135deg,#dc2626,#991b1b);flex:1" onclick="resetStudentForm()">✕ Not Me</button>
-        </div>
+        <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:9px;padding:10px 13px;font-size:12px;color:#059669;margin:10px 0;line-height:1.6;" id="st-details-display"></div>
+        <label class="llbl">Confirm Your Full Name</label>
+        <input class="linp" id="st-name-confirm" placeholder="Type your name exactly as registered" autocomplete="name">
+        <div style="font-size:11px;color:#94a3b8;margin-top:4px;margin-bottom:12px">This must match what the HOD uploaded in the master list.</div>
+        <button class="lbtn" style="background:linear-gradient(135deg,#d97706,#92400e)" onclick="doStudentLogin()">Continue to Enrollment →</button>
       </div>
     </div>
 
     <div class="lerr" id="lerr"></div>
     <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> and enter the code from your HOD.</div>
+    <div class="lnote" id="lnote2" style="margin-top:4px;color:#d97706">🎓 First time? Tap <b>Student</b> to enroll your face for attendance — you only do this once.</div>
   </div>
 </div>
 
@@ -643,8 +630,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         </div>
         <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div><div class="sdot" id="sd2">3</div><div class="sdot" id="sd3">4</div><div class="sdot" id="sd4">5</div></div>
         <button class="cap-btn" id="bcap" onclick="capSample()" disabled>📷 &nbsp;Tap to Capture Face Sample</button>
-        <!-- CHANGE 5: Retake in enroll tab -->
-        <button class="btn bo" id="bretake" onclick="enrollRetake()" style="margin-bottom:10px;display:none;">🔄 Retake Samples</button>
+        <button class="btn bo" id="bretake" onclick="retakeEnrollSamples()" style="width:100%;margin-bottom:10px;display:none">🔄 Retake — Clear All Samples</button>
         <div class="st" id="ereg">Start camera on Scan tab first, then capture 5 samples from different angles.</div>
         <hr>
         <div class="fr">
@@ -776,6 +762,9 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           <div class="hint">Share this via WhatsApp with your lecturers</div>
         </div>
         <button class="enroll-btn" onclick="saveCode()" style="margin-bottom:6px">🔑 Save Secret Code</button>
+        <div style="background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--amber);margin-bottom:8px;line-height:1.5;">
+          ⚠ <b>Firestore Rules:</b> Ensure <code>masterlist</code> allows <code>read: if true</code> so students can look up their matric number without logging in. Also enable Anonymous Authentication in Firebase Console.
+        </div>
         <div class="st" id="admin-st"></div>
         <hr>
         <div class="sh" style="margin-bottom:8px"><div class="shtt">👨‍🏫 Registered Lecturers</div></div>
@@ -861,8 +850,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <!-- Buttons -->
     <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:15px;background:linear-gradient(135deg,#1a56db,#1a3a6b);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:10px;">▶ Start Camera</button>
     <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:16px;background:linear-gradient(135deg,#d97706,#92400e);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:10px;opacity:.4;">📷 Tap to Capture Face Sample</button>
-    <!-- CHANGE 5: Retake button (student portal) -->
-    <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:12px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:rgba(255,255,255,.8);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;display:none;">🔄 Retake / Start Over</button>
+    <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:12px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:10px;display:none;">🔄 Retake — Clear All Samples</button>
     <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:15px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:16px;opacity:.4;">🎓 Submit &amp; Complete Enrollment</button>
 
     <div style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;line-height:1.6;">
@@ -911,7 +899,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-// GAPOSA EEE Attendance System v6
+// GAPOSA EEE Attendance System v9
 // HARDCODED Firebase — no setup screen for regular users
 // Auto-week, session/semester, correct courses, matric parsing
 // ═══════════════════════════════════════════════════════════════════
@@ -1338,10 +1326,13 @@ function setLTab(mode){
   const notes={
     login:'New lecturer? Tap <b>Register</b> and enter the code from your HOD.',
     register:'Get the secret code from your HOD.',
-    student:'Students — enter your matric number to enroll your face for attendance.',
+    student:'',
     hod:'HOD / Administrator access only.'
   };
   document.getElementById('lnote').innerHTML=notes[mode]||'';
+  // Show student hint only on login tab
+  const lnote2 = document.getElementById('lnote2');
+  if (lnote2) lnote2.style.display = mode === 'login' ? 'block' : 'none';
   // Load course picker when register tab opened
   if(mode==='register') renderRegCoursePicker();
 }
@@ -1436,10 +1427,10 @@ function showMainApp(){
   }
   updateClock();updateWeekDisplay();
   renderList();refreshAdminDashboard();
-  // CHANGE 9: Load lecturer courses after login
-  if (currentUserRole !== 'admin') {
-    loadLecturerCourses().then(() => addLog('info', 'Lecturer course filter ready'));
-  }
+  // Load lecturer's assigned courses for filtering
+  loadLecturerCourses().then(() => {
+    addLog('info', currentUserRole === 'admin' ? 'HOD: full course access' : 'Courses filtered to assigned only');
+  });
   // Show welcome overlay
   showWelcome();
 }
@@ -1578,14 +1569,15 @@ async function loadStudents(){
   try{
     const snap=await dbFB.collection('students').get();
     students=snap.docs.map(d=>{
-      const sd=d.data();
-      const descs=(sd.descriptors||[]).map(a=>{
-        if(Array.isArray(a))return new Float32Array(a);
-        if(a instanceof Object)return new Float32Array(Object.values(a));
-        return new Float32Array(a);
+      const data=d.data();
+      // Handle both plain number arrays and object-keyed arrays from Firebase
+      const descriptors=(data.descriptors||[]).map(a=>{
+        if(a instanceof Float32Array) return a;
+        if(Array.isArray(a)) return new Float32Array(a);
+        return new Float32Array(Object.values(a));
       });
-      return {...sd,descriptors:descs};
-    }); // CHANGE 4: handle both array and object descriptor formats
+      return {...data, descriptors};
+    });
     addLog('info',students.length+' students loaded');
   }catch(e){addLog('err','Load students: '+e.message);students=[];}
 }
@@ -1847,7 +1839,24 @@ async function capSample(){
     document.getElementById('sprog').style.width=(samples.length/SAMPLES_NEEDED*100)+'%';
     if(samples.length>=SAMPLES_NEEDED){document.getElementById('breg').disabled=false;setER('✓ Samples captured! Fill details and tap Enroll.','ok');}
     else setER('Sample '+samples.length+'/'+SAMPLES_NEEDED+'. Move head slightly and capture again.','info');
+    // Show retake button once samples started
+    const rb = document.getElementById('bretake');
+    if (rb && samples.length > 0) rb.style.display = 'block';
   }catch(e){setER('Error: '+e.message,'err');}
+}
+
+function retakeEnrollSamples() {
+  samples = [];
+  for (let i = 0; i < SAMPLES_NEEDED; i++) {
+    const s = document.getElementById('sd' + i);
+    if (s) { s.innerHTML = String(i + 1); s.classList.remove('done'); }
+  }
+  document.getElementById('slbl').textContent = '0 / ' + SAMPLES_NEEDED;
+  document.getElementById('sprog').style.width = '0%';
+  document.getElementById('breg').disabled = true;
+  const rb = document.getElementById('bretake');
+  if (rb) rb.style.display = 'none';
+  setER('Samples cleared. Capture ' + SAMPLES_NEEDED + ' new samples.', 'info');
 }
 
 function updateOptionRow(){
@@ -2129,37 +2138,31 @@ async function renderLecturerList(){
     const snap=await dbFB.collection('users').where('role','==','lecturer').get();
     const el=document.getElementById('lec-list');
     if(snap.empty){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
-    // CHANGE 8: Show delete button for each lecturer
     el.innerHTML=snap.docs.map(d=>{
-      const u=d.data();
-      const uid=d.id;
+      const u=d.data(); const uid=d.id;
       const courseCount=(u.assignedCourses||[]).length;
-      const courses=(u.assignedCourses||[]).slice(0,3).map(c=>c.split('_')[0]).join(', ');
       return `<div class="ei">
         <div class="ein">L</div>
         <div class="eii">
           <div class="ein2">${u.name}</div>
-          <div class="eim">${u.email}</div>
-          <div class="eim" style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned${courses?' · '+courses+(courseCount>3?' …':''):''}</div>
+          <div class="eim">${u.email} · <span style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned</span></div>
         </div>
-        <button class="edel" onclick="deleteLecturer('${uid}','${u.name.replace(/'/g,"\'")}')" title="Remove lecturer">✕</button>
+        <button class="edel" onclick="deleteLecturer('${uid}','${u.name.replace(/'/g,'')}')" title="Delete lecturer account">✕</button>
       </div>`;
     }).join('');
   }catch(e){addLog('err','Load lecturers: '+e.message);}
 }
 
-// ── DELETE LECTURER (HOD only) — CHANGE 8 ───────────────────────
 async function deleteLecturer(uid, name) {
-  if (currentUserRole !== 'admin') { alert('Only the HOD can remove lecturers.'); return; }
-  if (!confirm('Remove lecturer account for ' + name + '?\nThis will delete their login. Attendance records are preserved.')) return;
-  try {
+  if(currentUserRole!=='admin'){alert('Only the HOD can delete lecturers.');return;}
+  if(!confirm('Remove lecturer "'+name+'" from the system?\nThey will need to re-register to access the system again.'))return;
+  try{
     await dbFB.collection('users').doc(uid).delete();
-    addLog('warn', 'Lecturer removed: ' + name + ' (' + uid + ')');
-    renderLecturerList(); // refresh
-    setAdminSt('✓ Lecturer account removed: ' + name, 'warn');
-  } catch(e) { alert('Error: ' + e.message); }
+    setAdminSt('✓ Lecturer "'+name+'" removed. They can re-register with the department code.','ok');
+    addLog('warn','Lecturer deleted: '+name+' ('+uid+')');
+    renderLecturerList();
+  }catch(e){setAdminSt('Error: '+e.message,'err');addLog('err','Delete lecturer: '+e.message);}
 }
-
 function setAdminSt(m,t=''){const b=document.getElementById('admin-st');b.textContent=m;b.className='st '+t;}
 
 // ── LIST & STATS ──────────────────────────────────────────────────
@@ -2171,43 +2174,8 @@ function renderList(){
     <div class="ei">
       <div class="ein">${i+1}</div>
       <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
-      ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button class="edel" style="background:var(--blue-l);color:var(--blue)" onclick="editStudent('${u.matric}','${u.name.replace(/'/g,"\\'")}','${u.level}','${(u.option||'').replace(/'/g,"\\'")}')">✏️</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
+      ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${u.matric}')">✏</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
     </div>`).join('');
-}
-
-
-// ── EDIT STUDENT (HOD only) — CHANGE 6 ───────────────────────────
-function editStudent(matric, name, level, option) {
-  if (currentUserRole !== 'admin') { alert('Only the HOD can edit students.'); return; }
-  document.getElementById('edit-matric').value = matric;
-  document.getElementById('edit-name').value = name;
-  document.getElementById('edit-level').value = level;
-  updateEditOption();
-  document.getElementById('edit-option').value = option || '';
-  openM('medit');
-}
-function updateEditOption() {
-  const lv = document.getElementById('edit-level').value;
-  const isHND = lv === 'HND 1' || lv === 'HND 2';
-  document.getElementById('edit-opt-row').style.display = isHND ? 'block' : 'none';
-}
-async function saveEditStudent() {
-  const matric = document.getElementById('edit-matric').value;
-  const name = document.getElementById('edit-name').value.trim();
-  const level = document.getElementById('edit-level').value;
-  const option = document.getElementById('edit-option').value;
-  const isHND = level === 'HND 1' || level === 'HND 2';
-  if (!name) { alert('Enter student name.'); return; }
-  if (isHND && !option) { alert('Select specialisation option for HND.'); return; }
-  const programme = isHND ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
-  try {
-    await dbFB.collection('students').doc(matric).update({ name, level, option: isHND ? option : '', programme });
-    const idx = students.findIndex(u => u.matric === matric);
-    if (idx >= 0) { students[idx].name = name; students[idx].level = level; students[idx].option = isHND ? option : ''; students[idx].programme = programme; }
-    buildMatcher(); renderList();
-    closeM('medit');
-    addLog('ok', 'Edited: ' + matric + ' → ' + name + ' / ' + level);
-  } catch(e) { alert('Save failed: ' + e.message); }
 }
 
 async function deleteStudent(matric){
@@ -2221,6 +2189,45 @@ async function deleteStudent(matric){
     buildMatcher();renderList();renderWeeklyGrid();
     addLog('warn','Deleted: '+matric);
   }catch(e){alert('Error: '+e.message);}
+}
+
+function editStudent(matric) {
+  if(currentUserRole!=='admin'){alert('Only the HOD can edit students.');return;}
+  const u = students.find(s => s.matric === matric);
+  if(!u){alert('Student not found.');return;}
+  // Fill the correction modal for student info editing
+  const newName = prompt('Edit full name (current: '+u.name+'):', u.name);
+  if (newName === null) return; // cancelled
+  const newLevel = prompt('Edit level (current: '+u.level+')\nOptions: ND 1, ND 2, HND 1, HND 2', u.level);
+  if (newLevel === null) return;
+  const validLevels = ['ND 1','ND 2','HND 1','HND 2'];
+  if (!validLevels.includes(newLevel.trim())) { alert('Invalid level. Must be: ND 1, ND 2, HND 1, or HND 2'); return; }
+  const isHND = newLevel.includes('HND');
+  let newOption = u.option || '';
+  if (isHND) {
+    newOption = prompt('Edit specialisation option (current: '+(u.option||'none')+')\nOptions: Power and Machines, Electronics and Telecommunication', u.option||'');
+    if (newOption === null) return;
+  }
+  if (!confirm('Save changes for '+matric+'?\nName: '+newName+'\nLevel: '+newLevel+(isHND?'\nOption: '+newOption:''))) return;
+  dbFB.collection('students').doc(matric).update({
+    name: newName.trim(),
+    level: newLevel.trim(),
+    option: isHND ? newOption.trim() : '',
+    programme: isHND ? newOption.trim()+' Option' : 'Electrical & Electronics Engineering Technology',
+    editedBy: currentUserName,
+    editedAt: new Date().toISOString()
+  }).then(() => {
+    // Update local
+    const idx = students.findIndex(s => s.matric === matric);
+    if (idx >= 0) {
+      students[idx].name = newName.trim();
+      students[idx].level = newLevel.trim();
+      students[idx].option = isHND ? newOption.trim() : '';
+    }
+    renderList(); buildMatcher();
+    addLog('ok','Student edited: '+matric+' → '+newName+' | '+newLevel);
+    setAdminSt('✓ Student info updated for '+matric,'ok');
+  }).catch(e => alert('Save failed: '+e.message));
 }
 
 async function confirmClearAll(){
@@ -2447,12 +2454,6 @@ let spStream = null, spSamples = [], spStudentData = null;
 const SP_SAMPLES_NEEDED = 2;
 
 async function checkStudentMasterList(val) {
-  // CHANGE 1: Try anonymous auth if not signed in (so Firestore rules allow reads)
-  try {
-    if (!authFB.currentUser) {
-      await authFB.signInAnonymously().catch(() => {});
-    }
-  } catch(e) {}
   const statusEl = document.getElementById('st-matric-status');
   const detailsEl = document.getElementById('st-details-block');
   val = val.trim();
@@ -2466,6 +2467,12 @@ async function checkStudentMasterList(val) {
     statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
     return;
   }
+  // Ensure anonymous auth for student (needed for Firestore access)
+  try {
+    if (!authFB.currentUser) {
+      await authFB.signInAnonymously().catch(() => {});
+    }
+  } catch(e) { /* ignore */ }
   // Check master list
   try {
     const doc = await dbFB.collection('masterlist').doc(val).get();
@@ -2487,21 +2494,17 @@ async function checkStudentMasterList(val) {
   }
 }
 
-async function doStudentLogin() {
+function doStudentLoginNo() {
+  // Student says details are wrong — clear and try again
+  spStudentData = null;
+  document.getElementById('st-matric').value = '';
+  document.getElementById('st-matric-status').style.display = 'none';
+  document.getElementById('st-details-block').style.display = 'none';
+  showLoginErr('Please contact your HOD to correct your details in the master list.');
+}
+
+async function doStudentLoginYes() {
   if (!spStudentData) { showLoginErr('Verify your matric number first.'); return; }
-  const nameInput = document.getElementById('st-name-confirm').value.trim();
-  if (!nameInput) { showLoginErr('Enter your full name to confirm.'); return; }
-  // Fuzzy name match — compare lowercase, ignore extra spaces
-  const masterName = spStudentData.name.toLowerCase().replace(/\s+/g, ' ');
-  const enteredName = nameInput.toLowerCase().replace(/\s+/g, ' ');
-  // Check if at least 2 words match (surname + first name)
-  const masterWords = masterName.split(' ');
-  const enteredWords = enteredName.split(' ');
-  const matches = masterWords.filter(w => w.length > 2 && enteredWords.includes(w)).length;
-  if (matches < 2) {
-    showLoginErr('Name does not match our records. Enter your name exactly as registered (e.g. "' + spStudentData.name + '").');
-    return;
-  }
   // Open student portal
   document.getElementById('login-screen').classList.remove('show');
   const portal = document.getElementById('student-portal');
@@ -2516,33 +2519,8 @@ async function doStudentLogin() {
   addLog('info', 'Student portal opened for: ' + spStudentData.matric);
 }
 
+async function doStudentLogin() { doStudentLoginYes(); }
 
-
-function spRetake() {
-  // CHANGE 5: Clear samples and restart student portal enrollment
-  spSamples = [];
-  spUpdateProgress();
-  // Reset dots
-  for(let i=0;i<2;i++){
-    const dot=document.getElementById('sp-dot'+i);
-    if(dot){dot.innerHTML=i+1;dot.style.border='2px dashed rgba(255,255,255,.3)';dot.style.boxShadow='';}
-  }
-  document.getElementById('sp-cap-btn').disabled=false;
-  document.getElementById('sp-cap-btn').style.opacity='1';
-  document.getElementById('sp-save-btn').disabled=true;
-  document.getElementById('sp-save-btn').style.opacity='.4';
-  document.getElementById('sp-retake-btn').style.display='none';
-  document.getElementById('sp-status').textContent='Samples cleared — capture again.';
-  document.getElementById('sp-status').style.background='';
-  document.getElementById('sp-status').style.color='rgba(255,255,255,.8)';
-}
-function resetStudentForm() {
-  spStudentData = null;
-  document.getElementById('st-matric').value = '';
-  document.getElementById('st-matric-status').style.display = 'none';
-  document.getElementById('st-details-block').style.display = 'none';
-  document.getElementById('lerr').style.display = 'none';
-}
 async function spToggleCam() {
   const btn = document.getElementById('sp-cam-btn');
   if (spStream) {
@@ -2602,8 +2580,6 @@ async function spCapture() {
     dot.style.border = '2px solid #34d399';
     dot.style.boxShadow = '0 0 0 3px rgba(52,211,153,.25)';
     spUpdateProgress();
-    // CHANGE 5: Show retake button after first sample
-    document.getElementById('sp-retake-btn').style.display = 'block';
     if (spSamples.length >= SP_SAMPLES_NEEDED) {
       document.getElementById('sp-cap-btn').disabled = true;
       document.getElementById('sp-cap-btn').style.opacity = '.4';
@@ -2620,6 +2596,29 @@ function spUpdateProgress() {
   const pct = (spSamples.length / SP_SAMPLES_NEEDED * 100);
   document.getElementById('sp-prog-bar').style.width = pct + '%';
   document.getElementById('sp-prog-lbl').textContent = spSamples.length + ' / ' + SP_SAMPLES_NEEDED;
+  // Show retake button once at least 1 sample taken
+  const retakeBtn = document.getElementById('sp-retake-btn');
+  if (retakeBtn) retakeBtn.style.display = spSamples.length > 0 ? 'block' : 'none';
+}
+
+function spRetake() {
+  spSamples = [];
+  // Reset dot previews
+  for (let i = 0; i < SP_SAMPLES_NEEDED; i++) {
+    const dot = document.getElementById('sp-dot' + i);
+    if (dot) {
+      dot.innerHTML = String(i + 1);
+      dot.style.border = '2px dashed rgba(255,255,255,.3)';
+      dot.style.boxShadow = '';
+    }
+  }
+  // Re-enable capture, disable save
+  const capBtn = document.getElementById('sp-cap-btn');
+  const saveBtn = document.getElementById('sp-save-btn');
+  if (capBtn) { capBtn.disabled = false; capBtn.style.opacity = '1'; }
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '.4'; }
+  document.getElementById('sp-status').textContent = 'Samples cleared — tap Capture to take new samples.';
+  spUpdateProgress();
 }
 
 async function spSaveEnrollment() {
@@ -2630,14 +2629,16 @@ async function spSaveEnrollment() {
   try {
     const { matric, name, level, option } = spStudentData;
     const programme = (level === 'HND 1' || level === 'HND 2') ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
+    // Ensure descriptors are plain number arrays (fix Firebase nested array error)
+    const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v)));
     await dbFB.collection('students').doc(matric).set({
       matric, name, level, option: option || '', programme,
-      descriptors: spSamples.map(d => Array.from(d, v => +v)),  // CHANGE 4: plain number arrays, no nesting
+      descriptors: cleanDescriptors,
       enrolledAt: new Date().toISOString(),
       enrolledByStudent: true
     });
-    // Add to local students array and rebuild matcher
-    students.push({ matric, name, level, option: option || '', programme, descriptors: spSamples.slice() });
+    // Add to local students array (keep Float32Array for in-memory matching)
+    students.push({ matric, name, level, option: option || '', programme, descriptors: spSamples.map(d => new Float32Array(d)) });
     buildMatcher();
     // Stop camera
     if (spStream) { spStream.getTracks().forEach(t => t.stop()); spStream = null; }
@@ -2704,38 +2705,6 @@ window.addEventListener('load',()=>{
   renderCourseList();
 });
 </script>
-
-
-<!-- EDIT STUDENT MODAL (HOD only) - CHANGE 6 -->
-<div class="mbg" id="medit"><div class="mbox">
-  <div class="mico w">✏️</div>
-  <div class="mtt w">Edit Student Info</div>
-  <div class="mb">
-    <input type="hidden" id="edit-matric">
-    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Full Name</label>
-    <input class="inp" id="edit-name" placeholder="Surname Firstname" style="margin-bottom:10px">
-    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Level</label>
-    <select class="inp" id="edit-level" onchange="updateEditOption()" style="margin-bottom:10px">
-      <option value="ND 1">ND 1</option>
-      <option value="ND 2">ND 2</option>
-      <option value="HND 1">HND 1</option>
-      <option value="HND 2">HND 2</option>
-    </select>
-    <div id="edit-opt-row" style="display:none;margin-bottom:10px">
-      <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Specialisation Option</label>
-      <select class="inp" id="edit-option">
-        <option value="">— Select Option —</option>
-        <option value="Power and Machines">Power and Machines</option>
-        <option value="Electronics and Telecommunication">Electronics &amp; Telecommunication</option>
-      </select>
-    </div>
-    <div style="font-size:10px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b)">⚠ This updates name/level only. Face data is unchanged.</div>
-  </div>
-  <div style="display:flex;gap:8px;margin-top:4px">
-    <button class="mbtn e" style="flex:1" onclick="closeM('medit')">Cancel</button>
-    <button class="mbtn s" style="flex:1" onclick="saveEditStudent()">Save ✓</button>
-  </div>
-</div></div>
 
 <!-- CORRECTION MODAL (HOD only) -->
 <div class="mbg" id="mcorr"><div class="mbox">
@@ -2819,5 +2788,6 @@ window.addEventListener('load',()=>{
   </div>
 </div>
 
+</div>
 </body>
 </html>
