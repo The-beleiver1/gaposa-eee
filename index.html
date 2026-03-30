@@ -887,25 +887,39 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           </div>
         </div>
       </div>
-      <!-- Auto-logout -->
+      <!-- Auto-logout + Offline Queue settings -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--amber-l)">🔒</div><span class="card-ttl">Security</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--amber-l)">🔒</div><span class="card-ttl">Security & Behaviour</span></div>
         <div class="card-body">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;">
-            <div>
+          <!-- Auto-logout -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
+            <div style="flex:1;">
               <div style="font-size:13px;font-weight:700;color:var(--txt);">Auto-Logout</div>
-              <div style="font-size:11px;color:var(--txt3);">Logs out after 15 min inactivity</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:1px;">Log out automatically after inactivity</div>
             </div>
-            <div style="font-size:12px;font-weight:700;color:var(--green);background:var(--green-l);padding:4px 10px;border-radius:20px;border:1px solid var(--green-b);">Active ✓</div>
+            <select id="auto-logout-select" onchange="setAutoLogoutDuration(this.value)"
+              style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;margin-left:10px;flex-shrink:0;">
+              <option value="0">Off</option>
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15" selected>15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+            </select>
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;margin-top:8px;">
-            <div>
+          <!-- Offline scan queue -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;margin-bottom:12px;">
+            <div style="flex:1;">
               <div style="font-size:13px;font-weight:700;color:var(--txt);">Offline Scan Queue</div>
-              <div style="font-size:11px;color:var(--txt3);">Scans saved locally, sync when online</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:1px;">Save scans locally when offline, sync on reconnect</div>
             </div>
-            <div style="font-size:12px;font-weight:700;color:var(--green);background:var(--green-l);padding:4px 10px;border-radius:20px;border:1px solid var(--green-b);">Active ✓</div>
+            <select id="offline-queue-select" onchange="setOfflineQueueEnabled(this.value)"
+              style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;margin-left:10px;flex-shrink:0;">
+              <option value="1" selected>On</option>
+              <option value="0">Off</option>
+            </select>
           </div>
-          <button class="btn br" style="width:100%;margin-top:12px;padding:12px;" onclick="doLogout()">🚪 Logout Now</button>
+          <button class="btn br" style="width:100%;padding:12px;" onclick="doLogout()">🚪 Logout Now</button>
         </div>
       </div>
       <div class="pb"></div>
@@ -1010,6 +1024,20 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
   <div class="mico en">🎓</div><div class="mtt en">Enrolled!</div>
   <div class="mb">Saved to Firebase ✓<br><span class="mu" id="mregn"></span></div>
   <button class="mbtn en" onclick="closeM('men')">Done 🎉</button>
+</div></div>
+
+<!-- DUPLICATE FACE MODAL -->
+<div class="mbg" id="mdupe"><div class="mbox">
+  <div style="text-align:center;margin-bottom:8px;font-size:52px;line-height:1;">🚫</div>
+  <div style="font-size:18px;font-weight:900;color:var(--red);text-align:center;margin-bottom:10px;">Face Already Registered!</div>
+  <div style="background:var(--red-l);border:1.5px solid var(--red-b);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--red);line-height:1.7;margin-bottom:12px;text-align:center;">
+    This face closely matches an existing enrollment in the database.<br>
+    <span id="dupe-match-info" style="font-size:11px;color:var(--txt2);display:block;margin-top:6px;font-weight:600;"></span>
+  </div>
+  <div style="background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--amber);line-height:1.6;margin-bottom:16px;">
+    ⚠️ Duplicate face enrollments violate attendance policy. This attempt has been logged and flagged.
+  </div>
+  <button class="mbtn e" onclick="closeDupeModal()" style="width:100%;">Understood — Go Back</button>
 </div></div>
 
 <div class="mbg" id="mfin"><div class="mbox">
@@ -1470,7 +1498,34 @@ function setLTab(mode){
   if(mode==='register') renderRegCoursePicker();
 }
 
-function showLogin(){document.getElementById('login-screen').classList.add('show');}
+function clearAllLoginForms(){
+  // Lecturer login
+  const le=document.getElementById('l-email');const lp=document.getElementById('l-pass');
+  if(le)le.value='';if(lp){lp.value='';lp.type='password';}
+  // HOD login
+  const ae=document.getElementById('a-email');const ap=document.getElementById('a-pass');
+  if(ae)ae.value='';if(ap){ap.value='';ap.type='password';}
+  // Register form
+  ['r-code','r-name','r-email','r-pass','r-pass2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.value='';if(el.type==='password')el.type='password';}
+  });
+  // Student form
+  const sm=document.getElementById('st-matric');if(sm)sm.value='';
+  const ss=document.getElementById('st-matric-status');if(ss)ss.style.display='none';
+  const sd=document.getElementById('st-details-block');if(sd)sd.style.display='none';
+  // Reset all pw-eye buttons to closed state
+  document.querySelectorAll('.pw-eye').forEach(b=>{b.textContent='👁';b.style.color='#94a3b8';});
+  // Clear error
+  const lerr=document.getElementById('lerr');if(lerr){lerr.style.display='none';lerr.textContent='';}
+  // Reset to Login tab
+  setLTab('login');
+}
+
+function showLogin(){
+  clearAllLoginForms();
+  document.getElementById('login-screen').classList.add('show');
+}
 
 function showLoginErr(msg){const el=document.getElementById('lerr');el.textContent=msg;el.style.display='block';}
 
@@ -1532,13 +1587,26 @@ async function _signIn(email,pass,expectedRole){
 
 async function doLogout(){
   if(!confirm('Logout?'))return;
-  await authFB.signOut();
+  clearTimeout(_idleTimer);
+  await authFB.signOut().catch(()=>{});
   currentUser=null;currentUserRole=null;currentUserName=null;
+  // Stop any active camera streams
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  if(spStream){spStream.getTracks().forEach(t=>t.stop());spStream=null;}
+  // Reset session state
+  sessionMarked=new Set();
+  activeCourse=null;
+  // Hide main app
   document.getElementById('main-hdr').style.display='none';
   document.getElementById('session-bar').style.display='none';
   document.getElementById('main-nav').style.display='none';
   document.getElementById('main-body').style.display='none';
-  showLogin();addLog('info','Logged out');
+  // Hide student portal if open
+  const portal=document.getElementById('student-portal');
+  if(portal)portal.style.display='none';
+  // Clear all login forms and show login screen
+  showLogin();
+  addLog('info','Logged out — session cleared');
 }
 
 function showMainApp(){
@@ -1739,11 +1807,15 @@ async function saveWeekly(matric,data){
   try{
     await dbFB.collection('weekly').doc(matric).set(data,{merge:true});
   }catch(e){
-    // Queue for later if offline
-    const key=Object.keys(data).pop();
-    offlineQueue.push({matric,data,key,ts:Date.now()});
-    localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
-    addLog('warn','Offline: scan queued for '+matric+' (will sync when online)');
+    if(_offlineQueueEnabled){
+      const key=Object.keys(data).pop();
+      offlineQueue.push({matric,data,key,ts:Date.now()});
+      localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+      addLog('warn','Offline: scan queued for '+matric+' (will sync when online)');
+    }else{
+      addLog('err','Save failed (offline queue is Off): '+e.message);
+      throw e; // bubble up so caller can show error to user
+    }
   }
 }
 
@@ -1751,6 +1823,84 @@ function buildMatcher(){
   if(!students.length){matcher=null;return;}
   matcher=new faceapi.FaceMatcher(students.map(u=>new faceapi.LabeledFaceDescriptors(u.matric,u.descriptors)),0.5);
 }
+
+// ── DUPLICATE FACE DETECTION ──────────────────────────────────────
+// Threshold: 0.45 (stricter than recognition 0.5).
+// Fetches LIVE from Firestore so anonymous student portal always
+// has the full database to compare against — not just in-memory.
+const DUPE_THRESHOLD = 0.45;
+
+async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
+  // Always fetch fresh from Firestore — critical for student portal
+  // where the in-memory students array may be empty
+  let allStudents = [];
+  try {
+    const snap = await dbFB.collection('students').get();
+    allStudents = snap.docs.map(d => {
+      const data = d.data();
+      const descs = (data.descriptors || []).map(a => {
+        if (typeof a === 'string') return new Float32Array(a.split(',').map(Number));
+        if (Array.isArray(a)) return new Float32Array(a);
+        if (a instanceof Float32Array) return a;
+        return new Float32Array(Object.values(a));
+      });
+      return { matric: data.matric, name: data.name, level: data.level, descriptors: descs };
+    });
+  } catch(e) {
+    addLog('warn', 'Dupe check fetch failed: ' + e.message);
+    // If we can't reach the DB, fall back to in-memory students array
+    allStudents = students;
+  }
+
+  // Filter out the student being re-enrolled (face update case)
+  const compareAgainst = allStudents.filter(u =>
+    excludeMatric ? u.matric !== excludeMatric : true
+  );
+  if (!compareAgainst.length) return null;
+
+  let bestMatch = null;
+  let bestDistance = 1;
+
+  newDescriptors.forEach(newDesc => {
+    compareAgainst.forEach(u => {
+      u.descriptors.forEach(existingDesc => {
+        try {
+          const dist = faceapi.euclideanDistance(newDesc, existingDesc);
+          if (dist < bestDistance) {
+            bestDistance = dist;
+            bestMatch = u;
+          }
+        } catch(e) {}
+      });
+    });
+  });
+
+  if (bestDistance <= DUPE_THRESHOLD) {
+    return {
+      student: bestMatch,
+      distance: bestDistance,
+      confidence: Math.round((1 - bestDistance) * 100)
+    };
+  }
+  return null;
+}
+
+function showDupeModal(dupeResult, blockedMatric) {
+  const matchInfo = `Matches: ${dupeResult.student.name} · ${dupeResult.student.matric} · ${dupeResult.student.level} — ${dupeResult.confidence}% similarity`;
+  document.getElementById('dupe-match-info').textContent = matchInfo;
+  openM('mdupe');
+  addLog('warn', '🚫 DUPLICATE FACE BLOCKED: ' + blockedMatric + ' matches ' + dupeResult.student.matric + ' [' + dupeResult.confidence + '%]');
+}
+
+function closeDupeModal() {
+  closeM('mdupe');
+  // If student portal is visible — kick them back to login
+  const portal = document.getElementById('student-portal');
+  if (portal && portal.style.display !== 'none') {
+    spGoBackToLogin();
+  }
+}
+
 
 // ── COURSE PICKER ─────────────────────────────────────────────────
 let filtCourses=[...COURSES];
@@ -2033,21 +2183,37 @@ async function doEnroll(){
   if(isHND&&!option){setER('HND students must select a specialisation option.','err');return;}
   if(samples.length<SAMPLES_NEEDED){setER('Capture '+SAMPLES_NEEDED+' face samples first.','err');return;}
   if(students.find(u=>u.matric.toLowerCase()===matric.toLowerCase())){setER('"'+matric+'" already enrolled.','err');return;}
-  const programme=isHND?option+' Option':'Electrical & Electronics Engineering Technology';
-  const newStudent={matric,name,level,option:isHND?option:'',programme,descriptors:samples.slice()};
-  document.getElementById('breg').disabled=true;
-  document.getElementById('breg').textContent='Saving to Firebase...';
+
+  // ── LIVE DUPLICATE FACE CHECK ────────────────────────────────────
+  const btn=document.getElementById('breg');
+  btn.disabled=true;
+  btn.textContent='🔍 Checking for duplicate face...';
+  setER('Scanning database for duplicate face — please wait...','info');
+  // Pass matric as excludeMatric so face-update doesn't flag itself
+  const isFaceUpdate = btn.textContent.includes('Update');
+  const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
+  if(dupeResult){
+    btn.disabled=false;
+    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    setER('⛔ Duplicate face detected — enrollment blocked.','err');
+    showDupeModal(dupeResult, matric);
+    return;
+  }
+  // ── END DUPLICATE CHECK ──────────────────────────────────────────
+
+  btn.textContent='💾 Saving to Firebase...';
   try{
-    // Capture a small photo thumbnail from first sample
+    // Capture a small photo thumbnail
     let photoDataUrl='';
     try{
       const thumbCanvas=document.createElement('canvas');thumbCanvas.width=80;thumbCanvas.height=80;
-      const det0=newStudent.descriptors[0];
       const vid2=document.getElementById('evid');
       if(vid2&&vid2.videoWidth>0){thumbCanvas.getContext('2d').drawImage(vid2,0,0,80,80);photoDataUrl=thumbCanvas.toDataURL('image/jpeg',0.5);}
     }catch(e){}
+    const programme=isHND?option+' Option':'Electrical & Electronics Engineering Technology';
+    const newStudent={matric,name,level,option:isHND?option:'',programme,descriptors:samples.slice()};
     // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
-    const cleanDescriptors = newStudent.descriptors.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
+    const cleanDescriptors=newStudent.descriptors.map(d=>Array.from(d).map(v=>Number(v).toFixed(6)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric,name,level,option:isHND?option:'',programme,
       descriptors:cleanDescriptors,
@@ -2057,14 +2223,15 @@ async function doEnroll(){
     students.push(newStudent);
     weeklyData[matric]={};
     buildMatcher();renderList();
+    renderAdminStudents();
     document.getElementById('ecnt').textContent=students.length;
     addLog('ok','ENROLLED: '+name+' | '+matric+' | '+level+(isHND?' | '+option:''));
     document.getElementById('mregn').textContent=matric+' — '+name;
     openM('men');resetEnrollForm();
   }catch(e){
     setER('Failed: '+e.message,'err');
-    document.getElementById('breg').disabled=false;
-    document.getElementById('breg').textContent='🎓 Enroll Student & Save to Cloud';
+    btn.disabled=false;
+    btn.textContent='🎓 Enroll Student & Save to Cloud';
   }
 }
 
@@ -2270,6 +2437,7 @@ function setAdminTab(tab) {
   if(tab==='students') renderAdminStudents();
   if(tab==='lecturers') renderLecturerList();
   if(tab==='master') renderMasterList();
+  if(tab==='settings') initSecuritySettings();
 }
 
 // ── ADMIN DASHBOARD ───────────────────────────────────────────────
@@ -2592,16 +2760,48 @@ async function exportFullDB(){
 }
 
 // ── AUTO-LOGOUT (15 min inactivity) ──────────────────────────────
+// ── AUTO-LOGOUT (configurable) ────────────────────────────────────
 let _idleTimer=null;
+let _autoLogoutMinutes=parseInt(localStorage.getItem('autoLogoutMinutes')||'15');
+let _offlineQueueEnabled=(localStorage.getItem('offlineQueueEnabled')||'1')==='1';
+
+function setAutoLogoutDuration(val){
+  _autoLogoutMinutes=parseInt(val);
+  localStorage.setItem('autoLogoutMinutes',val);
+  resetIdleTimer();
+  const label=val==='0'?'Off':val+' min';
+  addLog('info','Auto-logout set to: '+label);
+}
+
+function setOfflineQueueEnabled(val){
+  _offlineQueueEnabled=val==='1';
+  localStorage.setItem('offlineQueueEnabled',val);
+  addLog('info','Offline scan queue: '+(_offlineQueueEnabled?'On':'Off'));
+}
+
+function initSecuritySettings(){
+  // Restore saved values to dropdowns
+  const als=document.getElementById('auto-logout-select');
+  if(als){
+    als.value=String(_autoLogoutMinutes);
+    // If stored value not in options list, default to 15
+    if(!als.value)als.value='15';
+  }
+  const oqs=document.getElementById('offline-queue-select');
+  if(oqs)oqs.value=_offlineQueueEnabled?'1':'0';
+}
+
 function resetIdleTimer(){
   clearTimeout(_idleTimer);
+  if(!_autoLogoutMinutes||_autoLogoutMinutes===0)return; // Off
   _idleTimer=setTimeout(()=>{
     if(currentUser){
-      addLog('warn','Auto-logout: 15 min inactivity');
-      alert('You have been logged out due to 15 minutes of inactivity.');
+      const label=_autoLogoutMinutes>=60?'1 hour':_autoLogoutMinutes+' minutes';
+      addLog('warn','Auto-logout: '+label+' inactivity');
+      alert('You have been automatically logged out after '+label+' of inactivity.');
       doLogout();
     }
-  },15*60*1000);
+  },_autoLogoutMinutes*60*1000);
 }
 ['click','keydown','touchstart','mousemove'].forEach(evt=>document.addEventListener(evt,resetIdleTimer,true));
 
@@ -2794,7 +2994,12 @@ async function deleteStudent(matric){
     await dbFB.collection('weekly').doc(matric).delete();
     students=students.filter(u=>u.matric!==matric);
     delete weeklyData[matric];
-    buildMatcher();renderList();renderWeeklyGrid();
+    buildMatcher();
+    renderList();
+    renderWeeklyGrid();
+    renderAdminStudents();
+    refreshAdminDashboard();
+    document.getElementById('ecnt').textContent=students.length;
     addLog('warn','Deleted: '+matric);
   }catch(e){alert('Error: '+e.message);}
 }
@@ -2833,6 +3038,8 @@ function editStudent(matric) {
       students[idx].option = isHND ? newOption.trim() : '';
     }
     renderList(); buildMatcher();
+    renderAdminStudents();
+    refreshAdminDashboard();
     addLog('ok','Student edited: '+matric+' → '+newName+' | '+newLevel);
     setAdminSt('✓ Student info updated for '+matric,'ok');
   }).catch(e => alert('Save failed: '+e.message));
@@ -2847,6 +3054,9 @@ async function confirmClearAll(){
     await dbFB.collection('weekly').doc(u.matric).delete().catch(()=>{});
   }
   students=[];weeklyData={};buildMatcher();renderList();renderWeeklyGrid();
+  renderAdminStudents();
+  refreshAdminDashboard();
+  document.getElementById('ecnt').textContent=0;
   addLog('warn','All data cleared');
 }
 
@@ -3304,10 +3514,34 @@ function spRetake() {
 async function spSaveEnrollment() {
   if (!spStudentData || spSamples.length < SP_SAMPLES_NEEDED) return;
   const btn = document.getElementById('sp-save-btn');
-  btn.textContent = '⏳ Saving to cloud...'; btn.disabled = true;
-  document.getElementById('sp-status').textContent = 'Saving your enrollment to Firebase...';
+  const statusEl = document.getElementById('sp-status');
+
+  // ── LIVE DUPLICATE FACE CHECK ────────────────────────────────────
+  btn.textContent = '🔍 Checking database...';
+  btn.disabled = true;
+  btn.style.opacity = '1';
+  statusEl.textContent = 'Checking database for duplicate face — please wait...';
+  statusEl.style.background = 'rgba(255,255,255,.1)';
+  statusEl.style.color = 'rgba(255,255,255,.8)';
+
+  const { matric, name, level, option } = spStudentData;
+  // excludeMatric = null since this is a brand new enrollment
+  const dupeResult = await checkFaceDuplicateLive(spSamples, null);
+  if (dupeResult) {
+    btn.textContent = '🎓 Submit & Enroll';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    statusEl.textContent = '⛔ Duplicate face detected — enrollment blocked.';
+    statusEl.style.background = 'rgba(220,38,38,.2)';
+    statusEl.style.color = '#fca5a5';
+    showDupeModal(dupeResult, matric);
+    return;
+  }
+  // ── END DUPLICATE CHECK ──────────────────────────────────────────
+
+  btn.textContent = '⏳ Saving to cloud...';
+  statusEl.textContent = 'Face verified — saving your enrollment...';
   try {
-    const { matric, name, level, option } = spStudentData;
     const programme = (level === 'HND 1' || level === 'HND 2') ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
     // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
     const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
@@ -3323,9 +3557,9 @@ async function spSaveEnrollment() {
     // Stop camera
     if (spStream) { spStream.getTracks().forEach(t => t.stop()); spStream = null; }
     // Show success
-    document.getElementById('sp-status').innerHTML = '✅ <b>Enrollment complete!</b> Your face has been saved. You will now be marked present by face scan in class.';
-    document.getElementById('sp-status').style.background = 'rgba(52,211,153,.2)';
-    document.getElementById('sp-status').style.color = '#34d399';
+    statusEl.innerHTML = '✅ <b>Enrollment complete!</b> Your face has been saved. You will now be marked present by face scan in class.';
+    statusEl.style.background = 'rgba(52,211,153,.2)';
+    statusEl.style.color = '#34d399';
     document.getElementById('sp-cam-btn').style.display = 'none';
     document.getElementById('sp-cap-btn').style.display = 'none';
     btn.textContent = '✓ Done — Close';
@@ -3338,8 +3572,8 @@ async function spSaveEnrollment() {
     };
     addLog('ok', 'Student self-enrolled: ' + matric + ' — ' + name);
   } catch(e) {
-    document.getElementById('sp-status').textContent = 'Save failed: ' + e.message;
-    btn.textContent = '🎓 Submit & Complete Enrollment';
+    statusEl.textContent = 'Save failed: ' + e.message;
+    btn.textContent = '🎓 Submit & Enroll';
     btn.disabled = false;
     btn.style.opacity = '1';
   }
