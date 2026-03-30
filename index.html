@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a3a6b">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20%5Cu2014%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%7D%5D%7D">
 <title>GAPOSA EEE — Attendance System</title>
 
 <!-- Firebase v9 compat -->
@@ -360,15 +360,14 @@ select.inp option{background:#fff;}
 
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
-/* PWA INSTALL BANNER */
-#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
+#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
 #pwa-banner.show{display:flex;}
-.pwa-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.pwa-text{flex:1;color:#fff;}
-.pwa-title{font-size:13px;font-weight:800;}
-.pwa-sub{font-size:10px;color:rgba(255,255,255,.7);}
-.pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
-.pwa-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
+.pwa-ico{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.pwa-txt{flex:1;color:#fff;min-width:0;}
+.pwa-ttl{font-size:12px;font-weight:800;}
+.pwa-sub{font-size:10px;color:rgba(255,255,255,.65);}
+.pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;}
+.pwa-x{background:none;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -1837,15 +1836,12 @@ function buildMatcher(){
 // Threshold: 0.45 (stricter than recognition 0.5).
 // Fetches LIVE from Firestore so anonymous student portal always
 // has the full database to compare against — not just in-memory.
-const DUPE_THRESHOLD = 0.45;
+const DUPE_THRESHOLD = 0.35; // Only block if extremely high match (same person, different device)
 
 async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
-  // ALWAYS fetch fresh from Firestore — never use cached in-memory array.
-  // If the fetch fails (e.g. permission denied), we BLOCK enrollment rather
-  // than silently allowing it. This is the safe default.
+  // Always fetch fresh from Firestore — critical for student portal
+  // where the in-memory students array may be empty
   let allStudents = [];
-  let fetchFailed = false;
-
   try {
     const snap = await dbFB.collection('students').get();
     allStudents = snap.docs.map(d => {
@@ -1855,22 +1851,14 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
         if (Array.isArray(a)) return new Float32Array(a);
         if (a instanceof Float32Array) return a;
         return new Float32Array(Object.values(a));
-      }).filter(d => d.length === 128); // only valid 128-dim descriptors
+      });
       return { matric: data.matric, name: data.name, level: data.level, descriptors: descs };
     });
-    addLog('info', 'Dupe check: fetched ' + allStudents.length + ' student(s) from DB');
   } catch(e) {
-    fetchFailed = true;
-    addLog('warn', 'Dupe check DB fetch failed: ' + e.message);
+    addLog('warn', 'Dupe check fetch failed: ' + e.message);
+    // If we can't reach the DB, fall back to in-memory students array
+    allStudents = students;
   }
-
-  // If fetch failed — return a special sentinel so callers can block
-  if (fetchFailed) {
-    return { fetchFailed: true };
-  }
-
-  // Empty DB — first ever enrollment, nothing to compare against
-  if (!allStudents.length) return null;
 
   // Filter out the student being re-enrolled (face update case)
   const compareAgainst = allStudents.filter(u =>
@@ -1906,7 +1894,7 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
 }
 
 function showDupeModal(dupeResult, blockedMatric) {
-  const matchInfo = `Matches: ${dupeResult.student.name} · ${dupeResult.student.matric} · ${dupeResult.student.level} — ${dupeResult.confidence}% similarity`;
+  const matchInfo = `Similarity: ${dupeResult.confidence}% — matched ${dupeResult.student.name} (${dupeResult.student.matric} · ${dupeResult.student.level}). Distance: ${dupeResult.distance.toFixed(3)} of max ${DUPE_THRESHOLD}`;
   document.getElementById('dupe-match-info').textContent = matchInfo;
   openM('mdupe');
   addLog('warn', '🚫 DUPLICATE FACE BLOCKED: ' + blockedMatric + ' matches ' + dupeResult.student.matric + ' [' + dupeResult.confidence + '%]');
@@ -2209,14 +2197,9 @@ async function doEnroll(){
   btn.disabled=true;
   btn.textContent='🔍 Checking for duplicate face...';
   setER('Scanning database for duplicate face — please wait...','info');
-  const isFaceUpdate = (faceUpdateMatric !== null && faceUpdateMatric === matric);
+  // Pass matric as excludeMatric so face-update doesn't flag itself
+  const isFaceUpdate = btn.textContent.includes('Update');
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
-  if(dupeResult && dupeResult.fetchFailed){
-    btn.disabled=false;
-    btn.textContent='🎓 Enroll Student & Save to Cloud';
-    setER('⚠️ Cannot verify — database unreachable. Check Firestore rules: students collection needs read: if true.','err');
-    return;
-  }
   if(dupeResult){
     btn.disabled=false;
     btn.textContent='🎓 Enroll Student & Save to Cloud';
@@ -3333,23 +3316,25 @@ async function checkStudentMasterList(val) {
   statusEl.style.display = 'none';
   detailsEl.style.display = 'none';
   if (val.length < 6) return;
-  // Ensure anonymous auth for student (needed for Firestore access)
+  // Ensure anonymous auth first (needed for ALL Firestore reads)
   try {
     if (!authFB.currentUser) {
       await authFB.signInAnonymously().catch(() => {});
     }
   } catch(e) { /* ignore */ }
 
-  // Check DIRECTLY in Firebase if already enrolled (never use cached array — it may be stale)
+  // Check DIRECTLY in Firebase — never use cached students[] array (it is stale)
   try {
     const enrolledDoc = await dbFB.collection('students').doc(val).get();
     if (enrolledDoc.exists) {
-      statusEl.textContent = '⚠ This matric number is already enrolled. Your face is in the system — attend class and the lecturer will scan you.';
-      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+      statusEl.textContent = '✅ Already enrolled! Your face is in the system. Just attend class — your lecturer will scan you.';
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#d1fae5;color:#059669;border:1px solid #6ee7b7;';
       return;
     }
-  } catch(e) { /* If read fails due to permissions, continue to masterlist check */ }
-
+  } catch(e) {
+    // If students collection read fails, continue anyway
+    addLog('warn', 'Student enrollment check: ' + e.message);
+  }
   // Check master list
   try {
     const doc = await dbFB.collection('masterlist').doc(val).get();
@@ -3556,16 +3541,6 @@ async function spSaveEnrollment() {
   const { matric, name, level, option } = spStudentData;
   // excludeMatric = null since this is a brand new enrollment
   const dupeResult = await checkFaceDuplicateLive(spSamples, null);
-  if (dupeResult && dupeResult.fetchFailed) {
-    btn.textContent = '🎓 Submit & Enroll';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    statusEl.textContent = '⚠️ Cannot verify face — database unreachable. Please ask your HOD to check Firestore rules (students: read if true).';
-    statusEl.style.background = 'rgba(217,119,6,.2)';
-    statusEl.style.color = '#fcd34d';
-    addLog('warn', 'Dupe check blocked enrollment — DB unreachable for: ' + matric);
-    return;
-  }
   if (dupeResult) {
     btn.textContent = '🎓 Submit & Enroll';
     btn.disabled = false;
@@ -3644,73 +3619,35 @@ function getFilteredCourses() {
 }
 
 // ── STARTUP ───────────────────────────────────────────────────────
-// ── PWA INSTALL PROMPT ───────────────────────────────────────────
-let pwaPrompt = null;
-
+// ── PWA INSTALL PROMPT ────────────────────────────────────────────
+let _pwaPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
-  pwaPrompt = e;
-  // Show banner after 3 seconds if not dismissed before
+  _pwaPrompt = e;
   setTimeout(() => {
-    if (pwaPrompt) {
-      document.getElementById('pwa-banner').classList.add('show');
-    }
-  }, 3000);
+    if (_pwaPrompt) document.getElementById('pwa-banner').classList.add('show');
+  }, 4000);
 });
-
-async function pwaInstall() {
-  if (!pwaPrompt) return;
-  pwaPrompt.prompt();
-  const { outcome } = await pwaPrompt.userChoice;
-  if (outcome === 'accepted') {
-    document.getElementById('pwa-banner').classList.remove('show');
-    addLog('ok', 'App installed to home screen');
-  }
-  pwaPrompt = null;
-}
-
-function pwaDismiss() {
-  document.getElementById('pwa-banner').classList.remove('show');
-  pwaPrompt = null; // Don't ask again this session
-}
-
 window.addEventListener('appinstalled', () => {
   document.getElementById('pwa-banner').classList.remove('show');
-  pwaPrompt = null;
+  _pwaPrompt = null;
 });
+async function pwaInstall() {
+  if (!_pwaPrompt) return;
+  _pwaPrompt.prompt();
+  const { outcome } = await _pwaPrompt.userChoice;
+  document.getElementById('pwa-banner').classList.remove('show');
+  _pwaPrompt = null;
+}
+function pwaDismiss() {
+  document.getElementById('pwa-banner').classList.remove('show');
+}
 
-// ── STARTUP ───────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
-  // ── INLINE SERVICE WORKER (no separate sw.js file needed) ─────────
-  // Registers a service worker from a Blob so PWA install prompt fires.
-  // Chrome requires: HTTPS + manifest + service worker for beforeinstallprompt.
+  // Firebase is hardcoded — init immediately when SDK is ready
   if ('serviceWorker' in navigator) {
-    const swCode = `
-const CACHE='gaposa-eee-v2';
-self.addEventListener('install',e=>{self.skipWaiting();});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(
-    fetch(e.request).then(r=>{
-      if(e.request.mode==='navigate'){
-        const c=r.clone();
-        caches.open(CACHE).then(cache=>cache.put(e.request,c));
-      }
-      return r;
-    }).catch(()=>caches.match(e.request))
-  );
-});`;
-    const blob = new Blob([swCode], {type:'application/javascript'});
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl)
-      .then(()=>{ addLog && addLog('ok','Service worker registered — PWA install ready'); })
-      .catch(e=>{ console.warn('SW registration failed:',e); });
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
-  // ── FIREBASE INIT ─────────────────────────────────────────────────
   function tryInit(){
     if(typeof firebase==='undefined'){setTimeout(tryInit,100);return;}
     if(initFirebase()){bootApp();}
@@ -3807,16 +3744,16 @@ self.addEventListener('fetch',e=>{
   </div>
 </div>
 
+</div>
 <!-- PWA INSTALL BANNER -->
 <div id="pwa-banner">
-  <div class="pwa-icon">📲</div>
-  <div class="pwa-text">
-    <div class="pwa-title">Install GAPOSA Attendance</div>
-    <div class="pwa-sub">Add to home screen for quick access — works offline</div>
+  <div class="pwa-ico">📲</div>
+  <div class="pwa-txt">
+    <div class="pwa-ttl">Install GAPOSA Attendance App</div>
+    <div class="pwa-sub">Add to home screen — works like a native app</div>
   </div>
   <button class="pwa-btn" onclick="pwaInstall()">Install</button>
-  <button class="pwa-close" onclick="pwaDismiss()">✕</button>
-</div>
+  <button class="pwa-x" onclick="pwaDismiss()" title="Dismiss">✕</button>
 </div>
 </body>
 </html>
