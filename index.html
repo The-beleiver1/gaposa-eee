@@ -1840,9 +1840,12 @@ function buildMatcher(){
 const DUPE_THRESHOLD = 0.45;
 
 async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
-  // Always fetch fresh from Firestore — critical for student portal
-  // where the in-memory students array may be empty
+  // ALWAYS fetch fresh from Firestore — never use cached in-memory array.
+  // If the fetch fails (e.g. permission denied), we BLOCK enrollment rather
+  // than silently allowing it. This is the safe default.
   let allStudents = [];
+  let fetchFailed = false;
+
   try {
     const snap = await dbFB.collection('students').get();
     allStudents = snap.docs.map(d => {
@@ -1852,14 +1855,22 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
         if (Array.isArray(a)) return new Float32Array(a);
         if (a instanceof Float32Array) return a;
         return new Float32Array(Object.values(a));
-      });
+      }).filter(d => d.length === 128); // only valid 128-dim descriptors
       return { matric: data.matric, name: data.name, level: data.level, descriptors: descs };
     });
+    addLog('info', 'Dupe check: fetched ' + allStudents.length + ' student(s) from DB');
   } catch(e) {
-    addLog('warn', 'Dupe check fetch failed: ' + e.message);
-    // If we can't reach the DB, fall back to in-memory students array
-    allStudents = students;
+    fetchFailed = true;
+    addLog('warn', 'Dupe check DB fetch failed: ' + e.message);
   }
+
+  // If fetch failed — return a special sentinel so callers can block
+  if (fetchFailed) {
+    return { fetchFailed: true };
+  }
+
+  // Empty DB — first ever enrollment, nothing to compare against
+  if (!allStudents.length) return null;
 
   // Filter out the student being re-enrolled (face update case)
   const compareAgainst = allStudents.filter(u =>
@@ -2198,9 +2209,14 @@ async function doEnroll(){
   btn.disabled=true;
   btn.textContent='🔍 Checking for duplicate face...';
   setER('Scanning database for duplicate face — please wait...','info');
-  // Pass matric as excludeMatric so face-update doesn't flag itself
-  const isFaceUpdate = btn.textContent.includes('Update');
+  const isFaceUpdate = (faceUpdateMatric !== null && faceUpdateMatric === matric);
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
+  if(dupeResult && dupeResult.fetchFailed){
+    btn.disabled=false;
+    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    setER('⚠️ Cannot verify — database unreachable. Check Firestore rules: students collection needs read: if true.','err');
+    return;
+  }
   if(dupeResult){
     btn.disabled=false;
     btn.textContent='🎓 Enroll Student & Save to Cloud';
@@ -3540,6 +3556,16 @@ async function spSaveEnrollment() {
   const { matric, name, level, option } = spStudentData;
   // excludeMatric = null since this is a brand new enrollment
   const dupeResult = await checkFaceDuplicateLive(spSamples, null);
+  if (dupeResult && dupeResult.fetchFailed) {
+    btn.textContent = '🎓 Submit & Enroll';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    statusEl.textContent = '⚠️ Cannot verify face — database unreachable. Please ask your HOD to check Firestore rules (students: read if true).';
+    statusEl.style.background = 'rgba(217,119,6,.2)';
+    statusEl.style.color = '#fcd34d';
+    addLog('warn', 'Dupe check blocked enrollment — DB unreachable for: ' + matric);
+    return;
+  }
   if (dupeResult) {
     btn.textContent = '🎓 Submit & Enroll';
     btn.disabled = false;
@@ -3655,13 +3681,36 @@ window.addEventListener('appinstalled', () => {
 
 // ── STARTUP ───────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
-  // Firebase is hardcoded — init immediately when SDK is ready
-  // Register service worker for PWA installability
+  // ── INLINE SERVICE WORKER (no separate sw.js file needed) ─────────
+  // Registers a service worker from a Blob so PWA install prompt fires.
+  // Chrome requires: HTTPS + manifest + service worker for beforeinstallprompt.
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {
-      // sw.js may not exist yet — create inline registration fallback
-    });
+    const swCode = `
+const CACHE='gaposa-eee-v2';
+self.addEventListener('install',e=>{self.skipWaiting();});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(
+    fetch(e.request).then(r=>{
+      if(e.request.mode==='navigate'){
+        const c=r.clone();
+        caches.open(CACHE).then(cache=>cache.put(e.request,c));
+      }
+      return r;
+    }).catch(()=>caches.match(e.request))
+  );
+});`;
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl)
+      .then(()=>{ addLog && addLog('ok','Service worker registered — PWA install ready'); })
+      .catch(e=>{ console.warn('SW registration failed:',e); });
   }
+  // ── FIREBASE INIT ─────────────────────────────────────────────────
   function tryInit(){
     if(typeof firebase==='undefined'){setTimeout(tryInit,100);return;}
     if(initFirebase()){bootApp();}
