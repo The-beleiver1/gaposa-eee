@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a3a6b">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20%5Cu2014%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D">
 <title>GAPOSA EEE — Attendance System</title>
 
 <!-- Firebase v9 compat -->
@@ -360,6 +360,15 @@ select.inp option{background:#fff;}
 
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
+/* PWA INSTALL BANNER */
+#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
+#pwa-banner.show{display:flex;}
+.pwa-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pwa-text{flex:1;color:#fff;}
+.pwa-title{font-size:13px;font-weight:800;}
+.pwa-sub{font-size:10px;color:rgba(255,255,255,.7);}
+.pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.pwa-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
 </style>
 </head>
 <body>
@@ -3308,19 +3317,23 @@ async function checkStudentMasterList(val) {
   statusEl.style.display = 'none';
   detailsEl.style.display = 'none';
   if (val.length < 6) return;
-  // Check if already enrolled
-  const alreadyEnrolled = students.find(s => s.matric.toLowerCase() === val.toLowerCase());
-  if (alreadyEnrolled) {
-    statusEl.textContent = '⚠ This matric number is already enrolled in the system.';
-    statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
-    return;
-  }
   // Ensure anonymous auth for student (needed for Firestore access)
   try {
     if (!authFB.currentUser) {
       await authFB.signInAnonymously().catch(() => {});
     }
   } catch(e) { /* ignore */ }
+
+  // Check DIRECTLY in Firebase if already enrolled (never use cached array — it may be stale)
+  try {
+    const enrolledDoc = await dbFB.collection('students').doc(val).get();
+    if (enrolledDoc.exists) {
+      statusEl.textContent = '⚠ This matric number is already enrolled. Your face is in the system — attend class and the lecturer will scan you.';
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+      return;
+    }
+  } catch(e) { /* If read fails due to permissions, continue to masterlist check */ }
+
   // Check master list
   try {
     const doc = await dbFB.collection('masterlist').doc(val).get();
@@ -3605,8 +3618,50 @@ function getFilteredCourses() {
 }
 
 // ── STARTUP ───────────────────────────────────────────────────────
+// ── PWA INSTALL PROMPT ───────────────────────────────────────────
+let pwaPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaPrompt = e;
+  // Show banner after 3 seconds if not dismissed before
+  setTimeout(() => {
+    if (pwaPrompt) {
+      document.getElementById('pwa-banner').classList.add('show');
+    }
+  }, 3000);
+});
+
+async function pwaInstall() {
+  if (!pwaPrompt) return;
+  pwaPrompt.prompt();
+  const { outcome } = await pwaPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('pwa-banner').classList.remove('show');
+    addLog('ok', 'App installed to home screen');
+  }
+  pwaPrompt = null;
+}
+
+function pwaDismiss() {
+  document.getElementById('pwa-banner').classList.remove('show');
+  pwaPrompt = null; // Don't ask again this session
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwa-banner').classList.remove('show');
+  pwaPrompt = null;
+});
+
+// ── STARTUP ───────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   // Firebase is hardcoded — init immediately when SDK is ready
+  // Register service worker for PWA installability
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // sw.js may not exist yet — create inline registration fallback
+    });
+  }
   function tryInit(){
     if(typeof firebase==='undefined'){setTimeout(tryInit,100);return;}
     if(initFirebase()){bootApp();}
@@ -3703,6 +3758,16 @@ window.addEventListener('load',()=>{
   </div>
 </div>
 
+<!-- PWA INSTALL BANNER -->
+<div id="pwa-banner">
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-text">
+    <div class="pwa-title">Install GAPOSA Attendance</div>
+    <div class="pwa-sub">Add to home screen for quick access — works offline</div>
+  </div>
+  <button class="pwa-btn" onclick="pwaInstall()">Install</button>
+  <button class="pwa-close" onclick="pwaDismiss()">✕</button>
+</div>
 </div>
 </body>
 </html>
