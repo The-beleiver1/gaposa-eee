@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a3a6b">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%7D%5D%7D">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20%5Cu2014%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D">
 <title>GAPOSA EEE — Attendance System</title>
 
 <!-- Firebase v9 compat -->
@@ -360,14 +360,15 @@ select.inp option{background:#fff;}
 
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
-#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
+/* PWA INSTALL BANNER */
+#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
 #pwa-banner.show{display:flex;}
-.pwa-ico{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.pwa-txt{flex:1;color:#fff;min-width:0;}
-.pwa-ttl{font-size:12px;font-weight:800;}
-.pwa-sub{font-size:10px;color:rgba(255,255,255,.65);}
-.pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;}
-.pwa-x{background:none;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+.pwa-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pwa-text{flex:1;color:#fff;}
+.pwa-title{font-size:13px;font-weight:800;}
+.pwa-sub{font-size:10px;color:rgba(255,255,255,.7);}
+.pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.pwa-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
 </style>
 </head>
 <body>
@@ -1836,7 +1837,7 @@ function buildMatcher(){
 // Threshold: 0.45 (stricter than recognition 0.5).
 // Fetches LIVE from Firestore so anonymous student portal always
 // has the full database to compare against — not just in-memory.
-const DUPE_THRESHOLD = 0.35; // Only block if extremely high match (same person, different device)
+const DUPE_THRESHOLD = 0.45;
 
 async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
   // Always fetch fresh from Firestore — critical for student portal
@@ -1894,7 +1895,7 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
 }
 
 function showDupeModal(dupeResult, blockedMatric) {
-  const matchInfo = `Similarity: ${dupeResult.confidence}% — matched ${dupeResult.student.name} (${dupeResult.student.matric} · ${dupeResult.student.level}). Distance: ${dupeResult.distance.toFixed(3)} of max ${DUPE_THRESHOLD}`;
+  const matchInfo = `Matches: ${dupeResult.student.name} · ${dupeResult.student.matric} · ${dupeResult.student.level} — ${dupeResult.confidence}% similarity`;
   document.getElementById('dupe-match-info').textContent = matchInfo;
   openM('mdupe');
   addLog('warn', '🚫 DUPLICATE FACE BLOCKED: ' + blockedMatric + ' matches ' + dupeResult.student.matric + ' [' + dupeResult.confidence + '%]');
@@ -3250,11 +3251,10 @@ async function importMasterCSV(input) {
   }
   try {
     if (added > 0) await batch.commit();
-    renderMasterList();
-    document.getElementById('master-count-badge').textContent = masterList.length + ' students';
-    document.getElementById('master-list-count').textContent = masterList.length;
-    setMasterSt(`✓ Imported ${added} students. ${skipped} already existed. ${errors.length} errors.`, 'ok');
-    addLog('ok', 'CSV import: ' + added + ' students added to master list');
+    // Reload from Firestore to confirm all data is saved and in sync
+    await loadMasterList();
+    setMasterSt(`✓ Imported ${added} student(s). ${skipped} already existed. ${errors.length} error(s). Master list now has ${masterList.length} total.`, 'ok');
+    addLog('ok', 'CSV import: ' + added + ' students added — total now ' + masterList.length);
   } catch(e) { setMasterSt('Import failed: ' + e.message, 'err'); }
   input.value = '';
 }
@@ -3316,26 +3316,39 @@ async function checkStudentMasterList(val) {
   statusEl.style.display = 'none';
   detailsEl.style.display = 'none';
   if (val.length < 6) return;
-  // Ensure anonymous auth first (needed for ALL Firestore reads)
+
+  // Show searching indicator immediately
+  statusEl.textContent = '🔍 Searching...';
+  statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#e8f0fe;color:#1a56db;border:1px solid #bfdbfe;';
+
+  // Ensure anonymous auth for student (needed for Firestore access)
+  // If this fails, the masterlist read will also fail — we catch that below
   try {
     if (!authFB.currentUser) {
-      await authFB.signInAnonymously().catch(() => {});
+      await authFB.signInAnonymously();
     }
-  } catch(e) { /* ignore */ }
+  } catch(e) {
+    // Anonymous auth failed — likely not enabled in Firebase Console
+    statusEl.textContent = '⚠️ System error: Anonymous sign-in is not enabled. Ask your HOD to enable it in Firebase Console → Authentication → Sign-in providers → Anonymous.';
+    statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;';
+    addLog('err', 'Anonymous auth failed: ' + e.message);
+    return;
+  }
 
-  // Check DIRECTLY in Firebase — never use cached students[] array (it is stale)
+  // Check DIRECTLY in Firebase if already enrolled (never use cached array — it may be stale)
   try {
     const enrolledDoc = await dbFB.collection('students').doc(val).get();
     if (enrolledDoc.exists) {
-      statusEl.textContent = '✅ Already enrolled! Your face is in the system. Just attend class — your lecturer will scan you.';
-      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#d1fae5;color:#059669;border:1px solid #6ee7b7;';
+      statusEl.textContent = '⚠ This matric number is already enrolled. Your face is in the system — attend class and the lecturer will scan you.';
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
       return;
     }
   } catch(e) {
-    // If students collection read fails, continue anyway
-    addLog('warn', 'Student enrollment check: ' + e.message);
+    // Permission error on students collection — not critical, continue to masterlist check
+    addLog('warn', 'Students check permission: ' + e.message);
   }
-  // Check master list
+
+  // Check master list DIRECTLY in Firestore — always fresh, never cached
   try {
     const doc = await dbFB.collection('masterlist').doc(val).get();
     if (!doc.exists) {
@@ -3351,8 +3364,16 @@ async function checkStudentMasterList(val) {
       `<b>${data.name}</b><br>${data.level}${data.option ? ' · ' + data.option : ' · General'}<br>Matric: ${data.matric}`;
     detailsEl.style.display = 'block';
   } catch(e) {
-    statusEl.textContent = 'Error checking: ' + e.message;
-    statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;';
+    // Distinguish permission error from other errors
+    if (e.code === 'permission-denied' || e.message.includes('permission') || e.message.includes('Missing')) {
+      statusEl.textContent = '⚠️ Permission denied reading master list. Your HOD needs to set Firestore rules: masterlist → allow read: if true';
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;';
+      addLog('err', 'Masterlist permission denied: ' + e.message);
+    } else {
+      statusEl.textContent = '⚠️ Error: ' + e.message;
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;';
+      addLog('err', 'Masterlist check error: ' + e.message);
+    }
   }
 }
 
@@ -3619,34 +3640,49 @@ function getFilteredCourses() {
 }
 
 // ── STARTUP ───────────────────────────────────────────────────────
-// ── PWA INSTALL PROMPT ────────────────────────────────────────────
-let _pwaPrompt = null;
+// ── PWA INSTALL PROMPT ───────────────────────────────────────────
+let pwaPrompt = null;
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
-  _pwaPrompt = e;
+  pwaPrompt = e;
+  // Show banner after 3 seconds if not dismissed before
   setTimeout(() => {
-    if (_pwaPrompt) document.getElementById('pwa-banner').classList.add('show');
-  }, 4000);
+    if (pwaPrompt) {
+      document.getElementById('pwa-banner').classList.add('show');
+    }
+  }, 3000);
 });
-window.addEventListener('appinstalled', () => {
-  document.getElementById('pwa-banner').classList.remove('show');
-  _pwaPrompt = null;
-});
+
 async function pwaInstall() {
-  if (!_pwaPrompt) return;
-  _pwaPrompt.prompt();
-  const { outcome } = await _pwaPrompt.userChoice;
-  document.getElementById('pwa-banner').classList.remove('show');
-  _pwaPrompt = null;
-}
-function pwaDismiss() {
-  document.getElementById('pwa-banner').classList.remove('show');
+  if (!pwaPrompt) return;
+  pwaPrompt.prompt();
+  const { outcome } = await pwaPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('pwa-banner').classList.remove('show');
+    addLog('ok', 'App installed to home screen');
+  }
+  pwaPrompt = null;
 }
 
+function pwaDismiss() {
+  document.getElementById('pwa-banner').classList.remove('show');
+  pwaPrompt = null; // Don't ask again this session
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwa-banner').classList.remove('show');
+  pwaPrompt = null;
+});
+
+// ── STARTUP ───────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   // Firebase is hardcoded — init immediately when SDK is ready
+  // Register service worker for PWA installability
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // sw.js may not exist yet — create inline registration fallback
+    });
   }
   function tryInit(){
     if(typeof firebase==='undefined'){setTimeout(tryInit,100);return;}
@@ -3744,16 +3780,16 @@ window.addEventListener('load',()=>{
   </div>
 </div>
 
-</div>
 <!-- PWA INSTALL BANNER -->
 <div id="pwa-banner">
-  <div class="pwa-ico">📲</div>
-  <div class="pwa-txt">
-    <div class="pwa-ttl">Install GAPOSA Attendance App</div>
-    <div class="pwa-sub">Add to home screen — works like a native app</div>
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-text">
+    <div class="pwa-title">Install GAPOSA Attendance</div>
+    <div class="pwa-sub">Add to home screen for quick access — works offline</div>
   </div>
   <button class="pwa-btn" onclick="pwaInstall()">Install</button>
-  <button class="pwa-x" onclick="pwaDismiss()" title="Dismiss">✕</button>
+  <button class="pwa-close" onclick="pwaDismiss()">✕</button>
+</div>
 </div>
 </body>
 </html>
