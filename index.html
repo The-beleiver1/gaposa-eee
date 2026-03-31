@@ -34,8 +34,17 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#1a3a6b 0%,#0f2547 50%,#1a56db 100%);color:var(--txt);display:flex;flex-direction:column;min-height:100vh;}
-#app-shell{width:100%;max-width:520px;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;box-shadow:0 0 60px rgba(0,0,0,.4);}
+/* BACKGROUND SLIDESHOW */
+@keyframes bgSlide{0%{opacity:1}25%{opacity:1}33%{opacity:0}91%{opacity:0}100%{opacity:1}}
+.bg-slide{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;animation:bgSlide 24s infinite;}
+.bg-slide:nth-child(1){animation-delay:0s;background-image:url('https://images.unsplash.com/photo-1621905251189-08b45249ff9e?w=1200&q=80');}
+.bg-slide:nth-child(2){animation-delay:-6s;background-image:url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80');}
+.bg-slide:nth-child(3){animation-delay:-12s;background-image:url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=80');}
+.bg-slide:nth-child(4){animation-delay:-18s;background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80');}
+.bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(135deg,rgba(26,58,107,.88) 0%,rgba(15,37,71,.85) 50%,rgba(26,86,219,.82) 100%);}
+
+body{font-family:'Outfit',sans-serif;background:#0f2547;color:var(--txt);display:flex;flex-direction:column;min-height:100vh;}
+#app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(240,244,255,0.97);display:flex;flex-direction:column;min-height:100vh;position:relative;box-shadow:0 0 80px rgba(0,0,0,.6);}
 
 /* LOADING */
 #ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(160deg,#1a3a6b,#0f2547,#1a56db);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
@@ -58,7 +67,7 @@ body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#1a3a6b 0
 /* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:7777;display:none;flex-direction:column;align-items:center;justify-content:center;background:transparent;padding:20px;overflow-y:auto;}
 #login-screen.show{display:flex;}
-.login-card{background:white;border-radius:20px;padding:26px 22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-card{background:white;border-radius:20px;padding:26px 22px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
 .login-logo{width:60px;height:60px;object-fit:contain;border-radius:12px;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:5px;display:block;margin:0 auto 10px;}
 .login-school{font-size:15px;font-weight:900;color:#1a3a6b;text-align:center;line-height:1.3;}
 .login-dept{font-size:10px;color:#94a3b8;text-align:center;margin-bottom:18px;}
@@ -331,7 +340,7 @@ select.inp option{background:#fff;}
 .mbg.open{display:flex !important;}
 .mbg{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mbg.open{opacity:1;pointer-events:all;}
-.mbox{background:#fff;border-radius:20px 20px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));width:100%;max-width:520px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);max-height:88vh;overflow-y:auto;}
+.mbox{background:#fff;border-radius:20px 20px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));width:100%;max-width:680px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);max-height:88vh;overflow-y:auto;}
 .mbg.open .mbox{transform:translateY(0);}
 .mbox::-webkit-scrollbar{display:none;}
 .mico{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px;}
@@ -361,7 +370,7 @@ select.inp option{background:#fff;}
 hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pb{height:calc(16px + env(safe-area-inset-bottom,0px));}
 /* PWA INSTALL BANNER */
-#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
+#pwa-banner{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;z-index:9998;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:12px 16px;display:none;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
 #pwa-banner.show{display:flex;}
 .pwa-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .pwa-text{flex:1;color:#fff;}
@@ -372,7 +381,14 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 </style>
 </head>
 <body>
-<div id="app-shell">
+<!-- BACKGROUND SLIDESHOW -->
+<div class="bg-slide"></div>
+<div class="bg-slide"></div>
+<div class="bg-slide"></div>
+<div class="bg-slide"></div>
+<div class="bg-overlay"></div>
+<!-- APP SHELL -->
+<div id="app-shell" style="position:relative;z-index:2;">
 <!-- LOADING -->
 <div id="ld">
   <div class="ld-ring"></div>
@@ -1840,9 +1856,11 @@ function buildMatcher(){
 const DUPE_THRESHOLD = 0.45;
 
 async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
-  // Always fetch fresh from Firestore — critical for student portal
-  // where the in-memory students array may be empty
+  // ALWAYS fetch fresh from Firestore — never use cached in-memory array.
+  // If fetch fails (permission denied etc) we BLOCK enrollment — safe default.
   let allStudents = [];
+  let fetchFailed = false;
+
   try {
     const snap = await dbFB.collection('students').get();
     allStudents = snap.docs.map(d => {
@@ -1852,14 +1870,20 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
         if (Array.isArray(a)) return new Float32Array(a);
         if (a instanceof Float32Array) return a;
         return new Float32Array(Object.values(a));
-      });
+      }).filter(d => d.length === 128);
       return { matric: data.matric, name: data.name, level: data.level, descriptors: descs };
     });
+    addLog('info', 'Dupe check: fetched ' + allStudents.length + ' student(s) from DB');
   } catch(e) {
-    addLog('warn', 'Dupe check fetch failed: ' + e.message);
-    // If we can't reach the DB, fall back to in-memory students array
-    allStudents = students;
+    fetchFailed = true;
+    addLog('warn', 'Dupe check DB fetch failed: ' + e.message);
   }
+
+  // If fetch failed — return sentinel so callers can block enrollment
+  if (fetchFailed) return { fetchFailed: true };
+
+  // Empty DB — first ever enrollment, nothing to compare against
+  if (!allStudents.length) return null;
 
   // Filter out the student being re-enrolled (face update case)
   const compareAgainst = allStudents.filter(u =>
@@ -1875,21 +1899,14 @@ async function checkFaceDuplicateLive(newDescriptors, excludeMatric) {
       u.descriptors.forEach(existingDesc => {
         try {
           const dist = faceapi.euclideanDistance(newDesc, existingDesc);
-          if (dist < bestDistance) {
-            bestDistance = dist;
-            bestMatch = u;
-          }
+          if (dist < bestDistance) { bestDistance = dist; bestMatch = u; }
         } catch(e) {}
       });
     });
   });
 
   if (bestDistance <= DUPE_THRESHOLD) {
-    return {
-      student: bestMatch,
-      distance: bestDistance,
-      confidence: Math.round((1 - bestDistance) * 100)
-    };
+    return { student: bestMatch, distance: bestDistance, confidence: Math.round((1 - bestDistance) * 100) };
   }
   return null;
 }
@@ -2198,9 +2215,14 @@ async function doEnroll(){
   btn.disabled=true;
   btn.textContent='🔍 Checking for duplicate face...';
   setER('Scanning database for duplicate face — please wait...','info');
-  // Pass matric as excludeMatric so face-update doesn't flag itself
-  const isFaceUpdate = btn.textContent.includes('Update');
+  const isFaceUpdate = (faceUpdateMatric !== null && faceUpdateMatric === matric);
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
+  if(dupeResult && dupeResult.fetchFailed){
+    btn.disabled=false;
+    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    setER('⚠️ Cannot verify — database unreachable. Check Firestore rules: students collection needs read: if true.','err');
+    return;
+  }
   if(dupeResult){
     btn.disabled=false;
     btn.textContent='🎓 Enroll Student & Save to Cloud';
@@ -3234,28 +3256,96 @@ async function importMasterCSV(input) {
   setMasterSt('Reading CSV...', 'info');
   const text = await file.text();
   const lines = text.split('\n').filter(l => l.trim());
+  if (!lines.length) { setMasterSt('CSV file is empty.', 'err'); return; }
+
+  // ── SMART HEADER DETECTION ────────────────────────────────────────
+  // Detect column positions from the header row regardless of order.
+  // Supports: matric first OR name first, any case, with/without spaces.
+  const headerLine = lines[0].toLowerCase();
+  const headerParts = headerLine.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+
+  // Find which column index holds what
+  let iMatric = -1, iName = -1, iLevel = -1, iOption = -1;
+  headerParts.forEach((h, i) => {
+    if (h.includes('matric') || h.includes('number') || h.includes('reg')) iMatric = i;
+    else if (h.includes('name') || h.includes('student')) iName = i;
+    else if (h.includes('level') || h.includes('class') || h.includes('year')) iLevel = i;
+    else if (h.includes('option') || h.includes('specialisation') || h.includes('programme')) iOption = i;
+  });
+
+  // If we found a proper header row with at least matric + name
+  const hasHeader = iMatric >= 0 && iName >= 0;
+  const startIdx = hasHeader ? 1 : 0;
+
+  // If no header detected, fall back to fixed order: matric, name, level, option
+  if (!hasHeader) {
+    iMatric = 0; iName = 1; iLevel = 2; iOption = 3;
+    addLog('warn', 'CSV: No header detected — using default column order (matric, name, level, option)');
+  } else {
+    // Fill in level/option defaults if not found in header
+    if (iLevel < 0) iLevel = 2;
+    if (iOption < 0) iOption = 3;
+    addLog('info', `CSV columns detected — matric:${iMatric} name:${iName} level:${iLevel} option:${iOption}`);
+  }
+  // ── END HEADER DETECTION ─────────────────────────────────────────
+
   let added = 0, skipped = 0, errors = [];
-  // Skip header row if it contains text
-  const startIdx = lines[0].toLowerCase().includes('matric') ? 1 : 0;
   const batch = dbFB.batch();
+
   for (let i = startIdx; i < lines.length; i++) {
-    const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
-    if (parts.length < 3) continue;
-    const [matric, name, level, option] = parts;
-    if (!matric || !name || !level) { errors.push('Row ' + (i+1) + ': missing data'); continue; }
-    if (masterList.find(s => s.matric.toLowerCase() === matric.toLowerCase())) { skipped++; continue; }
-    const entry = { matric, name: name.trim(), level: level.trim(), option: (option||'').trim() };
+    // Handle commas inside quoted fields
+    const raw = lines[i];
+    const parts = raw.match(/(".*?"|[^,]+)(?=,|$)/g)
+      ? raw.match(/(".*?"|[^,]+)(?=,|$)/g).map(p => p.trim().replace(/^"|"$/g, ''))
+      : raw.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+
+    const matric = (parts[iMatric] || '').trim();
+    const name   = (parts[iName]   || '').trim();
+    const level  = (parts[iLevel]  || '').trim();
+    const option = (parts[iOption] || '').trim();
+
+    if (!matric || !name || !level) {
+      errors.push('Row ' + (i + 1) + ': missing matric/name/level — skipped');
+      continue;
+    }
+    // Validate matric looks like a number (basic sanity check)
+    if (!/^\d{6,15}$/.test(matric)) {
+      errors.push('Row ' + (i + 1) + ': "' + matric + '" does not look like a matric number — skipped');
+      continue;
+    }
+    if (masterList.find(s => s.matric.toLowerCase() === matric.toLowerCase())) {
+      skipped++; continue;
+    }
+
+    // Normalise option field — map full text to system values
+    let normOption = option;
+    if (option.toLowerCase().includes('power')) normOption = 'Power and Machines';
+    else if (option.toLowerCase().includes('electron') || option.toLowerCase().includes('telecom')) normOption = 'Electronics and Telecommunication';
+    else if (option.toLowerCase().includes('electrical') || option.toLowerCase().includes('general')) normOption = '';
+
+    const entry = { matric, name, level, option: normOption };
     batch.set(dbFB.collection('masterlist').doc(matric), entry);
     masterList.push(entry);
     added++;
   }
+
+  if (errors.length && added === 0) {
+    setMasterSt('Import failed — ' + errors.length + ' errors. First: ' + errors[0], 'err');
+    addLog('err', 'CSV import failed: ' + errors.join(' | '));
+    input.value = ''; return;
+  }
+
   try {
     if (added > 0) await batch.commit();
     // Reload from Firestore to confirm all data is saved and in sync
     await loadMasterList();
-    setMasterSt(`✓ Imported ${added} student(s). ${skipped} already existed. ${errors.length} error(s). Master list now has ${masterList.length} total.`, 'ok');
-    addLog('ok', 'CSV import: ' + added + ' students added — total now ' + masterList.length);
-  } catch(e) { setMasterSt('Import failed: ' + e.message, 'err'); }
+    let msg = `✓ Imported ${added} student(s). ${skipped} already existed.`;
+    if (errors.length) msg += ` ⚠ ${errors.length} row(s) skipped.`;
+    msg += ` Master list now has ${masterList.length} total.`;
+    setMasterSt(msg, 'ok');
+    addLog('ok', 'CSV import: ' + added + ' added, ' + skipped + ' skipped, ' + errors.length + ' errors');
+    if (errors.length) addLog('warn', 'Skipped rows: ' + errors.slice(0,5).join(' | '));
+  } catch(e) { setMasterSt('Save failed: ' + e.message, 'err'); }
   input.value = '';
 }
 
@@ -3321,21 +3411,19 @@ async function checkStudentMasterList(val) {
   statusEl.textContent = '🔍 Searching...';
   statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#e8f0fe;color:#1a56db;border:1px solid #bfdbfe;';
 
-  // Ensure anonymous auth for student (needed for Firestore access)
-  // If this fails, the masterlist read will also fail — we catch that below
+  // Ensure anonymous auth — required for Firestore access
   try {
     if (!authFB.currentUser) {
       await authFB.signInAnonymously();
     }
   } catch(e) {
-    // Anonymous auth failed — likely not enabled in Firebase Console
-    statusEl.textContent = '⚠️ System error: Anonymous sign-in is not enabled. Ask your HOD to enable it in Firebase Console → Authentication → Sign-in providers → Anonymous.';
+    statusEl.textContent = '⚠️ System error: Anonymous sign-in not enabled. HOD must enable it in Firebase Console → Authentication → Sign-in providers → Anonymous.';
     statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;';
     addLog('err', 'Anonymous auth failed: ' + e.message);
     return;
   }
 
-  // Check DIRECTLY in Firebase if already enrolled (never use cached array — it may be stale)
+  // Check DIRECTLY in Firebase if already enrolled — never use cached array
   try {
     const enrolledDoc = await dbFB.collection('students').doc(val).get();
     if (enrolledDoc.exists) {
@@ -3344,8 +3432,8 @@ async function checkStudentMasterList(val) {
       return;
     }
   } catch(e) {
-    // Permission error on students collection — not critical, continue to masterlist check
-    addLog('warn', 'Students check permission: ' + e.message);
+    addLog('warn', 'Students check: ' + e.message);
+    // Continue to masterlist check even if students read fails
   }
 
   // Check master list DIRECTLY in Firestore — always fresh, never cached
@@ -3364,9 +3452,8 @@ async function checkStudentMasterList(val) {
       `<b>${data.name}</b><br>${data.level}${data.option ? ' · ' + data.option : ' · General'}<br>Matric: ${data.matric}`;
     detailsEl.style.display = 'block';
   } catch(e) {
-    // Distinguish permission error from other errors
     if (e.code === 'permission-denied' || e.message.includes('permission') || e.message.includes('Missing')) {
-      statusEl.textContent = '⚠️ Permission denied reading master list. Your HOD needs to set Firestore rules: masterlist → allow read: if true';
+      statusEl.textContent = '⚠️ Permission denied. HOD must set Firestore rule: match /masterlist/{m} { allow read: if true; }';
       statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;';
       addLog('err', 'Masterlist permission denied: ' + e.message);
     } else {
@@ -3562,6 +3649,16 @@ async function spSaveEnrollment() {
   const { matric, name, level, option } = spStudentData;
   // excludeMatric = null since this is a brand new enrollment
   const dupeResult = await checkFaceDuplicateLive(spSamples, null);
+  if (dupeResult && dupeResult.fetchFailed) {
+    btn.textContent = '🎓 Submit & Enroll';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    statusEl.textContent = '⚠️ Cannot verify face — database unreachable. Ask your HOD to check Firestore rules (students: read if true).';
+    statusEl.style.background = 'rgba(217,119,6,.2)';
+    statusEl.style.color = '#fcd34d';
+    addLog('warn', 'Dupe check blocked enrollment — DB unreachable for: ' + matric);
+    return;
+  }
   if (dupeResult) {
     btn.textContent = '🎓 Submit & Enroll';
     btn.disabled = false;
