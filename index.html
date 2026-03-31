@@ -33,18 +33,23 @@
   --r:14px;--rs:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
-/* BACKGROUND SLIDESHOW */
-@keyframes bgSlide{0%{opacity:1}25%{opacity:1}33%{opacity:0}91%{opacity:0}100%{opacity:1}}
-.bg-slide{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;animation:bgSlide 24s infinite;}
-.bg-slide:nth-child(1){animation-delay:0s;background-image:url('https://images.unsplash.com/photo-1621905251189-08b45249ff9e?w=1200&q=80');}
-.bg-slide:nth-child(2){animation-delay:-6s;background-image:url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80');}
-.bg-slide:nth-child(3){animation-delay:-12s;background-image:url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=80');}
-.bg-slide:nth-child(4){animation-delay:-18s;background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80');}
-.bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(135deg,rgba(26,58,107,.88) 0%,rgba(15,37,71,.85) 50%,rgba(26,86,219,.82) 100%);}
-
-body{font-family:'Outfit',sans-serif;background:#0f2547;color:var(--txt);display:flex;flex-direction:column;min-height:100vh;}
-#app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(240,244,255,0.97);display:flex;flex-direction:column;min-height:100vh;position:relative;box-shadow:0 0 80px rgba(0,0,0,.6);}
+html{height:100%;}
+body{height:100%;font-family:'Outfit',sans-serif;background:#0f2547;color:var(--txt);display:flex;flex-direction:column;min-height:100%;min-height:100svh;}
+/* BACKGROUND SLIDESHOW — fixed on desktop, absolute fallback for iOS */
+@keyframes bgSlide{0%,25%{opacity:1}33%,91%{opacity:0}100%{opacity:1}}
+.bg-slide{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;animation:bgSlide 30s infinite;will-change:opacity;}
+.bg-slide:nth-child(1){animation-delay:0s;background-image:url('https://images.unsplash.com/photo-1621905251189-08b45249ff9e?w=1400&q=85');}
+.bg-slide:nth-child(2){animation-delay:-7.5s;background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=85');}
+.bg-slide:nth-child(3){animation-delay:-15s;background-image:url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1400&q=85');}
+.bg-slide:nth-child(4){animation-delay:-22.5s;background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&q=85');}
+.bg-extra-1{background-image:url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1400&q=85') !important;animation-delay:-5s;}
+.bg-extra-2{background-image:url('https://images.unsplash.com/photo-1597733336794-12d05021d510?w=1400&q=85') !important;animation-delay:-12s;}
+.bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(160deg,rgba(10,25,55,.82) 0%,rgba(15,37,71,.78) 50%,rgba(20,60,130,.75) 100%);}
+@supports(-webkit-overflow-scrolling:touch){
+  .bg-slide{position:absolute;height:100vh;}
+  .bg-overlay{position:absolute;height:100vh;}
+}
+#app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(236,242,255,0.88);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:flex;flex-direction:column;min-height:100vh;min-height:100svh;position:relative;z-index:2;box-shadow:0 0 80px rgba(0,0,0,.7);}
 
 /* LOADING */
 #ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(160deg,#1a3a6b,#0f2547,#1a56db);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
@@ -67,7 +72,7 @@ body{font-family:'Outfit',sans-serif;background:#0f2547;color:var(--txt);display
 /* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:7777;display:none;flex-direction:column;align-items:center;justify-content:center;background:transparent;padding:20px;overflow-y:auto;}
 #login-screen.show{display:flex;}
-.login-card{background:white;border-radius:20px;padding:26px 22px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-card{background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.6);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.1);}
 .login-logo{width:60px;height:60px;object-fit:contain;border-radius:12px;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:5px;display:block;margin:0 auto 10px;}
 .login-school{font-size:15px;font-weight:900;color:#1a3a6b;text-align:center;line-height:1.3;}
 .login-dept{font-size:10px;color:#94a3b8;text-align:center;margin-bottom:18px;}
@@ -204,7 +209,9 @@ header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:10px 
 
 /* STATS */
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;}
-.stat{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.stat{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+.stat[onclick]:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.stat[onclick]:active{transform:scale(.97);}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .s1::before{background:linear-gradient(90deg,var(--blue),var(--teal));}
 .s2::before{background:linear-gradient(90deg,var(--green),#34d399);}
@@ -386,6 +393,8 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 <div class="bg-slide"></div>
 <div class="bg-slide"></div>
 <div class="bg-slide"></div>
+<div class="bg-slide bg-extra-1"></div>
+<div class="bg-slide bg-extra-2"></div>
 <div class="bg-overlay"></div>
 <!-- APP SHELL -->
 <div id="app-shell" style="position:relative;z-index:2;">
@@ -762,19 +771,19 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       </div>
       <!-- Stats grid -->
       <div class="stats" style="margin-bottom:14px;">
-        <div class="stat s1">
+        <div class="stat s1" onclick="setAdminTab('students')" style="cursor:pointer;" title="View all enrolled students">
           <div style="font-size:22px;margin-bottom:4px;">👥</div>
-          <div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">All levels enrolled</div>
+          <div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">Tap to view list</div>
         </div>
-        <div class="stat s2">
+        <div class="stat s2" onclick="goTab('weekly')" style="cursor:pointer;" title="View weekly attendance register">
           <div style="font-size:22px;margin-bottom:4px;">📚</div>
-          <div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">With attendance</div>
+          <div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">Tap to view register</div>
         </div>
-        <div class="stat s3">
+        <div class="stat s3" onclick="scrollToAtRisk()" style="cursor:pointer;" title="View students below 75%">
           <div style="font-size:22px;margin-bottom:4px;">⚠️</div>
-          <div class="sl">Below 75%</div><div class="sv" id="a-warn">0</div><div class="ss">Need attention</div>
+          <div class="sl">Below 75%</div><div class="sv" id="a-warn">0</div><div class="ss">Tap to view list</div>
         </div>
-        <div class="stat s4">
+        <div class="stat s4" onclick="goTab('logs')" style="cursor:pointer;" title="View system scan logs">
           <div style="font-size:22px;margin-bottom:4px;">📅</div>
           <div class="sl">Scans This Week</div><div class="sv" id="a-sessions">0</div><div class="ss">Week <span id="a-wknum">--</span></div>
         </div>
@@ -966,68 +975,68 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 <!-- STUDENT SELF-ENROLLMENT PORTAL                    -->
 <!-- Shown after student verifies matric number        -->
 <!-- ══════════════════════════════════════════════════ -->
-<div id="student-portal" style="display:none;position:fixed;inset:0;z-index:6000;background:linear-gradient(160deg,#1a3a6b,#0f2547);flex-direction:column;overflow-y:auto;">
+<div id="student-portal" style="display:none;position:fixed;inset:0;z-index:6000;background:rgba(10,25,55,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);flex-direction:column;overflow-y:auto;">
   <div style="padding:20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;max-width:480px;margin:0 auto;width:100%;">
     <!-- Header -->
     <div style="text-align:center;margin-bottom:20px;padding-top:16px;">
-      <img id="sp-logo" src="" style="width:56px;height:56px;object-fit:contain;border-radius:10px;background:white;padding:4px;margin-bottom:10px;">
-      <div style="font-size:16px;font-weight:900;color:white;">Face Enrollment Portal</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;">The Gateway Polytechnic — EEE Department</div>
+      <img id="sp-logo" src="" style="width:56px;height:56px;object-fit:contain;border-radius:10px;background:white;padding:4px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);">
+      <div style="font-size:16px;font-weight:900;color:white;text-shadow:0 2px 8px rgba(0,0,0,.4);">Face Enrollment Portal</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:3px;">The Gateway Polytechnic — EEE Department</div>
     </div>
 
     <!-- Student info card -->
-    <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:14px;width:100%;margin-bottom:16px;">
+    <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px;width:100%;margin-bottom:16px;backdrop-filter:blur(4px);">
       <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Enrolling As</div>
       <div style="font-size:16px;font-weight:900;color:white;" id="sp-name">--</div>
       <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;" id="sp-details">--</div>
     </div>
 
     <!-- Back to login button -->
-    <button onclick="spGoBackToLogin()" style="width:100%;padding:11px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1.5px solid rgba(255,255,255,.25);border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;">← Back to Login</button>
+    <button onclick="spGoBackToLogin()" style="width:100%;padding:11px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;backdrop-filter:blur(4px);transition:all .2s;">← Back to Login</button>
 
     <!-- Camera + Side Buttons row -->
     <div style="display:flex;gap:12px;width:100%;margin-bottom:14px;align-items:flex-start;">
       <!-- Camera box -->
-      <div style="flex:1;border-radius:12px;overflow:hidden;background:#1e293b;border:2px solid rgba(255,255,255,.2);position:relative;aspect-ratio:1/1;" id="sp-cam-box">
-        <div id="sp-cam-ph" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#1e293b,#0f172a);">
-          <div style="font-size:32px;">📷</div>
+      <div style="flex:1;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.2);position:relative;aspect-ratio:1/1;box-shadow:0 8px 32px rgba(0,0,0,.4);" id="sp-cam-box">
+        <div id="sp-cam-ph" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(0,0,0,.5);">
+          <div style="font-size:36px;">📷</div>
           <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-align:center;padding:0 8px;">Camera not started</div>
         </div>
         <video id="sp-vid" autoplay muted playsinline webkit-playsinline style="width:100%;height:100%;object-fit:cover;display:none;"></video>
       </div>
       <!-- Right-side buttons -->
       <div style="display:flex;flex-direction:column;gap:8px;width:110px;flex-shrink:0;">
-        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#1a56db,#1a3a6b);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;">▶ Start Camera</button>
-        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#d97706,#92400e);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;">📷 Capture Face Sample</button>
+        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#1a56db,#1a3a6b);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(26,86,219,.4);">▶ Start Camera</button>
+        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#d97706,#92400e);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);">📷 Capture Face Sample</button>
         <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;">🔄 Retake</button>
-        <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;">🎓 Submit &amp; Enroll</button>
+        <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(5,150,105,.3);">🎓 Submit &amp; Enroll</button>
       </div>
     </div>
 
     <!-- Progress -->
     <div style="width:100%;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px;">
         <span>Face Samples</span><span id="sp-prog-lbl">0 / 2</span>
       </div>
-      <div style="height:5px;background:rgba(255,255,255,.2);border-radius:5px;overflow:hidden;">
+      <div style="height:6px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;">
         <div id="sp-prog-bar" style="height:100%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:5px;transition:width .3s;width:0%;"></div>
       </div>
     </div>
     <!-- Sample dots -->
     <div style="display:flex;gap:10px;justify-content:center;margin-bottom:14px;">
-      <div id="sp-dot0" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">1</div>
-      <div id="sp-dot1" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">2</div>
+      <div id="sp-dot0" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">1</div>
+      <div id="sp-dot1" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">2</div>
     </div>
 
     <!-- Status -->
-    <div id="sp-status" style="width:100%;padding:10px 14px;background:rgba(255,255,255,.1);border-radius:10px;font-size:12px;color:rgba(255,255,255,.8);font-weight:500;margin-bottom:14px;text-align:center;line-height:1.5;">
+    <div id="sp-status" style="width:100%;padding:10px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,.85);font-weight:500;margin-bottom:14px;text-align:center;line-height:1.5;backdrop-filter:blur(4px);">
       Tap Start Camera to begin enrollment
     </div>
 
-    <div style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;line-height:1.6;">
+    <div style="font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;">
       Your face data is stored securely in the cloud.<br>
       It will only be used for attendance verification.<br>
-      <span style="color:rgba(255,255,255,.3);">You will be automatically signed out after enrollment.</span>
+      You will be automatically signed out after enrollment.
     </div>
   </div>
 </div>
@@ -2471,6 +2480,16 @@ function setAdminTab(tab) {
   if(tab==='settings') initSecuritySettings();
 }
 
+function scrollToAtRisk() {
+  // Navigate to admin tab, stay on dashboard, scroll to at-risk list
+  goTab('admin');
+  setTimeout(() => {
+    setAdminTab('dash');
+    const el = document.getElementById('atrisk-list');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+}
+
 // ── ADMIN DASHBOARD ───────────────────────────────────────────────
 async function refreshAdminDashboard(){
   if(currentUserRole!=='admin')return;
@@ -3427,8 +3446,11 @@ async function checkStudentMasterList(val) {
   try {
     const enrolledDoc = await dbFB.collection('students').doc(val).get();
     if (enrolledDoc.exists) {
-      statusEl.textContent = '⚠ This matric number is already enrolled. Your face is in the system — attend class and the lecturer will scan you.';
-      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+      const ed = enrolledDoc.data();
+      statusEl.innerHTML = `✅ <b>Already Enrolled!</b><br><span style="font-weight:400">${ed.name ? ed.name+' is' : 'This matric is'} already registered in the face attendance system. No action needed — attend class and the scanner will recognise you automatically.</span>`;
+      statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:10px 13px;border-radius:9px;font-weight:700;background:#d1fae5;color:#065f46;border:1.5px solid #6ee7b7;line-height:1.7;';
+      detailsEl.style.display = 'none';
+      addLog('info', 'Re-enroll attempt blocked — already enrolled: ' + val);
       return;
     }
   } catch(e) {
