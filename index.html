@@ -111,7 +111,9 @@ header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:10px 
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .dot.g{background:#34d399;box-shadow:0 0 8px #34d399;animation:blink 2s infinite;}
 .dot.a{background:#fbbf24;animation:blink 1s infinite;}
-.logout-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:7px;padding:4px 9px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;}
+.mtab-btn{padding:5px 9px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .18s;}
+.mtab-active{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;border-color:transparent;}
+
 
 /* SESSION BAR */
 .session-bar{background:linear-gradient(135deg,#1240a8,#1a3a6b);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.1);}
@@ -870,6 +872,16 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           </div>
           <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
           <div class="st" id="master-st" style="margin-bottom:10px;"></div>
+          <!-- Master List Level Tabs -->
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;" id="master-level-tabs">
+            <button onclick="setMasterTab('all')" id="mtab-all" class="mtab-btn mtab-active">All</button>
+            <button onclick="setMasterTab('ND 1')" id="mtab-ND1" class="mtab-btn">ND 1</button>
+            <button onclick="setMasterTab('ND 2')" id="mtab-ND2" class="mtab-btn">ND 2</button>
+            <button onclick="setMasterTab('HND 1|Power')" id="mtab-HND1P" class="mtab-btn">HND 1 · Power</button>
+            <button onclick="setMasterTab('HND 1|Elec')" id="mtab-HND1E" class="mtab-btn">HND 1 · E&amp;T</button>
+            <button onclick="setMasterTab('HND 2|Power')" id="mtab-HND2P" class="mtab-btn">HND 2 · Power</button>
+            <button onclick="setMasterTab('HND 2|Elec')" id="mtab-HND2E" class="mtab-btn">HND 2 · E&amp;T</button>
+          </div>
           <input class="inp" id="master-filter" placeholder="🔍 Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
           <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;">Total: <span id="master-list-count">0</span> students</div>
           <div id="master-list-body" style="max-height:350px;overflow-y:auto;"></div>
@@ -930,6 +942,17 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#047857);" onclick="exportFullSemesterCSV()">📊 Full Semester CSV</button>
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
           </div>
+        </div>
+      </div>
+      <!-- School Logo for Reports -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)">🖼️</div><span class="card-ttl">School Logo for Reports</span></div>
+        <div class="card-body">
+          <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6;">
+            Upload your school logo to appear on all printed reports (Master List, Student Reports, etc). Saved locally on this device.
+          </div>
+          <div id="logo-preview-area" style="margin-bottom:10px;"></div>
+          <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()">🖼️ Upload School Logo (PNG/JPG, max 500KB)</button>
         </div>
       </div>
       <!-- Auto-logout + Offline Queue settings -->
@@ -1766,12 +1789,26 @@ async function openArchive(){
     opt.value=cur; opt.textContent=activeSession+' · '+activeSemester+' (current)';
     sel.insertBefore(opt,sel.children[1]);
   }
-  document.getElementById('arch-results').innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session and course above to view records</div>';
+  // Populate course dropdown
+  const courseSel = document.getElementById('arch-course');
+  courseSel.innerHTML = '<option value="">— All Courses —</option>';
+  // Collect unique course codes from COURSES array
+  const seenCodes = new Set();
+  COURSES.forEach(c => {
+    if (!seenCodes.has(c.code)) {
+      seenCodes.add(c.code);
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = c.code + ' — ' + c.title;
+      courseSel.appendChild(opt);
+    }
+  });
+  document.getElementById('arch-results').innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session and optionally a course above to view records</div>';
   openM('marchive');
 }
 async function loadArchiveData(){
   const sessVal=document.getElementById('arch-session').value;
-  const courseCode=document.getElementById('arch-course').value.trim().toUpperCase();
+  const courseCode=document.getElementById('arch-course').value.trim();
   if(!sessVal){alert('Select a session.');return;}
   const [sess,sem]=sessVal.split('||');
   await loadWeeklyData();
@@ -1823,7 +1860,90 @@ async function exportArchiveCSV(){
   a.download=`GAPOSA_EEE_ARCHIVE_${sess.replace('/','_')}_${sem.replace(' ','_')}.csv`;
   a.click();
 }
-// ── FIREBASE OPERATIONS ───────────────────────────────────────────
+// ── SCHOOL LOGO & REPORT HEADER ───────────────────────────────────
+// To use your real school logo: replace SCHOOL_LOGO_URL with a Base64
+// data URL (e.g. data:image/png;base64,AAAA...) or upload logo image
+// in Settings → School Logo (coming soon). For now uses school initials badge.
+const SCHOOL_LOGO_URL = (function(){
+  try{ return localStorage.getItem('schoolLogoDataUrl') || ''; }catch(e){ return ''; }
+})();
+
+function getReportHeader(subtitle) {
+  const logoHtml = SCHOOL_LOGO_URL
+    ? `<img src="${SCHOOL_LOGO_URL}" style="width:64px;height:64px;object-fit:contain;border-radius:8px;border:2px solid #1a3a6b;" alt="School Logo">`
+    : `<div style="width:64px;height:64px;border-radius:8px;background:linear-gradient(135deg,#1a3a6b,#1a56db);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="text-align:center;color:white;font-size:11px;font-weight:900;line-height:1.1;font-family:Arial,sans-serif">GPA<br>OSA</div>
+       </div>`;
+  return `
+    <div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid #1a3a6b;padding-bottom:12px;margin-bottom:14px;">
+      ${logoHtml}
+      <div style="flex:1;">
+        <div style="font-size:18px;font-weight:900;color:#1a3a6b;line-height:1.2;">The Gateway Polytechnic, Saapade</div>
+        <div style="font-size:12px;color:#475569;margin-top:2px;">Department of Electrical &amp; Electronic Engineering Technology</div>
+        ${subtitle ? '<div style="font-size:11px;color:#1a56db;font-weight:700;margin-top:3px;">'+subtitle+'</div>' : ''}
+      </div>
+    </div>`;
+}
+
+function getReportStyles() {
+  return `<style>
+    *{box-sizing:border-box;}
+    body{font-family:Arial,sans-serif;padding:20px;font-size:13px;color:#0f172a;}
+    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px;}
+    th{background:#1a3a6b;color:white;padding:8px 10px;text-align:left;font-size:12px;}
+    td{padding:7px 10px;border-bottom:1px solid #e2e8f0;vertical-align:middle;}
+    tr:nth-child(even) td{background:#f8faff;}
+    .meta{color:#475569;font-size:12px;margin-bottom:4px;line-height:1.5;}
+    .footer{margin-top:24px;font-size:10px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:10px;}
+    @media print{body{padding:10px;}}
+  </style>`;
+}
+
+// ── SCHOOL LOGO UPLOAD (Admin Settings) ───────────────────────────
+function triggerLogoUpload() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = function() {
+    const file = inp.files[0];
+    if (!file) return;
+    if (file.size > 500*1024) { alert('Logo image must be under 500 KB.'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        localStorage.setItem('schoolLogoDataUrl', e.target.result);
+        // Refresh the in-memory variable and show confirmation
+        Object.defineProperty(window, 'SCHOOL_LOGO_URL_LIVE', {value: e.target.result, writable:true});
+        alert('✓ Logo saved! It will appear on all printed reports from now on.');
+        renderLogoPreview();
+      } catch(err) { alert('Could not save logo: ' + err.message); }
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+
+function renderLogoPreview() {
+  const el = document.getElementById('logo-preview-area');
+  if (!el) return;
+  const saved = (() => { try{ return localStorage.getItem('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
+  if (saved) {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-l);border:1.5px solid var(--green-b);border-radius:8px;">
+      <img src="${saved}" style="width:48px;height:48px;object-fit:contain;border-radius:6px;border:1px solid var(--border)">
+      <div style="flex:1;font-size:12px;color:var(--green);font-weight:700;">✓ Logo uploaded — will appear on all printed reports</div>
+      <button onclick="clearSchoolLogo()" style="background:var(--red-l);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Remove</button>
+    </div>`;
+  } else {
+    el.innerHTML = `<div style="font-size:12px;color:var(--txt3);padding:8px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border2);">No logo uploaded yet — reports will show text badge</div>`;
+  }
+}
+
+function clearSchoolLogo() {
+  if (!confirm('Remove school logo from reports?')) return;
+  try{ localStorage.removeItem('schoolLogoDataUrl'); }catch(e){}
+  renderLogoPreview();
+}
+
+
 async function loadStudents(){
   try{
     const snap=await dbFB.collection('students').get();
@@ -2527,7 +2647,7 @@ function setAdminTab(tab) {
   if(tab==='students') renderAdminStudents();
   if(tab==='lecturers') renderLecturerList();
   if(tab==='master') renderMasterList();
-  if(tab==='settings') initSecuritySettings();
+  if(tab==='settings') { initSecuritySettings(); renderLogoPreview(); }
 }
 
 function scrollToAtRisk() {
@@ -2561,9 +2681,10 @@ async function refreshAdminDashboard(){
   const lb=document.getElementById('level-breakdown');
   lb.innerHTML=levels.map((lvl,i)=>{
     const cnt=students.filter(u=>u.level===lvl).length;
-    return `<div style="background:${bgs[i]};border:1.5px solid ${borders[i]};border-radius:var(--rs);padding:10px 12px;text-align:center;">
+    return `<div onclick="showLevelStudents('${lvl}')" style="background:${bgs[i]};border:1.5px solid ${borders[i]};border-radius:var(--rs);padding:10px 12px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 4px 18px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
       <div style="font-size:22px;font-weight:900;color:${colors[i]}">${cnt}</div>
       <div style="font-size:10px;font-weight:800;color:${colors[i]};text-transform:uppercase;letter-spacing:.8px">${lvl}</div>
+      <div style="font-size:9px;color:${colors[i]};opacity:.7;margin-top:2px">Tap to view</div>
     </div>`;
   }).join('');
   // At-risk list — across all courses current week
@@ -2573,7 +2694,55 @@ async function refreshAdminDashboard(){
   loadSecretCode();
 }
 
-function renderAtRiskList(){
+function showLevelStudents(lvl) {
+  const lvlStudents = students.filter(u => u.level === lvl);
+  const colors = {'ND 1':'var(--blue)','ND 2':'var(--green)','HND 1':'var(--purple)','HND 2':'var(--amber)'};
+  const bgs    = {'ND 1':'var(--blue-l)','ND 2':'var(--green-l)','HND 1':'var(--purple-l)','HND 2':'var(--amber-l)'};
+  const borders= {'ND 1':'var(--blue-b)','ND 2':'var(--green-b)','HND 1':'var(--purple-b)','HND 2':'var(--amber-b)'};
+  const col = colors[lvl]||'var(--navy)';
+  const bg  = bgs[lvl]||'var(--blue-l)';
+  const brd = borders[lvl]||'var(--blue-b)';
+  const el = document.getElementById('mlvl-modal-body');
+  document.getElementById('mlvl-title').textContent = lvl + ' Students (' + lvlStudents.length + ')';
+  document.getElementById('mlvl-title').style.color = col;
+  if (!lvlStudents.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--txt3);text-align:center;padding:24px">No students enrolled under ' + lvl + ' yet</div>';
+  } else {
+    // Group HND by option
+    let html = '';
+    if (lvl.startsWith('HND')) {
+      const opts = ['Electronics and Telecommunication','Power and Machines',''];
+      opts.forEach(opt => {
+        const grp = lvlStudents.filter(u => (u.option||'') === opt);
+        if (!grp.length) return;
+        const optLabel = opt || 'General / Unspecified';
+        html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${col};background:${bg};border:1px solid ${brd};border-radius:6px;padding:5px 10px;margin-bottom:6px;">${optLabel} — ${grp.length}</div>`;
+        html += grp.map((u,i) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:white;border:1.5px solid var(--border);border-radius:var(--rs);margin-bottom:5px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${col};flex-shrink:0;">${i+1}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:12px;font-weight:700;color:var(--txt)">${u.name}</div>
+              <div style="font-size:10px;color:var(--txt3);font-family:'JetBrains Mono';">${u.matric}</div>
+            </div>
+            <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">📊 Report</button>
+          </div>`).join('');
+      });
+    } else {
+      html = lvlStudents.map((u,i) => `
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:white;border:1.5px solid var(--border);border-radius:var(--rs);margin-bottom:5px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${col};flex-shrink:0;">${i+1}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:var(--txt)">${u.name}</div>
+            <div style="font-size:10px;color:var(--txt3);font-family:'JetBrains Mono';">${u.matric}</div>
+          </div>
+          <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">📊 Report</button>
+        </div>`).join('');
+    }
+    el.innerHTML = html;
+  }
+  openM('mlvl');
+}
+
   const el=document.getElementById('atrisk-list');
   const course = adminActiveCourse || activeCourse;
   if(!course){
@@ -2749,14 +2918,9 @@ function printAdminStudents(){
   } else {
     filtered.forEach((u,i)=>{bodyHtml+=`<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;});
   }
-  const html=`<html><head><title>GAPOSA EEE Enrolled Students</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}p{text-align:center;color:#475569;font-size:13px}
-  table{width:100%;border-collapse:collapse;margin-top:16px}th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
-  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even)td{background:#f8faff}
-  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}</style></head><body>
-  <h2>The Gateway Polytechnic, Saapade</h2>
-  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
-  <p><b>Enrolled Students — ${lvlLabel}</b> | Printed: ${dateStr} | Total: ${filtered.length}</p>
+  const html=`<html><head><title>GAPOSA EEE Enrolled Students</title>${getReportStyles()}</head><body>
+  ${getReportHeader('Enrolled Students — ' + lvlLabel)}
+  <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${filtered.length} students</p>
   <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
   <tbody>${bodyHtml}</tbody></table>
   <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div></body></html>`;
@@ -2828,7 +2992,6 @@ async function viewStudentReport(matric){
   <style>
     *{box-sizing:border-box;}
     body{font-family:Arial,sans-serif;padding:20px;font-size:13px;color:#0f172a;}
-    h2{color:#1a3a6b;margin-bottom:6px;font-size:18px;}
     .meta{color:#475569;font-size:12px;margin-bottom:3px;line-height:1.5;}
     .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:800;}
     .ok{background:#d1fae5;color:#065f46;} .warn{background:#fee2e2;color:#991b1b;}
@@ -2837,10 +3000,10 @@ async function viewStudentReport(matric){
     td{padding:6px;border-bottom:1px solid #e2e8f0;vertical-align:middle;}
     tr:nth-child(even) td{background:#f8faff;}
     .footer{margin-top:20px;font-size:10px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:10px;}
-    @media print{body{padding:10px;}h2{font-size:16px;}}
+    @media print{body{padding:10px;}}
   </style></head><body>
-  <h2>${u.name}</h2>
-  <p class="meta"><b>Matric:</b> ${u.matric} &nbsp;|&nbsp; <b>Level:</b> ${u.level}${u.option?' · '+u.option:''}</p>
+  ${getReportHeader('Individual Student Attendance Report')}
+  <p class="meta"><b>Name:</b> ${u.name} &nbsp;|&nbsp; <b>Matric:</b> ${u.matric} &nbsp;|&nbsp; <b>Level:</b> ${u.level}${u.option?' · '+u.option:''}</p>
   <p class="meta"><b>Programme:</b> ${u.programme||'Electrical & Electronics Engineering Technology'}</p>
   <p class="meta"><b>Session:</b> ${getAcademicSession()} · ${getSemester()} &nbsp;|&nbsp; <b>Current Week:</b> ${currentWeek} of ${MAX_WEEKS}</p>
   <p class="meta"><b>Report Generated:</b> ${dateStr}</p>
@@ -3081,18 +3244,9 @@ function printEnrolledStudents() {
       bodyHtml += `<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;
     });
   }
-  const html = `<html><head><title>GAPOSA EEE Enrolled Students</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}
-  p{text-align:center;color:#475569;font-size:13px}
-  table{width:100%;border-collapse:collapse;margin-top:16px}
-  th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
-  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}
-  tr:nth-child(even)td{background:#f8faff}
-  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}
-  </style></head><body>
-  <h2>The Gateway Polytechnic, Saapade</h2>
-  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
-  <p><b>Enrolled Students — ${levelLabel}</b> &nbsp;|&nbsp; Printed: ${dateStr} &nbsp;|&nbsp; Total: ${filtered.length} student(s)</p>
+  const html = `<html><head><title>GAPOSA EEE Enrolled Students</title>${getReportStyles()}</head><body>
+  ${getReportHeader('Enrolled Students — ' + levelLabel)}
+  <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${filtered.length} student(s)</p>
   <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
   <tbody>${bodyHtml}</tbody></table>
   <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
@@ -3329,28 +3483,93 @@ function updateMlOption() {
   document.getElementById('ml-option').style.display = isHND ? 'block' : 'none';
 }
 
+let activeMasterTab = 'all';
+
+function setMasterTab(tab) {
+  activeMasterTab = tab;
+  const tabIds = {
+    'all':'all','ND 1':'ND1','ND 2':'ND2',
+    'HND 1|Power':'HND1P','HND 1|Elec':'HND1E',
+    'HND 2|Power':'HND2P','HND 2|Elec':'HND2E'
+  };
+  Object.entries(tabIds).forEach(([key, id]) => {
+    const btn = document.getElementById('mtab-' + id);
+    if (!btn) return;
+    btn.classList.toggle('mtab-active', key === tab);
+  });
+  renderMasterList();
+}
+
 function renderMasterList() {
   const el = document.getElementById('master-list-body');
   if (!el) return;
   const q = (document.getElementById('master-filter') ? document.getElementById('master-filter').value : '').toLowerCase();
-  const filtered = masterList.filter(s =>
-    s.matric.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) ||
-    s.level.toLowerCase().includes(q)
-  );
+
+  // Determine level + option filter from active tab
+  let lvlFilter = '', optFilter = null;
+  if (activeMasterTab !== 'all') {
+    const parts = activeMasterTab.split('|');
+    lvlFilter = parts[0];
+    if (parts[1] === 'Power') optFilter = 'Power and Machines';
+    else if (parts[1] === 'Elec') optFilter = 'Electronics and Telecommunication';
+  }
+
+  const filtered = masterList.filter(s => {
+    const levelMatch = !lvlFilter || s.level === lvlFilter;
+    const optMatch = optFilter === null || (s.option || '') === optFilter;
+    const searchMatch = !q || s.matric.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.level.toLowerCase().includes(q);
+    return levelMatch && optMatch && searchMatch;
+  });
+
+  // Sort: by level order then name
+  const levelOrder = ['ND 1','ND 2','HND 1','HND 2'];
+  filtered.sort((a,b) => {
+    const li = levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level);
+    if (li !== 0) return li;
+    return a.name.localeCompare(b.name);
+  });
+
   document.getElementById('master-list-count').textContent = masterList.length;
+
   if (!filtered.length) {
-    el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">' + (masterList.length ? 'No results for "' + q + '"' : 'No students in master list yet') + '</div>';
+    el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">' +
+      (masterList.length ? 'No results for this filter' : 'No students in master list yet') + '</div>';
     return;
   }
-  el.innerHTML = filtered.map((s, i) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:white;border:1.5px solid var(--border);border-radius:var(--rs);margin-bottom:6px;">
-      <div style="font-size:11px;font-weight:800;color:var(--blue);background:var(--blue-l);padding:2px 8px;border-radius:5px;flex-shrink:0;">${s.level}</div>
+
+  // Level colour map
+  const lvlColors = {'ND 1':'var(--blue)','ND 2':'var(--green)','HND 1':'var(--purple)','HND 2':'var(--amber)'};
+  const lvlBgs    = {'ND 1':'var(--blue-l)','ND 2':'var(--green-l)','HND 1':'var(--purple-l)','HND 2':'var(--amber-l)'};
+
+  // When showing all, group by level then option
+  let html = '';
+  if (activeMasterTab === 'all') {
+    levelOrder.forEach(lvl => {
+      const grp = filtered.filter(s => s.level === lvl);
+      if (!grp.length) return;
+      const col = lvlColors[lvl]||'var(--navy)';
+      const bg  = lvlBgs[lvl]||'var(--blue-l)';
+      html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${col};background:${bg};border-radius:6px;padding:5px 10px;margin-bottom:5px;margin-top:8px;">${lvl} — ${grp.length} student${grp.length!==1?'s':''}</div>`;
+      html += grp.map((s,i) => buildMasterRow(s, i, col, bg)).join('');
+    });
+  } else {
+    const col = lvlColors[lvlFilter]||'var(--blue)';
+    const bg  = lvlBgs[lvlFilter]||'var(--blue-l)';
+    html = filtered.map((s,i) => buildMasterRow(s, i, col, bg)).join('');
+  }
+  el.innerHTML = html;
+}
+
+function buildMasterRow(s, i, col, bg) {
+  return `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:white;border:1.5px solid var(--border);border-radius:var(--rs);margin-bottom:5px;">
+      <div style="font-size:10px;font-weight:800;color:${col};background:${bg};padding:2px 7px;border-radius:5px;flex-shrink:0;">${s.level}</div>
       <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;">${s.name}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">${s.name}</div>
         <div style="font-size:10px;color:var(--txt3);font-family:'JetBrains Mono';">${s.matric}${s.option?' · '+s.option:''}</div>
       </div>
       <button onclick="removeMasterEntry('${s.matric}')" style="background:var(--red-l);color:var(--red);border:none;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:800;">✕</button>
-    </div>`).join('');
+    </div>`;
 }
 
 function filterMasterList() { renderMasterList(); }
@@ -3497,21 +3716,19 @@ function printMasterList() {
   if (!masterList.length) { alert('No students in master list yet.'); return; }
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  let rows = masterList.map((s,i) =>
+  // Sort by level then name
+  const levelOrder = ['ND 1','ND 2','HND 1','HND 2'];
+  const sorted = [...masterList].sort((a,b)=>{
+    const li = levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level);
+    return li !== 0 ? li : a.name.localeCompare(b.name);
+  });
+  let rows = sorted.map((s,i) =>
     `<tr><td>${i+1}</td><td style="font-family:monospace">${s.matric}</td><td>${s.name}</td><td>${s.level}</td><td>${s.option||'General'}</td></tr>`
   ).join('');
-  const html = `<html><head><title>GAPOSA EEE Master Student List</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center;color:#1a3a6b}
-  p{text-align:center;color:#475569;font-size:13px}
-  table{width:100%;border-collapse:collapse;margin-top:16px}
-  th{background:#1a3a6b;color:white;padding:8px 10px;font-size:12px;text-align:left}
-  td{padding:7px 10px;font-size:12px;border-bottom:1px solid #e2e8f0}
-  tr:nth-child(even)td{background:#f8faff}
-  .footer{margin-top:20px;font-size:11px;color:#94a3b8;text-align:center}
-  </style></head><body>
-  <h2>The Gateway Polytechnic, Saapade</h2>
-  <p>Department of Electrical &amp; Electronic Engineering Technology</p>
-  <p><b>Master Student List</b> &nbsp;|&nbsp; Printed: ${dateStr} &nbsp;|&nbsp; Total: ${masterList.length} students</p>
+  const logoUrl = (() => { try{ return localStorage.getItem('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
+  const html = `<html><head><title>GAPOSA EEE Master Student List</title>${getReportStyles()}</head><body>
+  ${getReportHeader('Master Student List')}
+  <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${masterList.length} students</p>
   <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
   <tbody>${rows}</tbody></table>
   <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
@@ -4001,12 +4218,25 @@ window.addEventListener('load',()=>{
     <select class="inp" id="arch-session" style="margin-bottom:10px" onchange="loadArchiveData()">
       <option value="">— Select Session —</option>
     </select>
-    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Filter by Course Code (optional)</label>
-    <input class="inp" id="arch-course" placeholder="e.g. EEC 111 — leave blank for all" style="margin-bottom:10px" oninput="loadArchiveData()">
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Filter by Course (optional)</label>
+    <select class="inp" id="arch-course" style="margin-bottom:10px" onchange="loadArchiveData()">
+      <option value="">— All Courses —</option>
+    </select>
     <div id="arch-results" style="margin-bottom:12px">
       <div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session above to view records</div>
     </div>
     <button class="enroll-btn" onclick="exportArchiveCSV()" style="background:linear-gradient(135deg,var(--green),#047857)">📥 Export This Archive as CSV</button>
+  </div>
+</div>
+
+<!-- LEVEL STUDENTS MODAL -->
+<div class="mbg" id="mlvl">
+  <div class="mbox" style="max-height:85vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div id="mlvl-title" style="font-size:17px;font-weight:900;color:var(--navy)">Level Students</div>
+      <button class="smbtn" onclick="closeM('mlvl')">Close</button>
+    </div>
+    <div id="mlvl-modal-body"></div>
   </div>
 </div>
 
