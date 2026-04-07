@@ -624,9 +624,19 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           <div class="conf-r"><span>Match Confidence</span><span id="cpct">0%</span></div>
           <div class="conf-t"><div class="conf-f" id="cfill" style="width:0%"></div></div>
         </div>
-        <button class="scan-btn" id="bscan" onclick="doScan()" disabled>
-          🎯 &nbsp;Scan Face &amp; Mark Present
-        </button>
+        <div class="row2">
+          <button class="scan-btn" id="bscan" onclick="doScan()" disabled style="flex:1;margin:0">
+            🎯 &nbsp;Scan 1 Face
+          </button>
+          <button class="scan-btn" id="bmulti" onclick="doMultiScan()" disabled style="flex:1;margin:0;background:linear-gradient(135deg,#7c3aed,#5b21b6);box-shadow:0 4px 20px rgba(124,58,237,.4)">
+            👥 &nbsp;Scan Row (Multi)
+          </button>
+        </div>
+        <!-- Multi-scan live results ticker -->
+        <div id="multi-results" style="display:none;background:var(--navy2);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;max-height:180px;overflow-y:auto;">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:6px;">Multi-Scan Results</div>
+          <div id="multi-results-list"></div>
+        </div>
         <button class="finalise-btn" id="bfin" onclick="finaliseSession()" disabled>
           ✅ &nbsp;Finalise — Mark Remaining Absent
         </button>
@@ -2400,6 +2410,7 @@ async function toggleCam(){
     document.getElementById('cbadge').textContent='LIVE';document.getElementById('cbadge').classList.add('live');
     btn.textContent='■ Stop Camera';btn.disabled=false;btn.className='btn bo';
     document.getElementById('bscan').disabled=false;
+    document.getElementById('bmulti').disabled=false;
     document.getElementById('blive').disabled=false;
     document.getElementById('bcap').disabled=false;
     setS('Camera active ✓ — select a course then scan.','ok');
@@ -2422,7 +2433,7 @@ function stopCam(){
   document.getElementById('cph').style.display='flex';document.getElementById('eph').style.display='flex';
   document.getElementById('cbadge').textContent='OFF';document.getElementById('cbadge').classList.remove('live');
   document.getElementById('bcam').textContent='▶ Start Camera';document.getElementById('bcam').className='btn bb';
-  document.getElementById('bscan').disabled=true;document.getElementById('blive').disabled=true;document.getElementById('bcap').disabled=true;
+  document.getElementById('bscan').disabled=true;document.getElementById('bmulti').disabled=true;document.getElementById('blive').disabled=true;document.getElementById('bcap').disabled=true;
   document.getElementById('cfaces').textContent='Faces: 0';
   clearOC();setS('Camera stopped.','warn');addLog('warn','Camera stopped');stopFPS();
 }
@@ -2455,15 +2466,32 @@ async function liveLoop(){
   if(liveOn)liveAF=requestAnimationFrame(liveLoop);
 }
 
-// ── SCAN & MARK PRESENT ───────────────────────────────────────────
+// ── SHARED SCAN HELPERS ───────────────────────────────────────────
+function getScanKey(){
+  return activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+currentWeek;
+}
+async function markStudentPresent(u, key){
+  if(sessionMarked.has(u.matric)) return false;
+  const now=new Date();
+  sessionMarked.add(u.matric);
+  if(!weeklyData[u.matric])weeklyData[u.matric]={};
+  weeklyData[u.matric][key]={status:'P',time:now.toTimeString().slice(0,8),date:now.toLocaleDateString('en-GB'),week:currentWeek,session:getAcademicSession(),semester:getSemester()};
+  await saveWeekly(u.matric,weeklyData[u.matric]);
+  addLog('ok','PRESENT '+u.name+' | '+u.matric+' | '+activeCourse.code+' Wk'+currentWeek);
+  return true;
+}
+
+// ── SINGLE FACE SCAN ─────────────────────────────────────────────
 async function doScan(){
   if(!stream){setS('Start camera first.','err');return;}
   if(!loaded){setS('Models loading...','warn');return;}
   if(!activeCourse){setS('Select a course first — tap the course banner.','warn');openCourseModal();return;}
   const btn=document.getElementById('bscan');
   btn.disabled=true;btn.textContent='⏳ Scanning...';
+  document.getElementById('bmulti').disabled=true;
   setS('Scanning...','info');
   document.getElementById('confwrap').classList.remove('show');
+  document.getElementById('multi-results').style.display='none';
   const vid=document.getElementById('vid');sizeOC();
   const c=document.getElementById('oc'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
   try{
@@ -2484,34 +2512,129 @@ async function doScan(){
     }else{
       const u=students.find(x=>x.matric===m.label);
       if(!u){setS('DB error','err');resetScanBtn();return;}
-      const now=new Date();
-      const ts=now.toTimeString().slice(0,8);
-      const dateStr=now.toLocaleDateString('en-GB');
-      const key=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+currentWeek;
       if(sessionMarked.has(u.matric)){
         setS(u.name.split(' ')[0]+' already marked for Week '+currentWeek+'.','warn');
         drawB(ctx,res.detection.box,u.name.split(' ')[0]+' ✓ done','#d97706');
         addLog('warn','Duplicate: '+u.name);resetScanBtn();return;
       }
-      sessionMarked.add(u.matric);
-      if(!weeklyData[u.matric])weeklyData[u.matric]={};
-      weeklyData[u.matric][key]={status:'P',time:ts,date:dateStr,week:currentWeek,session:getAcademicSession(),semester:getSemester()};
-      await saveWeekly(u.matric,weeklyData[u.matric]);
+      await markStudentPresent(u, getScanKey());
       drawB(ctx,res.detection.box,u.name.split(' ')[0]+' ✓','#059669');
       setS('✓ '+u.name+' — Week '+currentWeek+' — '+conf+'% — PRESENT!','ok');
-      addLog('ok','PRESENT ['+conf+'%] '+u.name+' | '+u.matric+' | '+activeCourse.code+' Wk'+currentWeek);
       document.getElementById('m-wk').textContent=currentWeek;
       document.getElementById('mname').textContent=u.name;
       document.getElementById('mdept').textContent=u.level+(u.option?' · '+u.option:' · General')+' · '+activeCourse.code;
-      document.getElementById('mtime').textContent='Marked at '+ts+' on '+dateStr;
-      openM('ms');
-      renderWeeklyGrid();
+      document.getElementById('mtime').textContent='Marked at '+new Date().toTimeString().slice(0,8)+' on '+new Date().toLocaleDateString('en-GB');
+      openM('ms');renderWeeklyGrid();
     }
   }catch(e){setS('Error: '+e.message,'err');addLog('err',e.message);}
   resetScanBtn();
 }
+
+// ── MULTI-FACE ROW SCAN ──────────────────────────────────────────
+let multiScanActive=false;
+
+async function doMultiScan(){
+  if(!stream){setS('Start camera first.','err');return;}
+  if(!loaded){setS('Models loading...','warn');return;}
+  if(!activeCourse){setS('Select a course first.','warn');openCourseModal();return;}
+  if(!matcher||!students.length){setS('No students enrolled. Go to Enroll tab.','err');return;}
+  if(multiScanActive)return;
+
+  const btn=document.getElementById('bmulti');
+  const sBtn=document.getElementById('bscan');
+  btn.disabled=true;btn.textContent='⏳ Detecting faces...';
+  sBtn.disabled=true;
+  document.getElementById('confwrap').classList.remove('show');
+  setS('Multi-scan: detecting all faces in frame...','info');
+
+  const vid=document.getElementById('vid');sizeOC();
+  const c=document.getElementById('oc'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+  const resultsBox=document.getElementById('multi-results');
+  const resultsList=document.getElementById('multi-results-list');
+  resultsBox.style.display='block';
+  resultsList.innerHTML='<div style="color:rgba(255,255,255,.5);font-size:11px;text-align:center;padding:8px">Detecting faces...</div>';
+
+  multiScanActive=true;
+  try{
+    const dets=await faceapi
+      .detectAllFaces(vid,new faceapi.TinyFaceDetectorOptions({inputSize:416,scoreThreshold:.45}))
+      .withFaceLandmarks(true)
+      .withFaceDescriptors();
+
+    if(!dets||!dets.length){
+      setS('No faces detected. Make sure students face the camera clearly.','warn');
+      resultsList.innerHTML='<div style="color:#fbbf24;font-size:11px;text-align:center;padding:8px">No faces detected in frame</div>';
+      multiScanActive=false;resetMultiBtn();return;
+    }
+
+    const dims=faceapi.matchDimensions(c,{width:c.width,height:c.height},true);
+    const resized=faceapi.resizeResults(dets,dims);
+    const key=getScanKey();
+    let presentCount=0,unknownCount=0,alreadyCount=0;
+    const resultItems=[];
+
+    for(let i=0;i<resized.length;i++){
+      const box=resized[i].detection.box;
+      const descriptor=dets[i].descriptor;
+      const match=matcher.findBestMatch(descriptor);
+      const conf=Math.round((1-match.distance)*100);
+
+      if(match.label==='unknown'){
+        unknownCount++;
+        drawB(ctx,box,'Unknown '+conf+'%','#dc2626');
+        resultItems.push({status:'unknown',label:'Unknown face',conf,col:'#fca5a5',bg:'rgba(220,38,38,.18)'});
+      } else {
+        const u=students.find(x=>x.matric===match.label);
+        if(!u) continue;
+        if(sessionMarked.has(u.matric)){
+          alreadyCount++;
+          drawB(ctx,box,u.name.split(' ')[0]+' ✓done','#d97706');
+          resultItems.push({status:'already',label:u.name,sub:'Already marked this week',conf,col:'#fcd34d',bg:'rgba(217,119,6,.18)'});
+        } else {
+          await markStudentPresent(u,key);
+          presentCount++;
+          drawB(ctx,box,u.name.split(' ')[0]+' ✓','#059669');
+          resultItems.push({status:'present',label:u.name,sub:u.matric+' · '+u.level,conf,col:'#6ee7b7',bg:'rgba(5,150,105,.18)'});
+        }
+      }
+    }
+
+    // Render results ticker
+    resultsList.innerHTML=resultItems.map(r=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:${r.bg};border-radius:6px;margin-bottom:4px;">
+        <div style="font-size:13px;">${r.status==='present'?'✅':r.status==='already'?'🔄':'❓'}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:700;color:${r.col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.label}</div>
+          ${r.sub?`<div style="font-size:10px;color:rgba(255,255,255,.4);">${r.sub}</div>`:''}
+        </div>
+        <div style="font-size:10px;font-weight:800;color:${r.col};flex-shrink:0;">${r.conf}%</div>
+      </div>`).join('');
+
+    const total=dets.length;
+    const parts=[];
+    if(presentCount) parts.push(`✅ ${presentCount} marked present`);
+    if(alreadyCount) parts.push(`🔄 ${alreadyCount} already done`);
+    if(unknownCount) parts.push(`❓ ${unknownCount} unknown`);
+    setS(`Multi-scan: ${total} face${total!==1?'s':''} detected. ${parts.join(' · ')}`,presentCount>0?'ok':'warn');
+    addLog('ok',`Multi-scan: ${total} detected, ${presentCount} marked, ${alreadyCount} already, ${unknownCount} unknown — ${activeCourse.code} Wk${currentWeek}`);
+    if(presentCount>0) renderWeeklyGrid();
+
+  }catch(e){
+    setS('Multi-scan error: '+e.message,'err');
+    addLog('err','Multi-scan: '+e.message);
+    resultsList.innerHTML='<div style="color:#fca5a5;font-size:11px;padding:8px">Error: '+e.message+'</div>';
+  }
+  multiScanActive=false;
+  resetMultiBtn();
+}
+
+function resetMultiBtn(){
+  const b=document.getElementById('bmulti');if(b){b.disabled=false;b.textContent='👥 Scan Row (Multi)';}
+  const s=document.getElementById('bscan');if(s)s.disabled=false;
+}
 function resetScanBtn(){
-  const b=document.getElementById('bscan');b.disabled=false;b.textContent='🎯 Scan Face & Mark Present';
+  const b=document.getElementById('bscan');b.disabled=false;b.textContent='🎯 Scan 1 Face';
+  const mb=document.getElementById('bmulti');if(mb)mb.disabled=false;
 }
 
 // ── FINALISE SESSION (Auto-Absent) ────────────────────────────────
