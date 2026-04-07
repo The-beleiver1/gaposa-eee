@@ -630,6 +630,12 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <button class="finalise-btn" id="bfin" onclick="finaliseSession()" disabled>
           ✅ &nbsp;Finalise — Mark Remaining Absent
         </button>
+        <!-- Offline Queue Status -->
+        <div id="offline-queue-banner" style="display:none;background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:9px 13px;font-size:11px;color:var(--amber);font-weight:700;align-items:center;gap:8px;margin-top:2px;">
+          <span style="font-size:14px;">📵</span>
+          <span id="offline-queue-msg">0 offline scans pending sync</span>
+          <button onclick="flushOfflineQueue()" style="margin-left:auto;padding:3px 9px;background:var(--amber);color:white;border:none;border-radius:5px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">Sync Now</button>
+        </div>
       </div>
     </div>
   </div>
@@ -892,6 +898,21 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 
     <!-- ── LECTURERS ── -->
     <div id="apane-lecturers" class="apane">
+      <!-- Pending Approvals -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--amber-l)">⏳</div>
+          <span class="card-ttl">Pending Approvals</span>
+          <span class="cbadge" id="pending-badge" style="background:var(--amber-l);color:var(--amber);border-color:var(--amber-b)">0</span>
+          <button class="smbtn" style="margin-left:auto" onclick="renderPendingLecturers()">↻ Refresh</button>
+        </div>
+        <div class="card-body" style="padding:10px;">
+          <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border:1px solid var(--amber-b);border-radius:7px;padding:7px 10px;margin-bottom:10px;line-height:1.5;">
+            ⚠ New lecturer registrations require your approval before they can log in.
+          </div>
+          <div id="pending-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">Loading...</div></div>
+        </div>
+      </div>
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">🔑</div><span class="card-ttl">Department Registration Code</span></div>
         <div class="card-body">
@@ -944,6 +965,20 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           </div>
         </div>
       </div>
+      <!-- Audit Log -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--red-l)">🔐</div>
+          <span class="card-ttl">Audit Log</span>
+          <button class="smbtn" style="margin-left:auto" onclick="loadAuditLog()">↻ Load</button>
+        </div>
+        <div class="card-body" style="padding:10px;">
+          <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;line-height:1.5;">All attendance corrections, week changes, and lecturer approvals are permanently recorded here in the cloud.</div>
+          <div id="audit-log-list" style="max-height:280px;overflow-y:auto;">
+            <div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Tap ↻ Load to view recent entries</div>
+          </div>
+        </div>
+      </div>
       <!-- School Logo for Reports -->
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)">🖼️</div><span class="card-ttl">School Logo for Reports</span></div>
@@ -953,6 +988,68 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           </div>
           <div id="logo-preview-area" style="margin-bottom:10px;"></div>
           <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()">🖼️ Upload School Logo (PNG/JPG, max 500KB)</button>
+        </div>
+      </div>
+      <!-- Firestore Security Rules -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--red-l)">🛡️</div><span class="card-ttl">Firebase Security Rules</span><span id="rules-status-badge" class="cbadge">Not Checked</span></div>
+        <div class="card-body">
+          <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6;">
+            ⚠️ <b>Critical:</b> Your Firebase API key is visible in the app source. The only protection for your data is Firestore Security Rules. Copy and paste the rules below into your Firebase Console → Firestore → Rules tab, then publish.
+          </div>
+          <div style="background:#0f172a;border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e2e8f0;line-height:1.7;overflow-x:auto;margin-bottom:10px;white-space:pre;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    // Only authenticated users (lecturers/HOD) can read students
+    match /students/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role
+           in ['admin','lecturer'];
+    }
+
+    // Weekly attendance — lecturers can write, all auth can read
+    match /weekly/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role
+           in ['admin','lecturer'];
+    }
+
+    // Master list — HOD only can write
+    match /masterlist/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users — read own doc; write only as admin
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Allow new user creation (registration)
+      allow create: if request.auth != null;
+    }
+
+    // Settings — HOD only
+    match /settings/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Audit log — HOD only can read; authenticated can write (append only)
+    match /audit_log/{entry} {
+      allow read: if request.auth != null
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow create: if request.auth != null;
+      allow update, delete: if false; // audit entries are immutable
+    }
+  }
+}</div>
+          <button class="btn bb" style="width:100%;padding:11px;font-size:12px;" onclick="copyFirestoreRules()">📋 Copy Rules to Clipboard</button>
         </div>
       </div>
       <!-- Auto-logout + Offline Queue settings -->
@@ -1148,22 +1245,9 @@ const SAMPLES_NEEDED = 5;
 const ATT_THRESHOLD = 75;
 
 // ── ACADEMIC SESSION & SEMESTER ────────────────────────────────────
-// Auto-calculated based on current date
+// Auto-calculated based on current date — overridden by Firestore values below
 // Academic year: Aug–Jul (e.g. Aug 2025 – Jul 2026 = 2025/2026)
 // Semester 1: Aug – Jan | Semester 2: Feb – Jul
-function getAcademicSession() {
-  const now = new Date();
-  const month = now.getMonth() + 1; // 1-12
-  const year = now.getFullYear();
-  // If Aug–Dec: session starts this year
-  // If Jan–Jul: session started last year
-  const sessionStart = month >= 8 ? year : year - 1;
-  return `${sessionStart}/${sessionStart + 1}`;
-}
-function getSemester() {
-  const month = new Date().getMonth() + 1;
-  return month >= 8 || month <= 1 ? '1st Semester' : '2nd Semester';
-}
 
 // ── AUTO WEEK CALCULATION ──────────────────────────────────────────
 // Week is auto-calculated from the semester start date
@@ -1210,13 +1294,39 @@ function updateWeekDisplay() {
   document.getElementById('wk-detail').textContent = `Week ${currentWeek} of ${MAX_WEEKS} · ${getAcademicSession()} · ${getSemester()}`;
 }
 
-function changeWeek(d) {
+async function changeWeek(d) {
+  const prevWeek = currentWeek;
+  const proposed = Math.max(1, Math.min(MAX_WEEKS, calcAutoWeek() + manualWeekOffset + d));
+
+  // Block jumping more than 1 week at a time for lecturers
+  if (currentUserRole !== 'admin' && Math.abs(proposed - prevWeek) > 1) {
+    alert('Lecturers can only adjust the week by 1 at a time. Ask the HOD for larger adjustments.');
+    return;
+  }
+  // Warn if jumping forward more than 2 weeks (even HOD)
+  if (proposed > prevWeek + 2) {
+    if (!confirm('⚠ You are jumping forward ' + (proposed - prevWeek) + ' weeks to Week ' + proposed + '.\n\nThis will allow marking attendance for future weeks. Are you sure?')) return;
+  }
+
   manualWeekOffset += d;
   localStorage.setItem('weekOffset', manualWeekOffset);
   currentWeek = Math.max(1, Math.min(MAX_WEEKS, calcAutoWeek()));
   document.getElementById('wk-num').textContent = currentWeek;
   document.getElementById('wk-detail').textContent = `Week ${currentWeek} of ${MAX_WEEKS} · (manually adjusted)`;
-  addLog('info', 'Week manually set to ' + currentWeek);
+  addLog('warn', 'Week changed: ' + prevWeek + ' → ' + currentWeek + ' by ' + (currentUserName || 'unknown'));
+
+  // Persist week change audit to Firestore
+  try {
+    await dbFB.collection('audit_log').add({
+      type: 'week_change',
+      from: prevWeek, to: currentWeek,
+      changedBy: currentUserName || 'unknown',
+      role: currentUserRole || 'unknown',
+      session: getAcademicSession(),
+      semester: getSemester(),
+      timestamp: new Date().toISOString()
+    });
+  } catch(e) { addLog('warn', 'Audit log write failed: ' + e.message); }
 }
 
 // ── CLOCK & SESSION BAR ────────────────────────────────────────────
@@ -1632,13 +1742,21 @@ async function doRegister(){
     const cred=await authFB.createUserWithEmailAndPassword(email,pass);
     const assignedCourses = [...regSelectedCourses];
     await dbFB.collection('users').doc(cred.user.uid).set({
-      email, name, role:'lecturer',
+      email, name, role:'pending',
       assignedCourses,
       registeredAt: new Date().toISOString()
     });
-    currentUser=cred.user;currentUserRole='lecturer';currentUserName=name;
-    document.getElementById('login-screen').classList.remove('show');
-    showMainApp();addLog('ok','New lecturer registered: '+name);
+    // Sign out immediately — they need HOD approval before they can log in
+    await authFB.signOut();
+    document.getElementById('lerr').style.display='none';
+    // Show pending message instead of logging them in
+    const el = document.getElementById('lform-register');
+    if(el) el.innerHTML = `<div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:10px;padding:16px;text-align:center;margin-top:8px;">
+      <div style="font-size:20px;margin-bottom:6px;">✅</div>
+      <div style="font-size:14px;font-weight:800;color:#065f46;margin-bottom:4px">Registration Submitted!</div>
+      <div style="font-size:12px;color:#047857;line-height:1.6">Your account for <b>${name}</b> is pending HOD approval.<br>You will be notified when access is granted. Return to <b>Login</b> after approval.</div>
+    </div>`;
+    addLog('ok','New lecturer registered (PENDING approval): '+name+' — '+email);
   }catch(e){let m=e.message;if(e.code==='auth/email-already-in-use')m='Email already registered. Use Login tab.';showLoginErr(m);}
 }
 
@@ -1647,10 +1765,16 @@ async function _signIn(email,pass,expectedRole){
   const doc=await dbFB.collection('users').doc(cred.user.uid).get();
   if(!doc.exists){await authFB.signOut();throw new Error('Account not in system. Use Register tab if new.');}
   const ud=doc.data();
+  if(ud.role==='pending'){
+    await authFB.signOut();
+    throw new Error('Your account is pending HOD approval. Please wait for the HOD to activate your account, then try logging in again.');
+  }
   if(expectedRole==='admin'&&ud.role!=='admin'){await authFB.signOut();throw new Error('Not an admin account. Use Login tab.');}
   currentUser=cred.user;currentUserRole=ud.role;currentUserName=ud.name||email;
   document.getElementById('login-screen').classList.remove('show');
-  showMainApp();addLog('ok','Logged in: '+currentUserName+' ('+currentUserRole+')');
+  showMainApp();
+  loadLogoFromCloud();
+  addLog('ok','Logged in: '+currentUserName+' ('+currentUserRole+')');
 }
 
 async function doLogout(){
@@ -1696,6 +1820,7 @@ function showMainApp(){
   }
   updateClock();updateWeekDisplay();
   renderList();refreshAdminDashboard();
+  updateOfflineQueueBanner();
   // Load lecturer's assigned courses for filtering
   loadLecturerCourses().then(() => {
     addLog('info', currentUserRole === 'admin' ? 'HOD: full course access' : 'Courses filtered to assigned only');
@@ -1908,18 +2033,80 @@ function triggerLogoUpload() {
     if (!file) return;
     if (file.size > 500*1024) { alert('Logo image must be under 500 KB.'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
+      const dataUrl = e.target.result;
       try {
-        localStorage.setItem('schoolLogoDataUrl', e.target.result);
-        // Refresh the in-memory variable and show confirmation
-        Object.defineProperty(window, 'SCHOOL_LOGO_URL_LIVE', {value: e.target.result, writable:true});
-        alert('✓ Logo saved! It will appear on all printed reports from now on.');
+        // Save to localStorage for instant access
+        localStorage.setItem('schoolLogoDataUrl', dataUrl);
+        // Also save to Firestore so any device can use it
+        await dbFB.collection('settings').doc('logo').set({ dataUrl, uploadedBy: currentUserName, uploadedAt: new Date().toISOString() });
+        alert('✓ Logo saved to cloud! It will appear on all printed reports on any device.');
         renderLogoPreview();
-      } catch(err) { alert('Could not save logo: ' + err.message); }
+      } catch(err) {
+        // Firestore failed — still works locally
+        localStorage.setItem('schoolLogoDataUrl', dataUrl);
+        alert('✓ Logo saved locally. Cloud save failed — it will only show on this device. (' + err.message + ')');
+        renderLogoPreview();
+      }
     };
     reader.readAsDataURL(file);
   };
   inp.click();
+}
+
+async function loadLogoFromCloud() {
+  // Try loading from Firestore first, fall back to localStorage
+  try {
+    const doc = await dbFB.collection('settings').doc('logo').get();
+    if (doc.exists && doc.data().dataUrl) {
+      localStorage.setItem('schoolLogoDataUrl', doc.data().dataUrl);
+      addLog('info', 'School logo loaded from cloud');
+    }
+  } catch(e) {
+    addLog('info', 'Logo: using local cache (cloud load failed: ' + e.message + ')');
+  }
+}
+
+async function loadAuditLog() {
+  const el = document.getElementById('audit-log-list');
+  if (!el) return;
+  el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Loading...</div>';
+  try {
+    const snap = await dbFB.collection('audit_log').orderBy('timestamp','desc').limit(60).get();
+    if (snap.empty) { el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">No audit events recorded yet</div>'; return; }
+    const typeLabels = {
+      'attendance_correction': { icon:'✏️', color:'var(--amber)', bg:'var(--amber-l)' },
+      'week_change':           { icon:'📅', color:'var(--blue)',  bg:'var(--blue-l)'  },
+      'lecturer_approved':     { icon:'✅', color:'var(--green)', bg:'var(--green-l)' },
+      'lecturer_rejected':     { icon:'❌', color:'var(--red)',   bg:'var(--red-l)'   },
+    };
+    el.innerHTML = snap.docs.map(d => {
+      const a = d.data();
+      const ts = a.timestamp ? new Date(a.timestamp).toLocaleString('en-GB') : '—';
+      const style = typeLabels[a.type] || { icon:'📋', color:'var(--txt2)', bg:'var(--bg)' };
+      let detail = '';
+      if (a.type === 'attendance_correction')
+        detail = `${a.studentName} (${a.matric}) · ${a.course} Wk${a.week} · ${a.oldStatus} → ${a.newStatus} · by ${a.correctedBy}`;
+      else if (a.type === 'week_change')
+        detail = `Wk${a.from} → Wk${a.to} · ${a.session} ${a.semester} · by ${a.changedBy} (${a.role})`;
+      else if (a.type === 'lecturer_approved')
+        detail = `${a.name} approved by ${a.approvedBy}`;
+      else if (a.type === 'lecturer_rejected')
+        detail = `${a.name} rejected by ${a.rejectedBy}`;
+      else detail = JSON.stringify(a).slice(0,80);
+      return `<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:${style.bg};border:1px solid ${style.color}22;border-radius:7px;margin-bottom:5px;">
+        <div style="font-size:14px;flex-shrink:0;margin-top:1px;">${style.icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:11px;font-weight:700;color:${style.color};">${a.type.replace(/_/g,' ').toUpperCase()}</div>
+          <div style="font-size:11px;color:var(--txt2);line-height:1.5;word-break:break-word;">${detail}</div>
+          <div style="font-size:10px;color:var(--txt3);margin-top:2px;">${ts}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--red);padding:10px;">Error: ' + e.message + '</div>';
+    addLog('err', 'Audit log load failed: ' + e.message);
+  }
 }
 
 function renderLogoPreview() {
@@ -1935,6 +2122,48 @@ function renderLogoPreview() {
   } else {
     el.innerHTML = `<div style="font-size:12px;color:var(--txt3);padding:8px;text-align:center;background:var(--bg);border-radius:8px;border:1.5px dashed var(--border2);">No logo uploaded yet — reports will show text badge</div>`;
   }
+}
+
+function copyFirestoreRules() {
+  const rules = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /students/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role in ['admin','lecturer'];
+    }
+    match /weekly/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role in ['admin','lecturer'];
+    }
+    match /masterlist/{matric} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow create: if request.auth != null;
+    }
+    match /settings/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /audit_log/{entry} {
+      allow read: if request.auth != null && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+  }
+}`;
+  navigator.clipboard.writeText(rules).then(() => {
+    setAdminSt('✓ Firestore rules copied! Go to Firebase Console → Firestore → Rules → paste and publish.', 'ok');
+  }).catch(() => {
+    const t = document.createElement('textarea');
+    t.value = rules; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    setAdminSt('✓ Rules copied! Go to Firebase Console → Firestore → Rules → paste and publish.', 'ok');
+  });
+  addLog('info', 'Firestore security rules copied to clipboard');
 }
 
 function clearSchoolLogo() {
@@ -1976,6 +2205,7 @@ async function saveWeekly(matric,data){
       const key=Object.keys(data).pop();
       offlineQueue.push({matric,data,key,ts:Date.now()});
       localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+      updateOfflineQueueBanner();
       addLog('warn','Offline: scan queued for '+matric+' (will sync when online)');
     }else{
       addLog('err','Save failed (offline queue is Off): '+e.message);
@@ -1986,7 +2216,7 @@ async function saveWeekly(matric,data){
 
 function buildMatcher(){
   if(!students.length){matcher=null;return;}
-  matcher=new faceapi.FaceMatcher(students.map(u=>new faceapi.LabeledFaceDescriptors(u.matric,u.descriptors)),0.5);
+  matcher=new faceapi.FaceMatcher(students.map(u=>new faceapi.LabeledFaceDescriptors(u.matric,u.descriptors)),0.42);
 }
 
 // ── DUPLICATE FACE DETECTION ──────────────────────────────────────
@@ -2070,12 +2300,6 @@ function closeDupeModal() {
 
 // ── COURSE PICKER ─────────────────────────────────────────────────
 let filtCourses=[...COURSES];
-function openCourseModal(){
-  // Lecturers only see their assigned courses; admin sees all
-  filtCourses=[...getFilteredCourses()];
-  document.getElementById('csearch').value='';
-  selCourseTemp=activeCourse;renderCourseList();openM('mc');
-}
 function filterCourses(){
   const q=document.getElementById('csearch').value.toLowerCase();
   const base=getFilteredCourses();
@@ -2084,8 +2308,8 @@ function filterCourses(){
 }
 function renderCourseList(){
   const el=document.getElementById('clist');
+  if(!el) return; // modal not in DOM yet
   if(!filtCourses.length){el.innerHTML='<div style="text-align:center;color:var(--txt3);padding:16px;font-size:12px">No courses found</div>';return;}
-  // Deduplicate by code+level+option for display
   const seen=new Set();
   const unique=filtCourses.filter(c=>{const k=c.code+c.level+(c.option||'');if(seen.has(k))return false;seen.add(k);return true;});
   el.innerHTML=unique.map(c=>`
@@ -2563,16 +2787,52 @@ async function saveCorrection(){
   const week=parseInt(document.getElementById('corr-week').value);
   const status=document.getElementById('corr-status').value;
   if(!matric||!week||!status){alert('Fill all fields.');return;}
+
+  // Block correcting a week that hasn't happened yet
+  if(week > currentWeek){
+    alert('⚠ Cannot correct Week '+week+' — current week is only Week '+currentWeek+'. You cannot correct future weeks.');
+    return;
+  }
+  if(week < 1 || week > MAX_WEEKS){
+    alert('Week must be between 1 and '+MAX_WEEKS+'.');
+    return;
+  }
+
   const key=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+week;
   const now=new Date();
+
+  // Get the old status before overwriting
+  const oldEntry = weeklyData[matric] && weeklyData[matric][key];
+  const oldStatus = oldEntry ? oldEntry.status : '—';
+
   const entry={status,time:now.toTimeString().slice(0,8),date:now.toLocaleDateString('en-GB'),week,session:getAcademicSession(),semester:getSemester(),correctedBy:currentUserName,correctedAt:now.toISOString()};
   if(!weeklyData[matric])weeklyData[matric]={};
   weeklyData[matric][key]=entry;
   try{
     await saveWeekly(matric,weeklyData[matric]);
-    addLog('warn','CORRECTION: '+matric+' Wk'+week+' set to '+status+' by '+currentUserName);
+
+    // ── PERSISTENT AUDIT TRAIL ───────────────────────────────────────
+    const u = students.find(s => s.matric === matric);
+    await dbFB.collection('audit_log').add({
+      type: 'attendance_correction',
+      matric,
+      studentName: u ? u.name : matric,
+      course: activeCourse.code,
+      courseTitle: activeCourse.title,
+      week,
+      oldStatus,
+      newStatus: status,
+      correctedBy: currentUserName,
+      correctedByUid: currentUser ? currentUser.uid : 'unknown',
+      session: getAcademicSession(),
+      semester: getSemester(),
+      timestamp: now.toISOString()
+    });
+    // ─────────────────────────────────────────────────────────────────
+
+    addLog('warn','CORRECTION SAVED: '+matric+' ('+( u ? u.name : '?')+') Wk'+week+' '+oldStatus+'→'+status+' by '+currentUserName);
     closeM('mcorr');renderWeeklyGrid();
-    setS('✓ Attendance corrected for Week '+week,'ok');
+    setS('✓ Attendance corrected for Week '+week+' — audit record saved','ok');
   }catch(e){alert('Save failed: '+e.message);}
 }
 function updateWarningBanner(warnings){
@@ -2645,7 +2905,7 @@ function setAdminTab(tab) {
     document.getElementById('apane-'+t).classList.toggle('active', t===tab);
   });
   if(tab==='students') renderAdminStudents();
-  if(tab==='lecturers') renderLecturerList();
+  if(tab==='lecturers') { renderLecturerList(); renderPendingLecturers(); }
   if(tab==='master') renderMasterList();
   if(tab==='settings') { initSecuritySettings(); renderLogoPreview(); }
 }
@@ -2743,6 +3003,7 @@ function showLevelStudents(lvl) {
   openM('mlvl');
 }
 
+function renderAtRiskList(){
   const el=document.getElementById('atrisk-list');
   const course = adminActiveCourse || activeCourse;
   if(!course){
@@ -3131,8 +3392,21 @@ function resetIdleTimer(){
 
 // ── OFFLINE SCAN QUEUE ────────────────────────────────────────────
 let offlineQueue=JSON.parse(localStorage.getItem('offlineQueue')||'[]');
+function updateOfflineQueueBanner() {
+  const queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+  const banner = document.getElementById('offline-queue-banner');
+  const msg = document.getElementById('offline-queue-msg');
+  if (!banner) return;
+  if (queue.length > 0) {
+    banner.style.display = 'flex';
+    msg.textContent = queue.length + ' offline scan' + (queue.length !== 1 ? 's' : '') + ' pending cloud sync — go online to sync';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
 async function flushOfflineQueue(){
-  if(!offlineQueue.length)return;
+  if(!offlineQueue.length){ updateOfflineQueueBanner(); return; }
   addLog('info','Flushing '+offlineQueue.length+' offline scan(s)...');
   const failed=[];
   for(const item of offlineQueue){
@@ -3143,9 +3417,22 @@ async function flushOfflineQueue(){
   }
   offlineQueue=failed;
   localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
-  if(!failed.length)addLog('ok','All offline scans synced successfully');
+  updateOfflineQueueBanner();
+  if(!failed.length) addLog('ok','All offline scans synced successfully');
+  else addLog('warn', failed.length + ' scan(s) still pending — still offline?');
 }
 window.addEventListener('online',flushOfflineQueue);
+
+// FIX 10: Warn before leaving if offline queue has unsynced scans
+window.addEventListener('beforeunload', (e) => {
+  const queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+  if (queue.length > 0) {
+    const msg = queue.length + ' offline scan(s) are not yet synced to the cloud. Closing now may lose them. Stay on the page until you are online and they sync.';
+    e.preventDefault();
+    e.returnValue = msg;
+    return msg;
+  }
+});
 
 // ── WELCOME MODAL — show assigned courses ─────────────────────────
 
@@ -3172,6 +3459,63 @@ function copyCode(){
     setAdminSt('✓ Code copied!','ok');
   });
 }
+async function renderPendingLecturers(){
+  const el = document.getElementById('pending-list');
+  const badge = document.getElementById('pending-badge');
+  if(!el) return;
+  try{
+    const snap = await dbFB.collection('users').where('role','==','pending').get();
+    badge.textContent = snap.size;
+    if(snap.empty){
+      el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ No pending approvals</div>';
+      return;
+    }
+    el.innerHTML = snap.docs.map(d=>{
+      const u=d.data(); const uid=d.id;
+      const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
+      const courseCount = (u.assignedCourses||[]).length;
+      return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${u.name}</div>
+        <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${u.email} · Registered ${regDate} · ${courseCount} course(s) selected</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
+          <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">Error loading: '+e.message+'</div>';
+    addLog('err','Load pending lecturers: '+e.message);
+  }
+}
+
+async function approveLecturer(uid, name){
+  if(!confirm('Approve "'+name+'" as a lecturer? They will be able to log in immediately.'))return;
+  try{
+    await dbFB.collection('users').doc(uid).update({ role:'lecturer', approvedBy:currentUserName, approvedAt:new Date().toISOString() });
+    await dbFB.collection('audit_log').add({
+      type:'lecturer_approved', uid, name, approvedBy:currentUserName, timestamp:new Date().toISOString()
+    });
+    addLog('ok','Lecturer approved: '+name);
+    setAdminSt('✓ '+name+' approved — they can now log in.','ok');
+    renderPendingLecturers();
+    renderLecturerList();
+  }catch(e){alert('Error: '+e.message);}
+}
+
+async function rejectLecturer(uid, name){
+  if(!confirm('Reject and delete "'+name+'"\'s account? They will need to register again.'))return;
+  try{
+    await dbFB.collection('users').doc(uid).delete();
+    await dbFB.collection('audit_log').add({
+      type:'lecturer_rejected', uid, name, rejectedBy:currentUserName, timestamp:new Date().toISOString()
+    });
+    addLog('warn','Lecturer rejected & deleted: '+name);
+    setAdminSt('Account for "'+name+'" rejected and removed.','warn');
+    renderPendingLecturers();
+  }catch(e){alert('Error: '+e.message);}
+}
+
 async function renderLecturerList(){
   try{
     const snap=await dbFB.collection('users').where('role','==','lecturer').get();
@@ -3744,7 +4088,7 @@ function printMasterList() {
 // STUDENT PORTAL — face enrollment from student's own device
 // ═══════════════════════════════════════════════════════════════════
 let spStream = null, spSamples = [], spStudentData = null;
-const SP_SAMPLES_NEEDED = 2;
+const SP_SAMPLES_NEEDED = 4;
 
 async function checkStudentMasterList(val) {
   const statusEl = document.getElementById('st-matric-status');
@@ -4140,7 +4484,6 @@ window.addEventListener('load',()=>{
     }
   }
   tryInit();
-  renderCourseList();
 });
 </script>
 
