@@ -980,10 +980,13 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <div class="card-hdr">
           <div class="card-hdr-ico" style="background:var(--red-l)">🔐</div>
           <span class="card-ttl">Audit Log</span>
-          <button class="smbtn" style="margin-left:auto" onclick="loadAuditLog()">↻ Load</button>
+          <div style="display:flex;gap:6px;margin-left:auto">
+            <button class="smbtn" onclick="exportAuditLogCSV()">⤓ CSV</button>
+            <button class="smbtn" onclick="loadAuditLog()">↻ Load</button>
+          </div>
         </div>
         <div class="card-body" style="padding:10px;">
-          <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;line-height:1.5;">All attendance corrections, week changes, and lecturer approvals are permanently recorded here in the cloud.</div>
+          <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;line-height:1.5;">All attendance corrections, week changes, master list wipes, and lecturer approvals are permanently recorded here in the cloud.</div>
           <div id="audit-log-list" style="max-height:280px;overflow-y:auto;">
             <div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Tap ↻ Load to view recent entries</div>
           </div>
@@ -1157,16 +1160,18 @@ service cloud.firestore {
     <!-- Progress -->
     <div style="width:100%;margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px;">
-        <span>Face Samples</span><span id="sp-prog-lbl">0 / 2</span>
+        <span>Face Samples</span><span id="sp-prog-lbl">0 / 4</span>
       </div>
       <div style="height:6px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;">
         <div id="sp-prog-bar" style="height:100%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:5px;transition:width .3s;width:0%;"></div>
       </div>
     </div>
     <!-- Sample dots -->
-    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:14px;">
-      <div id="sp-dot0" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">1</div>
-      <div id="sp-dot1" style="width:64px;height:64px;border-radius:12px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">2</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;">
+      <div id="sp-dot0" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">1</div>
+      <div id="sp-dot1" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">2</div>
+      <div id="sp-dot2" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">3</div>
+      <div id="sp-dot3" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">4</div>
     </div>
 
     <!-- Status -->
@@ -1264,7 +1269,7 @@ const ATT_THRESHOLD = 75;
 // Semester 1 starts: 1st Monday of October each year
 // Semester 2 starts: 1st Monday of March each year
 // Lecturer can manually adjust with +/- buttons
-let manualWeekOffset = parseInt(localStorage.getItem('weekOffset')||'0');
+let manualWeekOffset = parseInt(lsGet('weekOffset')||'0');
 
 function getSemesterStartDate() {
   const now = new Date();
@@ -1319,7 +1324,7 @@ async function changeWeek(d) {
   }
 
   manualWeekOffset += d;
-  localStorage.setItem('weekOffset', manualWeekOffset);
+  lsSet('weekOffset', manualWeekOffset);
   currentWeek = Math.max(1, Math.min(MAX_WEEKS, calcAutoWeek()));
   document.getElementById('wk-num').textContent = currentWeek;
   document.getElementById('wk-detail').textContent = `Week ${currentWeek} of ${MAX_WEEKS} · (manually adjusted)`;
@@ -1883,7 +1888,7 @@ async function saveSessionSettings(){
     if(semChanged){
       // Reset week counter on semester change
       manualWeekOffset=0;
-      localStorage.setItem('weekOffset','0');
+      lsSet('weekOffset','0');
       addLog('warn','Semester changed from '+prevSem+' to '+sem+' — week reset to 1');
     }
     updateClock();updateWeekDisplay();
@@ -2000,7 +2005,7 @@ async function exportArchiveCSV(){
 // data URL (e.g. data:image/png;base64,AAAA...) or upload logo image
 // in Settings → School Logo (coming soon). For now uses school initials badge.
 const SCHOOL_LOGO_URL = (function(){
-  try{ return localStorage.getItem('schoolLogoDataUrl') || ''; }catch(e){ return ''; }
+  try{ return lsGet('schoolLogoDataUrl') || ''; }catch(e){ return ''; }
 })();
 
 function getReportHeader(subtitle) {
@@ -2047,14 +2052,14 @@ function triggerLogoUpload() {
       const dataUrl = e.target.result;
       try {
         // Save to localStorage for instant access
-        localStorage.setItem('schoolLogoDataUrl', dataUrl);
+        lsSet('schoolLogoDataUrl', dataUrl);
         // Also save to Firestore so any device can use it
         await dbFB.collection('settings').doc('logo').set({ dataUrl, uploadedBy: currentUserName, uploadedAt: new Date().toISOString() });
         alert('✓ Logo saved to cloud! It will appear on all printed reports on any device.');
         renderLogoPreview();
       } catch(err) {
         // Firestore failed — still works locally
-        localStorage.setItem('schoolLogoDataUrl', dataUrl);
+        lsSet('schoolLogoDataUrl', dataUrl);
         alert('✓ Logo saved locally. Cloud save failed — it will only show on this device. (' + err.message + ')');
         renderLogoPreview();
       }
@@ -2069,7 +2074,7 @@ async function loadLogoFromCloud() {
   try {
     const doc = await dbFB.collection('settings').doc('logo').get();
     if (doc.exists && doc.data().dataUrl) {
-      localStorage.setItem('schoolLogoDataUrl', doc.data().dataUrl);
+      lsSet('schoolLogoDataUrl', doc.data().dataUrl);
       addLog('info', 'School logo loaded from cloud');
     }
   } catch(e) {
@@ -2119,10 +2124,53 @@ async function loadAuditLog() {
   }
 }
 
+async function exportAuditLogCSV() {
+  const el = document.getElementById('audit-log-list');
+  if(el) el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Fetching audit records...</div>';
+  try {
+    const snap = await dbFB.collection('audit_log').orderBy('timestamp','desc').limit(500).get();
+    if(snap.empty){ alert('No audit entries to export yet.'); return; }
+    const now = new Date();
+    let csv = 'THE GATEWAY POLYTECHNIC SAAPADE\n';
+    csv += 'DEPARTMENT OF ELECTRICAL & ELECTRONIC ENGINEERING TECHNOLOGY\n';
+    csv += 'SYSTEM AUDIT LOG EXPORT\n';
+    csv += `Exported By:,${currentUserName}\nExport Date:,${now.toLocaleDateString('en-GB')} ${now.toTimeString().slice(0,5)}\nTotal Entries:,${snap.size}\n\n`;
+    csv += 'Timestamp,Event Type,Details,Performed By\n';
+    snap.docs.forEach(d => {
+      const a = d.data();
+      const ts = a.timestamp ? new Date(a.timestamp).toLocaleString('en-GB') : '—';
+      let details = '';
+      if(a.type==='attendance_correction')
+        details = `${a.studentName} (${a.matric}) | ${a.course} Week ${a.week} | ${a.oldStatus} → ${a.newStatus}`;
+      else if(a.type==='week_change')
+        details = `Week ${a.from} → Week ${a.to} | ${a.session} ${a.semester} | Role: ${a.role}`;
+      else if(a.type==='lecturer_approved')
+        details = `Approved: ${a.name}`;
+      else if(a.type==='lecturer_rejected')
+        details = `Rejected: ${a.name}`;
+      else if(a.type==='master_list_cleared')
+        details = `Deleted ${a.count} students from master list`;
+      else
+        details = JSON.stringify(a).slice(0,100);
+      const by = a.correctedBy||a.changedBy||a.approvedBy||a.rejectedBy||a.clearedBy||'—';
+      csv += `"${ts}","${a.type}","${details.replace(/"/g,"'")}","${by}"\n`;
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    a.download = `GAPOSA_EEE_AuditLog_${now.toLocaleDateString('en-GB').replace(/\//g,'-')}.csv`;
+    a.click();
+    addLog('info','Audit log exported: '+snap.size+' entries');
+    loadAuditLog(); // refresh the display
+  } catch(e) {
+    alert('Export failed: '+e.message);
+    addLog('err','Audit log export failed: '+e.message);
+  }
+}
+
 function renderLogoPreview() {
   const el = document.getElementById('logo-preview-area');
   if (!el) return;
-  const saved = (() => { try{ return localStorage.getItem('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
+  const saved = (() => { try{ return lsGet('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
   if (saved) {
     el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-l);border:1.5px solid var(--green-b);border-radius:8px;">
       <img src="${saved}" style="width:48px;height:48px;object-fit:contain;border-radius:6px;border:1px solid var(--border)">
@@ -2178,10 +2226,22 @@ service cloud.firestore {
 
 function clearSchoolLogo() {
   if (!confirm('Remove school logo from reports?')) return;
-  try{ localStorage.removeItem('schoolLogoDataUrl'); }catch(e){}
+  try{ lsRemove('schoolLogoDataUrl'); }catch(e){}
   renderLogoPreview();
 }
 
+
+// ── XSS SANITIZER ─────────────────────────────────────────────────
+function esc(str){
+  if(!str)return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── NAMESPACED localStorage ────────────────────────────────────────
+const LS_PREFIX='gaposa_eee_';
+function lsGet(k){try{return localStorage.getItem(LS_PREFIX+k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(LS_PREFIX+k,v);}catch(e){}}
+function lsRemove(k){try{localStorage.removeItem(LS_PREFIX+k);}catch(e){}}
 
 async function loadStudents(){
   try{
@@ -2214,7 +2274,7 @@ async function saveWeekly(matric,data){
     if(_offlineQueueEnabled){
       const key=Object.keys(data).pop();
       offlineQueue.push({matric,data,key,ts:Date.now()});
-      localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+      lsSet('offlineQueue',JSON.stringify(offlineQueue));
       updateOfflineQueueBanner();
       addLog('warn','Offline: scan queued for '+matric+' (will sync when online)');
     }else{
@@ -2338,6 +2398,8 @@ function selCourse(code,level,option){
 }
 function confirmCourse(){
   if(!selCourseTemp){alert('Select a course first.');return;}
+  const prevCourseKey = activeCourse ? activeCourse.code+'_'+activeCourse.level : null;
+  const newCourseKey = selCourseTemp.code+'_'+selCourseTemp.level;
   activeCourse=selCourseTemp;
   const sem=activeCourse.sem===1?'1st Semester':'2nd Semester';
   document.getElementById('cb-course').textContent=activeCourse.code+' — '+activeCourse.title;
@@ -2345,7 +2407,27 @@ function confirmCourse(){
   document.getElementById('wk-course-ttl').textContent=activeCourse.code+' — '+activeCourse.title;
   document.getElementById('wk-course-meta').textContent=activeCourse.level+' · '+(activeCourse.option||'General')+' · '+getAcademicSession()+' · '+getSemester();
   document.getElementById('bfin').disabled=false;
-  sessionMarked.clear();
+  // FIX 3: Always clear sessionMarked when course changes
+  if(prevCourseKey !== newCourseKey) {
+    sessionMarked.clear();
+    addLog('info','Course changed — session marks cleared');
+  }
+  // FIX 4: Log and warn if lecturer is scanning a course not in their assigned list
+  if(currentUserRole !== 'admin' && lecturerCourses.length > 0) {
+    const key = activeCourse.code+'_'+activeCourse.level+'_'+(activeCourse.option||'');
+    if(!lecturerCourses.includes(key)) {
+      addLog('warn','UNASSIGNED COURSE SELECTED: '+currentUserName+' selected '+activeCourse.code+' which is not in their assigned courses');
+      // Log to Firestore audit trail
+      dbFB.collection('audit_log').add({
+        type:'unassigned_course_scan_attempt',
+        course: activeCourse.code, courseTitle: activeCourse.title,
+        lecturer: currentUserName, lecturerUid: currentUser ? currentUser.uid : '—',
+        assignedCourses: lecturerCourses,
+        timestamp: new Date().toISOString()
+      }).catch(()=>{});
+      setS('⚠ Warning: '+activeCourse.code+' is not in your assigned courses. This has been logged.','warn');
+    }
+  }
   closeM('mc');
   addLog('info','Course: '+activeCourse.code+' — '+activeCourse.title);
   renderWeeklyGrid();
@@ -2470,6 +2552,13 @@ async function liveLoop(){
 function getScanKey(){
   return activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+currentWeek;
 }
+// FIX 2: Validate matched student belongs to the active course level
+function isStudentForActiveCourse(u){
+  if(!activeCourse) return false;
+  if(u.level !== activeCourse.level) return false;
+  if(activeCourse.option && u.option && u.option !== activeCourse.option) return false;
+  return true;
+}
 async function markStudentPresent(u, key){
   if(sessionMarked.has(u.matric)) return false;
   const now=new Date();
@@ -2512,14 +2601,22 @@ async function doScan(){
     }else{
       const u=students.find(x=>x.matric===m.label);
       if(!u){setS('DB error','err');resetScanBtn();return;}
+      // FIX 2: Ensure matched student belongs to this course level
+      if(!isStudentForActiveCourse(u)){
+        fails++;
+        drawB(ctx,res.detection.box,esc(u.name.split(' ')[0])+' Wrong Level','#d97706');
+        setS('⚠ '+esc(u.name)+' is '+u.level+' — not enrolled in this '+activeCourse.level+' course.','warn');
+        addLog('warn','Level mismatch: '+u.name+' ('+u.level+') scanned for '+activeCourse.level+' course');
+        resetScanBtn();return;
+      }
       if(sessionMarked.has(u.matric)){
-        setS(u.name.split(' ')[0]+' already marked for Week '+currentWeek+'.','warn');
-        drawB(ctx,res.detection.box,u.name.split(' ')[0]+' ✓ done','#d97706');
+        setS(esc(u.name.split(' ')[0])+' already marked for Week '+currentWeek+'.','warn');
+        drawB(ctx,res.detection.box,esc(u.name.split(' ')[0])+' \u2713 done','#d97706');
         addLog('warn','Duplicate: '+u.name);resetScanBtn();return;
       }
       await markStudentPresent(u, getScanKey());
-      drawB(ctx,res.detection.box,u.name.split(' ')[0]+' ✓','#059669');
-      setS('✓ '+u.name+' — Week '+currentWeek+' — '+conf+'% — PRESENT!','ok');
+      drawB(ctx,res.detection.box,esc(u.name.split(' ')[0])+' \u2713','#059669');
+      setS('\u2713 '+esc(u.name)+' \u2014 Week '+currentWeek+' \u2014 '+conf+'% \u2014 PRESENT!','ok');
       document.getElementById('m-wk').textContent=currentWeek;
       document.getElementById('mname').textContent=u.name;
       document.getElementById('mdept').textContent=u.level+(u.option?' · '+u.option:' · General')+' · '+activeCourse.code;
@@ -2586,15 +2683,21 @@ async function doMultiScan(){
       } else {
         const u=students.find(x=>x.matric===match.label);
         if(!u) continue;
+        // FIX 2: Skip students not belonging to this course level
+        if(!isStudentForActiveCourse(u)){
+          drawB(ctx,box,esc(u.name.split(' ')[0])+' Wrong Lvl','#d97706');
+          resultItems.push({status:'wrong',label:esc(u.name)+' — wrong level ('+u.level+')',conf,col:'#fcd34d',bg:'rgba(217,119,6,.18)'});
+          continue;
+        }
         if(sessionMarked.has(u.matric)){
           alreadyCount++;
-          drawB(ctx,box,u.name.split(' ')[0]+' ✓done','#d97706');
-          resultItems.push({status:'already',label:u.name,sub:'Already marked this week',conf,col:'#fcd34d',bg:'rgba(217,119,6,.18)'});
+          drawB(ctx,box,esc(u.name.split(' ')[0])+' \u2713done','#d97706');
+          resultItems.push({status:'already',label:esc(u.name),sub:'Already marked this week',conf,col:'#fcd34d',bg:'rgba(217,119,6,.18)'});
         } else {
           await markStudentPresent(u,key);
           presentCount++;
-          drawB(ctx,box,u.name.split(' ')[0]+' ✓','#059669');
-          resultItems.push({status:'present',label:u.name,sub:u.matric+' · '+u.level,conf,col:'#6ee7b7',bg:'rgba(5,150,105,.18)'});
+          drawB(ctx,box,esc(u.name.split(' ')[0])+' \u2713','#059669');
+          resultItems.push({status:'present',label:esc(u.name),sub:esc(u.matric)+' \u00b7 '+esc(u.level),conf,col:'#6ee7b7',bg:'rgba(5,150,105,.18)'});
         }
       }
     }
@@ -2642,7 +2745,25 @@ async function finaliseSession(){
   if(!activeCourse){setS('Select a course first.','warn');return;}
   const courseStudents=getStudentsForCourse(activeCourse);
   if(!courseStudents.length){setS('No students for this level.','warn');return;}
+
+  // FIX 7: Always reload fresh attendance data before counting who is absent
+  setS('Loading latest attendance data...','info');
+  await loadWeeklyData();
+
   const key=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk'+currentWeek;
+  const alreadyPresent=courseStudents.filter(u=>weeklyData[u.matric]&&weeklyData[u.matric][key]&&weeklyData[u.matric][key].status==='P').length;
+  const willBeAbsent=courseStudents.length-alreadyPresent;
+
+  // FIX 8: Show confirmation modal with exact counts before proceeding
+  const confirmed=confirm(
+    'FINALISE ATTENDANCE — Week '+currentWeek+'\n'+
+    'Course: '+activeCourse.code+' — '+activeCourse.title+'\n\n'+
+    '✅ Already marked present: '+alreadyPresent+' students\n'+
+    '❌ Will be marked ABSENT: '+willBeAbsent+' students\n\n'+
+    'This will mark '+willBeAbsent+' student(s) as absent. Continue?'
+  );
+  if(!confirmed){setS('Finalise cancelled.','warn');return;}
+
   const now=new Date();
   const ts=now.toTimeString().slice(0,8);
   const dateStr=now.toLocaleDateString('en-GB');
@@ -2658,7 +2779,7 @@ async function finaliseSession(){
   const presentCount=courseStudents.filter(u=>weeklyData[u.matric]&&weeklyData[u.matric][key]&&weeklyData[u.matric][key].status==='P').length;
   renderWeeklyGrid();
   document.getElementById('mfin-body').innerHTML=
-    `<b>${activeCourse.code}</b><br>${getAcademicSession()} · ${getSemester()} · Week ${currentWeek}<br><br>`+
+    `<b>${esc(activeCourse.code)}</b><br>${esc(getAcademicSession())} · ${esc(getSemester())} · Week ${currentWeek}<br><br>`+
     `✅ <b style="color:var(--green)">${presentCount} Present</b><br>`+
     `❌ <b style="color:var(--red)">${absentCount} Absent</b><br>`+
     `📊 Total: ${courseStudents.length} students`;
@@ -2964,7 +3085,7 @@ function updateWarningBanner(warnings){
   // Only HOD sees the warning banner — lecturers are not shown who is at risk
   if(currentUserRole!=='admin'||!warnings.length){b.classList.remove('show');document.getElementById('a-warn').textContent=warnings.length||'0';return;}
   b.classList.add('show');
-  l.innerHTML=warnings.map(w=>`<div class="wb-item"><span>${w.name} — <span class="mono">${w.matric}</span></span><span class="wb-pct">${w.pct}% ⚠</span></div>`).join('');
+  l.innerHTML=warnings.map(w=>`<div class="wb-item"><span>${esc(w.name)} — <span class="mono">${esc(w.matric)}</span></span><span class="wb-pct">${w.pct}% ⚠</span></div>`).join('');
   document.getElementById('a-warn').textContent=warnings.length;
 }
 
@@ -3149,8 +3270,8 @@ function renderAtRiskList(){
     <div class="risk-row">
       <div class="risk-pct">${u.pct}%</div>
       <div class="risk-info">
-        <div class="risk-name">${u.name}</div>
-        <div class="risk-sub">${u.matric} · ${u.present}/${currentWeek} classes · ${u.level}</div>
+        <div class="risk-name">${esc(u.name)}</div>
+        <div class="risk-sub">${esc(u.matric)} · ${u.present}/${currentWeek} classes · ${esc(u.level)}</div>
       </div>
     </div>`).join('');
 }
@@ -3470,12 +3591,12 @@ async function exportFullDB(){
 // ── AUTO-LOGOUT (15 min inactivity) ──────────────────────────────
 // ── AUTO-LOGOUT (configurable) ────────────────────────────────────
 let _idleTimer=null;
-let _autoLogoutMinutes=parseInt(localStorage.getItem('autoLogoutMinutes')||'15');
-let _offlineQueueEnabled=(localStorage.getItem('offlineQueueEnabled')||'1')==='1';
+let _autoLogoutMinutes=parseInt(lsGet('autoLogoutMinutes')||'15');
+let _offlineQueueEnabled=(lsGet('offlineQueueEnabled')||'1')==='1';
 
 function setAutoLogoutDuration(val){
   _autoLogoutMinutes=parseInt(val);
-  localStorage.setItem('autoLogoutMinutes',val);
+  lsSet('autoLogoutMinutes',val);
   resetIdleTimer();
   const label=val==='0'?'Off':val+' min';
   addLog('info','Auto-logout set to: '+label);
@@ -3483,7 +3604,7 @@ function setAutoLogoutDuration(val){
 
 function setOfflineQueueEnabled(val){
   _offlineQueueEnabled=val==='1';
-  localStorage.setItem('offlineQueueEnabled',val);
+  lsSet('offlineQueueEnabled',val);
   addLog('info','Offline scan queue: '+(_offlineQueueEnabled?'On':'Off'));
 }
 
@@ -3514,9 +3635,9 @@ function resetIdleTimer(){
 ['click','keydown','touchstart','mousemove'].forEach(evt=>document.addEventListener(evt,resetIdleTimer,true));
 
 // ── OFFLINE SCAN QUEUE ────────────────────────────────────────────
-let offlineQueue=JSON.parse(localStorage.getItem('offlineQueue')||'[]');
+let offlineQueue=JSON.parse(lsGet('offlineQueue')||'[]');
 function updateOfflineQueueBanner() {
-  const queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+  const queue = JSON.parse(lsGet('offlineQueue') || '[]');
   const banner = document.getElementById('offline-queue-banner');
   const msg = document.getElementById('offline-queue-msg');
   if (!banner) return;
@@ -3539,7 +3660,7 @@ async function flushOfflineQueue(){
     }catch(e){failed.push(item);}
   }
   offlineQueue=failed;
-  localStorage.setItem('offlineQueue',JSON.stringify(offlineQueue));
+  lsSet('offlineQueue',JSON.stringify(offlineQueue));
   updateOfflineQueueBanner();
   if(!failed.length) addLog('ok','All offline scans synced successfully');
   else addLog('warn', failed.length + ' scan(s) still pending — still offline?');
@@ -3548,7 +3669,7 @@ window.addEventListener('online',flushOfflineQueue);
 
 // FIX 10: Warn before leaving if offline queue has unsynced scans
 window.addEventListener('beforeunload', (e) => {
-  const queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+  const queue = JSON.parse(lsGet('offlineQueue') || '[]');
   if (queue.length > 0) {
     const msg = queue.length + ' offline scan(s) are not yet synced to the cloud. Closing now may lose them. Stay on the page until you are online and they sync.';
     e.preventDefault();
@@ -3749,12 +3870,12 @@ function renderList(){
     levels.forEach(lvl => {
       const group = filtered.filter(u => u.level === lvl);
       if (!group.length) return;
-      html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);background:var(--blue-l);padding:5px 12px;border-radius:7px;margin-bottom:5px;border:1px solid var(--blue-b)">${lvl} — ${group.length} student(s)</div>`;
+      html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);background:var(--blue-l);padding:5px 12px;border-radius:7px;margin-bottom:5px;border:1px solid var(--blue-b)">${esc(lvl)} — ${group.length} student(s)</div>`;
       html += group.map((u,i) => `
         <div class="ei">
           <div class="ein">${i+1}</div>
-          <div class="eii"><div class="ein2">${u.name}</div><div class="eim">${u.matric} · ${u.level}${u.option?' · '+u.option:''}</div></div>
-          ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${u.matric}')">✏</button><button class="edel" onclick="deleteStudent('${u.matric}')">✕</button></div>`:''}
+          <div class="eii"><div class="ein2">${esc(u.name)}</div><div class="eim">${esc(u.matric)} · ${esc(u.level)}${u.option?' · '+esc(u.option):''}</div></div>
+          ${currentUserRole==='admin'?`<div style="display:flex;gap:5px"><button style="background:var(--blue-l);color:var(--blue);border:none;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer;font-weight:800" onclick="editStudent('${esc(u.matric)}')">✏</button><button class="edel" onclick="deleteStudent('${esc(u.matric)}')">✕</button></div>`:''}
         </div>`).join('');
     });
   } else {
@@ -4053,7 +4174,21 @@ async function removeMasterEntry(matric) {
 }
 
 async function clearMasterList() {
-  if (!confirm('Delete the entire master student list? Students will no longer be able to self-enroll.')) return;
+  if(currentUserRole!=='admin'){alert('Only the HOD can clear the master list.');return;}
+  const count = masterList.length;
+  if(!count){alert('Master list is already empty.');return;}
+  // FIX 11: Require typing DELETE to prevent accidental wipe
+  const typed = prompt(
+    'DANGER: This will permanently delete ALL '+count+' students from the master list.\n\n'+
+    'Students will no longer be able to self-enroll.\n'+
+    'This CANNOT be undone.\n\n'+
+    'Type  DELETE  (all caps) to confirm:'
+  );
+  if(typed === null) return; // cancelled
+  if(typed.trim() !== 'DELETE'){
+    alert('Cancelled — you must type DELETE exactly to confirm this action.');
+    return;
+  }
   try {
     const snap = await dbFB.collection('masterlist').get();
     const batch = dbFB.batch();
@@ -4062,7 +4197,14 @@ async function clearMasterList() {
     masterList = [];
     renderMasterList();
     document.getElementById('master-count-badge').textContent = '0 students';
-    addLog('warn', 'Master list cleared');
+    document.getElementById('master-list-count').textContent = '0';
+    // Log to audit trail
+    await dbFB.collection('audit_log').add({
+      type:'master_list_cleared', count, clearedBy:currentUserName,
+      timestamp:new Date().toISOString()
+    });
+    setAdminSt('Master list cleared ('+count+' students removed). This action has been logged.','warn');
+    addLog('warn','MASTER LIST CLEARED: '+count+' students deleted by '+currentUserName);
   } catch(e) { alert('Error: ' + e.message); }
 }
 
@@ -4192,7 +4334,7 @@ function printMasterList() {
   let rows = sorted.map((s,i) =>
     `<tr><td>${i+1}</td><td style="font-family:monospace">${s.matric}</td><td>${s.name}</td><td>${s.level}</td><td>${s.option||'General'}</td></tr>`
   ).join('');
-  const logoUrl = (() => { try{ return localStorage.getItem('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
+  const logoUrl = (() => { try{ return lsGet('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
   const html = `<html><head><title>GAPOSA EEE Master Student List</title>${getReportStyles()}</head><body>
   ${getReportHeader('Master Student List')}
   <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${masterList.length} students</p>
@@ -4213,13 +4355,35 @@ function printMasterList() {
 let spStream = null, spSamples = [], spStudentData = null;
 const SP_SAMPLES_NEEDED = 4;
 
-async function checkStudentMasterList(val) {
+// FIX 6: Rate limiting for student matric lookup — max 10 lookups per minute
+let _spLookupCount = 0;
+let _spLookupWindowStart = Date.now();
+let _spLookupDebounce = null;
+const SP_RATE_LIMIT = 10; // max lookups per minute
+
+function checkStudentMasterList(val) {
+  // Debounce: wait 600ms after last keystroke before firing
+  clearTimeout(_spLookupDebounce);
+  _spLookupDebounce = setTimeout(() => _doCheckStudentMasterList(val), 600);
+}
+
+async function _doCheckStudentMasterList(val) {
   const statusEl = document.getElementById('st-matric-status');
   const detailsEl = document.getElementById('st-details-block');
   val = val.trim();
   statusEl.style.display = 'none';
   detailsEl.style.display = 'none';
   if (val.length < 6) return;
+
+  // Rate limit check — reset window every 60 seconds
+  const now = Date.now();
+  if(now - _spLookupWindowStart > 60000){ _spLookupCount = 0; _spLookupWindowStart = now; }
+  _spLookupCount++;
+  if(_spLookupCount > SP_RATE_LIMIT){
+    statusEl.textContent = '⚠️ Too many attempts. Please wait a moment before trying again.';
+    statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    return;
+  }
 
   // Show searching indicator immediately
   statusEl.textContent = '🔍 Searching...';
