@@ -655,8 +655,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <div class="sh" style="margin-bottom:10px">
       <div class="shtt">📋 Weekly Register</div>
       <div style="display:flex;gap:6px">
-        <button class="smbtn" onclick="exportWeeklyCSV()">⤓ CSV</button>
-        <button class="smbtn" onclick="window.print()">🖨 Print</button>
+        <button class="smbtn" onclick="printWeeklyRegister()">🖨️ Print</button>
       </div>
     </div>
     <div class="card" style="margin-bottom:11px">
@@ -883,7 +882,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
             <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()">⤓ Template</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-            <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#047857);" onclick="printMasterList()">🖨️ Print List</button>
+            <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#047857);" onclick="openPrintMasterModal()">🖨️ Print List</button>
             <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()">🗑️ Clear All</button>
           </div>
           <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
@@ -967,10 +966,10 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       </div>
       <!-- Export -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">📥</div><span class="card-ttl">Data Export</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">🖨️</div><span class="card-ttl">Reports & Export</span></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#047857);" onclick="exportFullSemesterCSV()">📊 Full Semester CSV</button>
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#047857);" onclick="printFullSemesterReport()">🖨️ Full Semester Report</button>
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
           </div>
         </div>
@@ -1001,68 +1000,6 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           </div>
           <div id="logo-preview-area" style="margin-bottom:10px;"></div>
           <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()">🖼️ Upload School Logo (PNG/JPG, max 500KB)</button>
-        </div>
-      </div>
-      <!-- Firestore Security Rules -->
-      <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--red-l)">🛡️</div><span class="card-ttl">Firebase Security Rules</span><span id="rules-status-badge" class="cbadge">Not Checked</span></div>
-        <div class="card-body">
-          <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6;">
-            ⚠️ <b>Critical:</b> Your Firebase API key is visible in the app source. The only protection for your data is Firestore Security Rules. Copy and paste the rules below into your Firebase Console → Firestore → Rules tab, then publish.
-          </div>
-          <div style="background:#0f172a;border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e2e8f0;line-height:1.7;overflow-x:auto;margin-bottom:10px;white-space:pre;">rules_version = '2';
-service cloud.firestore {
-  match /databases/{db}/documents {
-
-    // Only authenticated users (lecturers/HOD) can read students
-    match /students/{matric} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role
-           in ['admin','lecturer'];
-    }
-
-    // Weekly attendance — lecturers can write, all auth can read
-    match /weekly/{matric} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role
-           in ['admin','lecturer'];
-    }
-
-    // Master list — HOD only can write
-    match /masterlist/{matric} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Users — read own doc; write only as admin
-    match /users/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      // Allow new user creation (registration)
-      allow create: if request.auth != null;
-    }
-
-    // Settings — HOD only
-    match /settings/{doc} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Audit log — HOD only can read; authenticated can write (append only)
-    match /audit_log/{entry} {
-      allow read: if request.auth != null
-        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      allow create: if request.auth != null;
-      allow update, delete: if false; // audit entries are immutable
-    }
-  }
-}</div>
-          <button class="btn bb" style="width:100%;padding:11px;font-size:12px;" onclick="copyFirestoreRules()">📋 Copy Rules to Clipboard</button>
         </div>
       </div>
       <!-- Auto-logout + Offline Queue settings -->
@@ -2009,33 +1946,45 @@ const SCHOOL_LOGO_URL = (function(){
 })();
 
 function getReportHeader(subtitle) {
-  const logoHtml = SCHOOL_LOGO_URL
-    ? `<img src="${SCHOOL_LOGO_URL}" style="width:64px;height:64px;object-fit:contain;border-radius:8px;border:2px solid #1a3a6b;" alt="School Logo">`
-    : `<div style="width:64px;height:64px;border-radius:8px;background:linear-gradient(135deg,#1a3a6b,#1a56db);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <div style="text-align:center;color:white;font-size:11px;font-weight:900;line-height:1.1;font-family:Arial,sans-serif">GPA<br>OSA</div>
-       </div>`;
+  // Always read fresh at print time — not from the startup constant
+  const savedLogo = lsGet('schoolLogoDataUrl') || '';
+  const logoHtml = savedLogo
+    ? `<img src="${savedLogo}" style="width:70px;height:70px;object-fit:contain;display:block;" alt="School Logo">`
+    : `<div style="width:70px;height:70px;border:2px solid #000;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:900;text-align:center;line-height:1.3;color:#000;font-family:Arial,sans-serif;">GATEWAY<br>POLY<br>GAPOSA</div>`;
   return `
-    <div style="display:flex;align-items:center;gap:16px;border-bottom:3px solid #1a3a6b;padding-bottom:12px;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:14px;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
       ${logoHtml}
       <div style="flex:1;">
-        <div style="font-size:18px;font-weight:900;color:#1a3a6b;line-height:1.2;">The Gateway Polytechnic, Saapade</div>
-        <div style="font-size:12px;color:#475569;margin-top:2px;">Department of Electrical &amp; Electronic Engineering Technology</div>
-        ${subtitle ? '<div style="font-size:11px;color:#1a56db;font-weight:700;margin-top:3px;">'+subtitle+'</div>' : ''}
+        <div style="font-size:17px;font-weight:900;color:#000;letter-spacing:.3px;line-height:1.2;">THE GATEWAY POLYTECHNIC, SAAPADE</div>
+        <div style="font-size:11px;color:#333;margin-top:3px;">Department of Electrical &amp; Electronic Engineering Technology</div>
+        ${subtitle ? `<div style="font-size:12px;font-weight:700;color:#000;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;border-top:1px solid #ccc;padding-top:4px;">${subtitle}</div>` : ''}
       </div>
     </div>`;
 }
 
 function getReportStyles() {
   return `<style>
-    *{box-sizing:border-box;}
-    body{font-family:Arial,sans-serif;padding:20px;font-size:13px;color:#0f172a;}
-    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px;}
-    th{background:#1a3a6b;color:white;padding:8px 10px;text-align:left;font-size:12px;}
-    td{padding:7px 10px;border-bottom:1px solid #e2e8f0;vertical-align:middle;}
-    tr:nth-child(even) td{background:#f8faff;}
-    .meta{color:#475569;font-size:12px;margin-bottom:4px;line-height:1.5;}
-    .footer{margin-top:24px;font-size:10px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:10px;}
-    @media print{body{padding:10px;}}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #000; background: #fff; padding: 18px 22px; }
+    h3 { font-size: 13px; font-weight: bold; margin: 10px 0 4px 0; border-bottom: 1px solid #000; padding-bottom: 3px; }
+    .meta { font-size: 11px; color: #333; margin-bottom: 3px; line-height: 1.6; }
+    .meta b { color: #000; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+    th { background: #f0f0f0; color: #000; border: 1px solid #999; padding: 6px 8px; text-align: left; font-weight: bold; font-size: 11px; }
+    td { padding: 5px 8px; border: 1px solid #ccc; vertical-align: middle; }
+    tr:nth-child(even) td { background: #fafafa; }
+    .ok  { font-weight: bold; }
+    .low { font-weight: bold; text-decoration: underline; }
+    .badge { display: inline-block; border: 1px solid #999; padding: 1px 6px; font-size: 10px; font-weight: bold; border-radius: 3px; }
+    .section-hdr td { background: #e8e8e8 !important; font-weight: bold; border: 1px solid #888; font-size: 11px; }
+    .footer { margin-top: 18px; font-size: 10px; color: #555; text-align: center; border-top: 1px solid #bbb; padding-top: 8px; }
+    .info-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 10px; }
+    .info-cell { font-size: 11px; }
+    .info-cell span { font-weight: bold; }
+    @media print {
+      body { padding: 8px 12px; }
+      @page { margin: 1cm; }
+    }
   </style>`;
 }
 
@@ -2980,41 +2929,181 @@ async function renderWeeklyGrid(){
 
 
 // ── BULK EXPORT — All courses, all students (HOD only) ────────────
-async function exportFullSemesterCSV(){
-  if(currentUserRole!=='admin'){alert('Only the HOD can do a full export.');return;}
-  await loadStudents();await loadWeeklyData();
-  const now=new Date();
-  let csv='THE GATEWAY POLYTECHNIC SAAPADE\n';
-  csv+='DEPARTMENT OF ELECTRICAL & ELECTRONIC ENGINEERING TECHNOLOGY\n';
-  csv+='FULL SEMESTER ATTENDANCE REPORT\n';
-  csv+=`Academic Session:,${getAcademicSession()}\nSemester:,${getSemester()}\nExported By:,${currentUserName}\nExport Date:,${now.toLocaleDateString('en-GB')} ${now.toTimeString().slice(0,5)}\n\n`;
-  // Group students by level
-  const levels=['ND 1','ND 2','HND 1','HND 2'];
+async function exportFullSemesterCSV(){ await printFullSemesterReport(); } // legacy alias
+
+async function printFullSemesterReport(){
+  if(currentUserRole!=='admin'){alert('Only the HOD can print the full semester report.');return;}
+  await loadStudents(); await loadWeeklyData();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const levels = ['ND 1','ND 2','HND 1','HND 2'];
+  const semNum = getSemester().includes('1st') ? 1 : 2;
+  let sectionsHtml = '';
+
   for(const lvl of levels){
-    const lvlStudents=students.filter(u=>u.level===lvl);
-    if(!lvlStudents.length)continue;
-    csv+=`\n=== ${lvl} ===\n`;
-    csv+='Matric,Name,Option';
-    // Get all course keys for this level
-    const lvlCourses=COURSES.filter(c2=>c2.level===lvl&&c2.sem===(getSemester().includes('1st')?1:2));
-    lvlCourses.forEach(c2=>csv+=`,${c2.code}`);
-    csv+='\n';
-    lvlStudents.forEach(u=>{
-      csv+=`"${u.matric}","${u.name}","${u.option||'General'}"`;
-      lvlCourses.forEach(c2=>{
-        const baseKey=c2.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
-        let present=0;
-        for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
-        const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
-        csv+=`,${pct}%`;
+    const lvlStudents = students.filter(u => u.level === lvl);
+    if(!lvlStudents.length) continue;
+    const lvlCourses = COURSES.filter(c => c.level === lvl && c.sem === semNum);
+    if(!lvlCourses.length) continue;
+
+    // Week header cells
+    const wkHeaders = Array.from({length:currentWeek},(_,i)=>`<th style="text-align:center;min-width:22px;padding:4px 3px;font-size:9px;">W${i+1}</th>`).join('');
+    const courseHeaders = lvlCourses.map(c=>`<th style="text-align:center;padding:4px 3px;font-size:9px;white-space:nowrap;">${esc(c.code)}</th>`).join('');
+
+    let rows = '';
+    // Group HND by option
+    const groups = lvl.startsWith('HND')
+      ? [['Power and Machines', lvlStudents.filter(u=>u.option==='Power and Machines')],
+         ['Electronics and Telecommunication', lvlStudents.filter(u=>u.option==='Electronics and Telecommunication')]]
+      : [['General', lvlStudents]];
+
+    groups.forEach(([optLabel, grp]) => {
+      if(!grp.length) return;
+      rows += `<tr class="section-hdr"><td colspan="${4+lvlCourses.length}">${lvl}${lvl.startsWith('HND')?' — '+optLabel:''} &nbsp; (${grp.length} student${grp.length!==1?'s':''})</td></tr>`;
+      grp.forEach((u,i) => {
+        const pctCols = lvlCourses.map(c => {
+          const baseKey = c.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+          let present=0;
+          for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+          const pct = currentWeek>0 ? Math.round(present/currentWeek*100) : 0;
+          const cls = pct < 75 ? 'low' : 'ok';
+          return `<td style="text-align:center;font-size:10px;" class="${cls}">${pct}%</td>`;
+        }).join('');
+        rows += `<tr>
+          <td style="text-align:center;font-size:10px;">${i+1}</td>
+          <td style="font-size:10px;font-family:monospace;">${esc(u.matric)}</td>
+          <td style="font-size:10px;">${esc(u.name)}</td>
+          <td style="font-size:10px;">${esc(u.option||'General')}</td>
+          ${pctCols}
+        </tr>`;
       });
-      csv+='\n';
     });
+
+    sectionsHtml += `
+      <h3 style="margin-top:18px;">${lvl} — Attendance Summary (Week 1 to ${currentWeek})</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px;text-align:center;">#</th>
+            <th>Matric No.</th>
+            <th>Full Name</th>
+            <th>Option</th>
+            ${courseHeaders}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
   }
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download=`GAPOSA_EEE_FULL_${getAcademicSession().replace('/','_')}_${getSemester().replace(/\s/g,'_')}.csv`;
-  a.click();addLog('info','Full semester CSV exported by '+currentUserName);
+
+  const html = `<html><head><title>Full Semester Attendance Report</title>${getReportStyles()}
+  <style>
+    table { font-size:10px; }
+    th,td { padding:4px 6px; }
+    .low { color:#000; font-weight:bold; text-decoration:underline; }
+    .ok  { color:#000; }
+    h3   { font-size:12px; font-weight:bold; margin:14px 0 4px 0; border-bottom:1px solid #000; padding-bottom:3px; page-break-before: auto; }
+    @media print { table { page-break-inside: auto; } tr { page-break-inside: avoid; } }
+  </style>
+  </head><body>
+  ${getReportHeader('FULL SEMESTER ATTENDANCE REPORT')}
+  <div class="info-row">
+    <div class="info-cell">Session: <span>${getAcademicSession()} · ${getSemester()}</span></div>
+    <div class="info-cell">Weeks Held: <span>${currentWeek} of ${MAX_WEEKS}</span></div>
+    <div class="info-cell">Printed: <span>${dateStr}</span></div>
+    <div class="info-cell">Printed By: <span>${esc(currentUserName)}</span></div>
+  </div>
+  <div style="font-size:10px;border:1px solid #ccc;padding:5px 8px;border-radius:4px;background:#f9f9f9;margin-bottom:8px;">
+    <b>Note:</b> Percentages shown are attendance rate per course up to Week ${currentWeek}. 
+    Figures <b style="text-decoration:underline;">underlined</b> are below 75% — action required.
+  </div>
+  ${sectionsHtml}
+  <div class="footer">The Gateway Polytechnic, Saapade &nbsp;·&nbsp; EEE Attendance System &nbsp;·&nbsp; Printed: ${now.toLocaleString('en-GB')}</div>
+  </body></html>`;
+
+  const w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); setTimeout(()=>w.print(),500); }
+  addLog('info','Full semester report printed by '+currentUserName);
+}
+
+async function printWeeklyRegister(){
+  if(!activeCourse){alert('Select a course first, then print.');return;}
+  await loadWeeklyData();
+  const courseStudents = getStudentsForCourse(activeCourse);
+  if(!courseStudents.length){alert('No students enrolled for this course level.');return;}
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const baseKey = activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+  const weeks = Array.from({length:currentWeek},(_,i)=>i+1);
+
+  const wkHeaders = weeks.map(w=>`<th style="text-align:center;min-width:24px;padding:5px 3px;">${w}</th>`).join('');
+
+  const rows = courseStudents.map((u,i)=>{
+    let present=0;
+    const cells = weeks.map(w=>{
+      const k = baseKey+w;
+      const e = weeklyData[u.matric] && weeklyData[u.matric][k];
+      if(!e) return `<td style="text-align:center;color:#aaa;">—</td>`;
+      const isP = e.status==='P';
+      present += isP?1:0;
+      return `<td style="text-align:center;font-weight:bold;">${isP?'P':'A'}</td>`;
+    }).join('');
+    const pct = currentWeek>0 ? Math.round(present/currentWeek*100) : 0;
+    const pctStyle = pct<75 ? 'font-weight:bold;text-decoration:underline;' : 'font-weight:bold;';
+    return `<tr>
+      <td style="text-align:center;">${i+1}</td>
+      <td style="font-family:monospace;font-size:10px;">${esc(u.matric)}</td>
+      <td>${esc(u.name)}</td>
+      ${cells}
+      <td style="text-align:center;${pctStyle}">${pct}%</td>
+    </tr>`;
+  }).join('');
+
+  const presentTotal = courseStudents.filter(u=>{
+    const k = baseKey+currentWeek;
+    return weeklyData[u.matric]&&weeklyData[u.matric][k]&&weeklyData[u.matric][k].status==='P';
+  }).length;
+
+  const html = `<html><head><title>Attendance Register — ${activeCourse.code}</title>${getReportStyles()}
+  <style>
+    th,td{padding:5px 6px;font-size:11px;}
+    .low{font-weight:bold;text-decoration:underline;}
+    @media print{table{page-break-inside:auto;}tr{page-break-inside:avoid;}}
+  </style>
+  </head><body>
+  ${getReportHeader('ATTENDANCE REGISTER')}
+  <div class="info-row">
+    <div class="info-cell">Course Code: <span>${esc(activeCourse.code)}</span></div>
+    <div class="info-cell">Course Title: <span>${esc(activeCourse.title)}</span></div>
+    <div class="info-cell">Level: <span>${esc(activeCourse.level)}${activeCourse.option?' · '+esc(activeCourse.option):''}</span></div>
+  </div>
+  <div class="info-row">
+    <div class="info-cell">Session: <span>${esc(getAcademicSession())} · ${esc(getSemester())}</span></div>
+    <div class="info-cell">Weeks Held: <span>${currentWeek} of ${MAX_WEEKS}</span></div>
+    <div class="info-cell">Total Students: <span>${courseStudents.length}</span></div>
+    <div class="info-cell">Printed: <span>${dateStr}</span></div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30px;text-align:center;">#</th>
+        <th>Matric No.</th>
+        <th>Full Name</th>
+        ${wkHeaders}
+        <th style="text-align:center;">Att%</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div style="margin-top:10px;font-size:10px;border:1px solid #ccc;padding:5px 8px;background:#f9f9f9;border-radius:4px;">
+    <b>P</b> = Present &nbsp;&nbsp; <b>A</b> = Absent &nbsp;&nbsp; <b>—</b> = Not recorded &nbsp;&nbsp;
+    <b style="text-decoration:underline;">Underlined %</b> = Below 75% attendance
+  </div>
+  <div class="footer">The Gateway Polytechnic, Saapade &nbsp;·&nbsp; EEE Attendance System &nbsp;·&nbsp; Printed: ${now.toLocaleString('en-GB')}</div>
+  </body></html>`;
+
+  const w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); setTimeout(()=>w.print(),400); }
+  addLog('info','Weekly register printed: '+activeCourse.code+' — '+courseStudents.length+' students');
 }
 // ── ATTENDANCE CORRECTION (Admin/HOD only) ────────────────────────
 function openCorrection(matric,name){
@@ -3707,7 +3796,13 @@ async function renderPendingLecturers(){
   const el = document.getElementById('pending-list');
   const badge = document.getElementById('pending-badge');
   if(!el) return;
+  // Only run if HOD is logged in
+  if(currentUserRole !== 'admin') {
+    el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">HOD access required</div>';
+    return;
+  }
   try{
+    // Query users where role == 'pending' — works because HOD's Firestore rules allow admin to read all user docs
     const snap = await dbFB.collection('users').where('role','==','pending').get();
     badge.textContent = snap.size;
     if(snap.empty){
@@ -3719,17 +3814,41 @@ async function renderPendingLecturers(){
       const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
       const courseCount = (u.assignedCourses||[]).length;
       return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
-        <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${u.name}</div>
-        <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${u.email} · Registered ${regDate} · ${courseCount} course(s) selected</div>
+        <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${esc(u.name||'Unknown')}</div>
+        <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${esc(u.email||'')} · Registered ${regDate} · ${courseCount} course(s) selected</div>
         <div style="display:flex;gap:8px;">
-          <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
-          <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
+          <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
+          <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
         </div>
       </div>`;
     }).join('');
   }catch(e){
-    el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">Error loading: '+e.message+'</div>';
-    addLog('err','Load pending lecturers: '+e.message);
+    // If the rules block the where() query, fall back to fetching all users and filtering client-side
+    try {
+      const allSnap = await dbFB.collection('users').get();
+      const pendingDocs = allSnap.docs.filter(d => d.data().role === 'pending');
+      badge.textContent = pendingDocs.length;
+      if(!pendingDocs.length){
+        el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ No pending approvals</div>';
+        return;
+      }
+      el.innerHTML = pendingDocs.map(d=>{
+        const u=d.data(); const uid=d.id;
+        const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
+        const courseCount = (u.assignedCourses||[]).length;
+        return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
+          <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${esc(u.name||'Unknown')}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${esc(u.email||'')} · Registered ${regDate} · ${courseCount} course(s) selected</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
+            <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e2) {
+      el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;line-height:1.6;">⚠ Could not load pending approvals.<br><small>Go to Firebase Console → Firestore → Rules and update the <b>users</b> rule to allow admin to read all users:<br><code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;">allow read: if request.auth != null && (request.auth.uid == uid || get(...).data.role == \'admin\');</code></small></div>';
+      addLog('err','Load pending lecturers: '+e2.message);
+    }
   }
 }
 
@@ -3761,23 +3880,36 @@ async function rejectLecturer(uid, name){
 }
 
 async function renderLecturerList(){
+  if(currentUserRole !== 'admin') return;
+  const el=document.getElementById('lec-list');
+  const buildRow = (d) => {
+    const u=d.data(); const uid=d.id;
+    const courseCount=(u.assignedCourses||[]).length;
+    return `<div class="ei">
+      <div class="ein">L</div>
+      <div class="eii">
+        <div class="ein2">${esc(u.name||'')}</div>
+        <div class="eim">${esc(u.email||'')} · <span style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned</span></div>
+      </div>
+      <button class="edel" onclick="deleteLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" title="Delete lecturer account">✕</button>
+    </div>`;
+  };
   try{
     const snap=await dbFB.collection('users').where('role','==','lecturer').get();
-    const el=document.getElementById('lec-list');
     if(snap.empty){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
-    el.innerHTML=snap.docs.map(d=>{
-      const u=d.data(); const uid=d.id;
-      const courseCount=(u.assignedCourses||[]).length;
-      return `<div class="ei">
-        <div class="ein">L</div>
-        <div class="eii">
-          <div class="ein2">${u.name}</div>
-          <div class="eim">${u.email} · <span style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned</span></div>
-        </div>
-        <button class="edel" onclick="deleteLecturer('${uid}','${u.name.replace(/'/g,'')}')" title="Delete lecturer account">✕</button>
-      </div>`;
-    }).join('');
-  }catch(e){addLog('err','Load lecturers: '+e.message);}
+    el.innerHTML=snap.docs.map(buildRow).join('');
+  }catch(e){
+    // Fallback if where() is blocked — read all and filter client-side
+    try{
+      const allSnap=await dbFB.collection('users').get();
+      const lecturers=allSnap.docs.filter(d=>d.data().role==='lecturer');
+      if(!lecturers.length){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
+      el.innerHTML=lecturers.map(buildRow).join('');
+    }catch(e2){
+      el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">⚠ Permission error loading lecturers. Please update your Firestore rules to allow admin to read all user documents.</div>';
+      addLog('err','Load lecturers: '+e2.message);
+    }
+  }
 }
 
 async function deleteLecturer(uid, name) {
@@ -3832,12 +3964,17 @@ function printEnrolledStudents() {
       bodyHtml += `<tr><td>${i+1}</td><td style="font-family:monospace">${u.matric}</td><td>${u.name}</td><td>${u.level}</td><td>${u.option||'General'}</td></tr>`;
     });
   }
-  const html = `<html><head><title>GAPOSA EEE Enrolled Students</title>${getReportStyles()}</head><body>
-  ${getReportHeader('Enrolled Students — ' + levelLabel)}
-  <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${filtered.length} student(s)</p>
-  <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
-  <tbody>${bodyHtml}</tbody></table>
-  <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
+  const html = `<html><head><title>Enrolled Students</title>${getReportStyles()}</head><body>
+  ${getReportHeader('ENROLLED STUDENTS — ' + levelLabel.toUpperCase())}
+  <div class="info-row">
+    <div class="info-cell">Printed: <span>${dateStr}</span></div>
+    <div class="info-cell">Total: <span>${filtered.length} student${filtered.length!==1?'s':''}</span></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:36px">#</th><th>Matric No.</th><th>Full Name</th><th>Level</th><th>Specialisation / Option</th></tr></thead>
+    <tbody>${bodyHtml}</tbody>
+  </table>
+  <div class="footer">The Gateway Polytechnic, Saapade — EEE Attendance System &nbsp;|&nbsp; Printed: ${new Date().toLocaleString('en-GB')}</div>
   </body></html>`;
   const w = window.open('', '_blank');
   w.document.write(html);
@@ -4321,32 +4458,116 @@ function setMasterSt(m, t='') {
   if (b) { b.textContent = m; b.className = 'st ' + t; }
 }
 
-function printMasterList() {
+function openPrintMasterModal() {
   if (!masterList.length) { alert('No students in master list yet.'); return; }
+  openM('mprint-master');
+}
+
+function executePrintMasterList() {
+  const sel = document.getElementById('print-master-select').value;
+  closeM('mprint-master');
+  printMasterList(sel);
+}
+
+function printMasterList(filter) {
+  if (!masterList.length) { alert('No students in master list yet.'); return; }
+  filter = filter || 'all';
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  // Sort by level then name
+  const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
   const levelOrder = ['ND 1','ND 2','HND 1','HND 2'];
-  const sorted = [...masterList].sort((a,b)=>{
+
+  // Determine what to print
+  let toPrint = [];
+  let subtitle = 'MASTER STUDENT LIST';
+
+  if (filter === 'all') {
+    toPrint = [...masterList];
+    subtitle = 'MASTER STUDENT LIST — ALL LEVELS';
+  } else if (filter.includes('|')) {
+    const [lvl, opt] = filter.split('|');
+    toPrint = masterList.filter(s => s.level === lvl && (s.option||'') === opt);
+    subtitle = `MASTER STUDENT LIST — ${lvl.toUpperCase()} (${opt.toUpperCase()})`;
+  } else {
+    toPrint = masterList.filter(s => s.level === filter);
+    subtitle = `MASTER STUDENT LIST — ${filter.toUpperCase()}`;
+  }
+
+  if (!toPrint.length) { alert('No students found for the selected filter.'); return; }
+
+  // Sort: level order then name
+  toPrint.sort((a,b) => {
     const li = levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level);
-    return li !== 0 ? li : a.name.localeCompare(b.name);
+    if (li !== 0) return li;
+    if (a.option && b.option && a.option !== b.option) return a.option.localeCompare(b.option);
+    return a.name.localeCompare(b.name);
   });
-  let rows = sorted.map((s,i) =>
-    `<tr><td>${i+1}</td><td style="font-family:monospace">${s.matric}</td><td>${s.name}</td><td>${s.level}</td><td>${s.option||'General'}</td></tr>`
-  ).join('');
-  const logoUrl = (() => { try{ return lsGet('schoolLogoDataUrl')||''; }catch(e){ return ''; } })();
-  const html = `<html><head><title>GAPOSA EEE Master Student List</title>${getReportStyles()}</head><body>
-  ${getReportHeader('Master Student List')}
-  <p class="meta"><b>Printed:</b> ${dateStr} &nbsp;|&nbsp; <b>Total:</b> ${masterList.length} students</p>
-  <table><thead><tr><th>#</th><th>Matric No.</th><th>Name</th><th>Level</th><th>Option</th></tr></thead>
-  <tbody>${rows}</tbody></table>
-  <div class="footer">GAPOSA EEE Face-ID Attendance System — Confidential</div>
+
+  // Build rows — grouped by level when printing all
+  let bodyHtml = '';
+  if (filter === 'all') {
+    levelOrder.forEach(lvl => {
+      // Sub-group HND by option
+      const lvlStudents = toPrint.filter(s => s.level === lvl);
+      if (!lvlStudents.length) return;
+      if (lvl.startsWith('HND')) {
+        const opts = ['Power and Machines','Electronics and Telecommunication'];
+        opts.forEach(opt => {
+          const grp = lvlStudents.filter(s => (s.option||'') === opt);
+          if (!grp.length) return;
+          bodyHtml += `<tr class="section-hdr"><td colspan="4">${lvl} — ${opt} &nbsp;&nbsp; (${grp.length} student${grp.length!==1?'s':''})</td></tr>`;
+          grp.forEach((s,i) => {
+            bodyHtml += `<tr><td style="text-align:center;width:36px">${i+1}</td><td>${esc(s.matric)}</td><td>${esc(s.name)}</td><td>${esc(s.level)}</td></tr>`;
+          });
+        });
+        // Any HND students without a recognised option
+        const other = lvlStudents.filter(s => !['Power and Machines','Electronics and Telecommunication'].includes(s.option||''));
+        if (other.length) {
+          bodyHtml += `<tr class="section-hdr"><td colspan="4">${lvl} — Unspecified Option (${other.length})</td></tr>`;
+          other.forEach((s,i) => {
+            bodyHtml += `<tr><td style="text-align:center;width:36px">${i+1}</td><td>${esc(s.matric)}</td><td>${esc(s.name)}</td><td>${esc(s.level)}</td></tr>`;
+          });
+        }
+      } else {
+        bodyHtml += `<tr class="section-hdr"><td colspan="4">${lvl} — General &nbsp;&nbsp; (${lvlStudents.length} student${lvlStudents.length!==1?'s':''})</td></tr>`;
+        lvlStudents.forEach((s,i) => {
+          bodyHtml += `<tr><td style="text-align:center;width:36px">${i+1}</td><td>${esc(s.matric)}</td><td>${esc(s.name)}</td><td>${esc(s.level)}</td></tr>`;
+        });
+      }
+    });
+  } else {
+    // Single level/option — no section headers needed, just number rows sequentially
+    toPrint.forEach((s,i) => {
+      bodyHtml += `<tr><td style="text-align:center;width:36px">${i+1}</td><td>${esc(s.matric)}</td><td>${esc(s.name)}</td><td>${esc(s.level)}${s.option?' · '+esc(s.option):''}</td></tr>`;
+    });
+  }
+
+  const html = `<html><head><title>Master Student List</title>${getReportStyles()}</head><body>
+  ${getReportHeader(subtitle)}
+  <div class="info-row">
+    <div class="info-cell">Printed: <span>${dateStr}</span></div>
+    <div class="info-cell">Total Students: <span>${toPrint.length}</span></div>
+    <div class="info-cell">Session: <span>${getAcademicSession()}</span></div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36px;text-align:center">#</th>
+        <th>Matric No.</th>
+        <th>Full Name</th>
+        <th>Level / Option</th>
+      </tr>
+    </thead>
+    <tbody>${bodyHtml}</tbody>
+  </table>
+  <div class="footer">
+    The Gateway Polytechnic, Saapade &nbsp;·&nbsp; EEE Attendance System &nbsp;·&nbsp;
+    Printed: ${now.toLocaleString('en-GB')} &nbsp;·&nbsp; Total: ${toPrint.length} students
+  </div>
   </body></html>`;
+
   const w = window.open('', '_blank');
-  w.document.write(html);
-  w.document.close();
-  w.print();
-  addLog('info', 'Master list printed: ' + masterList.length + ' students');
+  if (w) { w.document.write(html); w.document.close(); setTimeout(() => w.print(), 400); }
+  addLog('info', 'Master list printed: ' + toPrint.length + ' students (' + filter + ')');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -4867,6 +5088,30 @@ window.addEventListener('load',()=>{
       <button class="smbtn" onclick="closeM('mlvl')">Close</button>
     </div>
     <div id="mlvl-modal-body"></div>
+  </div>
+</div>
+
+<!-- PRINT MASTER LIST MODAL -->
+<div class="mbg" id="mprint-master">
+  <div class="mbox">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:17px;font-weight:900;color:var(--navy)">🖨️ Print Master List</div>
+      <button class="smbtn" onclick="closeM('mprint-master')">Close</button>
+    </div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6;">
+      Choose which level/option to print. Select <b>All Students</b> to print the complete list grouped by level.
+    </div>
+    <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;">Select Level / Option to Print</label>
+    <select class="inp" id="print-master-select" style="margin-bottom:16px;font-size:13px;">
+      <option value="all">📋 All Students (grouped by level)</option>
+      <option value="ND 1">ND 1 — General</option>
+      <option value="ND 2">ND 2 — General</option>
+      <option value="HND 1|Power and Machines">HND 1 — Power and Machines</option>
+      <option value="HND 1|Electronics and Telecommunication">HND 1 — Electronics &amp; Telecommunication</option>
+      <option value="HND 2|Power and Machines">HND 2 — Power and Machines</option>
+      <option value="HND 2|Electronics and Telecommunication">HND 2 — Electronics &amp; Telecommunication</option>
+    </select>
+    <button class="mbtn s" onclick="executePrintMasterList()" style="width:100%">🖨️ Print Now</button>
   </div>
 </div>
 
