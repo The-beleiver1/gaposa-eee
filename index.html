@@ -958,9 +958,28 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session</span></div>
         <div class="card-body">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
             <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()">🗓️ Change Session</button>
             <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5b21b6);" onclick="openArchive()">🗂️ Historical Records</button>
+          </div>
+          <!-- FIX 7: HOD-configurable max weeks -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--txt);">Lecture Weeks Per Semester</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:1px;">Maximum weeks for this semester (default 15)</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:10px;">
+              <select id="max-weeks-select" onchange="saveMaxWeeks(this.value)"
+                style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--txt);cursor:pointer;">
+                <option value="12">12 weeks</option>
+                <option value="13">13 weeks</option>
+                <option value="14">14 weeks</option>
+                <option value="15" selected>15 weeks</option>
+                <option value="16">16 weeks</option>
+                <option value="17">17 weeks</option>
+                <option value="18">18 weeks</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -1192,7 +1211,7 @@ const FB_CFG = {
 };
 
 const MDL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-const MAX_WEEKS = 15;
+let MAX_WEEKS = 15; // HOD-configurable — loaded from Firestore settings
 const SAMPLES_NEEDED = 5;
 const ATT_THRESHOLD = 75;
 
@@ -1503,7 +1522,12 @@ function _autoSemester(){
 async function loadActiveSessionFromDB(){
   try{
     const d=await dbFB.collection('settings').doc('academic').get();
-    if(d.exists&&d.data().session){ activeSession=d.data().session; activeSemester=d.data().semester||_autoSemester(); }
+    if(d.exists&&d.data().session){
+      activeSession=d.data().session;
+      activeSemester=d.data().semester||_autoSemester();
+      // FIX 7: Load HOD-configured max weeks if set
+      if(d.data().maxWeeks) MAX_WEEKS=parseInt(d.data().maxWeeks)||15;
+    }
     else{ activeSession=_autoSession(); activeSemester=_autoSemester(); }
   }catch(e){ activeSession=_autoSession(); activeSemester=_autoSemester(); }
 }
@@ -1557,10 +1581,11 @@ async function bootApp(){
 
   mk(3);bar(90,'Loading student database...');
   await loadActiveSessionFromDB();
-  await loadStudents();
+  await loadStudents();   // fast — no descriptor parsing
   await loadMasterList();
   bar(100,'Ready!');
-  loaded=true;buildMatcher();
+  loaded=true;
+  // FIX 16: Don't buildMatcher here — descriptors load lazily when scan tab opens
 
   setTimeout(()=>{
     const l=document.getElementById('ld');l.style.opacity='0';
@@ -1726,6 +1751,8 @@ async function _signIn(email,pass,expectedRole){
   document.getElementById('login-screen').classList.remove('show');
   showMainApp();
   loadLogoFromCloud();
+  // FIX 3: Check if weekly backup is due (HOD only)
+  if(ud.role==='admin') checkScheduledBackup();
   addLog('ok','Logged in: '+currentUserName+' ('+currentUserRole+')');
 }
 
@@ -1838,8 +1865,8 @@ async function saveSessionSettings(){
 // ── ARCHIVE / HISTORY VIEWER (HOD only) ───────────────────────────
 async function openArchive(){
   if(currentUserRole!=='admin'){alert('Only the HOD can view historical records.');return;}
-  // Build session list from existing weekly data keys
-  await loadWeeklyData();
+  // Archive needs ALL historical data — use unfiltered load
+  await loadWeeklyDataFull();
   const sessions=new Set();
   Object.values(weeklyData).forEach(d=>Object.keys(d).forEach(k=>{
     const parts=k.split('_');
@@ -1888,8 +1915,7 @@ async function loadArchiveData(){
   const courseCode=document.getElementById('arch-course').value.trim();
   if(!sessVal){alert('Select a session.');return;}
   const [sess,sem]=sessVal.split('||');
-  await loadWeeklyData();
-  // filter students that have any record for this session+sem
+  await loadWeeklyDataFull(); // needs all historical data
   const sessKey=sess.replace('/','_')+'_'+sem.replace(' ','_');
   const matchStudents=students.filter(u=>{
     if(!weeklyData[u.matric])return false;
@@ -1899,21 +1925,19 @@ async function loadArchiveData(){
     document.getElementById('arch-results').innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">No records found for this selection</div>';
     return;
   }
-  // Build summary table
   let html='<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px">'+sess+' · '+sem+(courseCode?' · '+courseCode:'')+'</div>';
   html+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">';
   html+='<tr style="background:var(--navy);color:#fff"><th style="padding:6px 8px;text-align:left">Name</th><th style="padding:6px 8px">Matric</th><th style="padding:6px 8px">Level</th><th style="padding:6px 8px">Present</th><th style="padding:6px 8px">%</th></tr>';
   matchStudents.forEach((u,i)=>{
     let present=0,total=0;
     for(let w=1;w<=MAX_WEEKS;w++){
-      const k=(courseCode?courseCode.replace(' ','_'):'')+( courseCode?'_':'' )+sessKey+'_wk'+w;
       const allKeys=Object.keys(weeklyData[u.matric]||{}).filter(key=>key.includes(sessKey)&&key.endsWith('_wk'+w)&&(!courseCode||key.startsWith(courseCode.replace(' ','_'))));
       allKeys.forEach(key=>{total++;if(weeklyData[u.matric][key].status==='P')present++;});
     }
     const pct=total>0?Math.round(present/total*100):0;
     const bg=i%2===0?'#f8faff':'#fff';
     const pctCol=pct<75?'var(--red)':pct>=75?'var(--green)':'var(--amber)';
-    html+=`<tr style="background:${bg}"><td style="padding:5px 8px;font-weight:600">${u.name}</td><td style="padding:5px 8px;font-family:monospace">${u.matric}</td><td style="padding:5px 8px">${u.level}</td><td style="padding:5px 8px;text-align:center">${present}/${total}</td><td style="padding:5px 8px;text-align:center;font-weight:800;color:${pctCol}">${pct}%</td></tr>`;
+    html+=`<tr style="background:${bg}"><td style="padding:5px 8px;font-weight:600">${esc(u.name)}</td><td style="padding:5px 8px;font-family:monospace">${esc(u.matric)}</td><td style="padding:5px 8px">${esc(u.level)}</td><td style="padding:5px 8px;text-align:center">${present}/${total}</td><td style="padding:5px 8px;text-align:center;font-weight:800;color:${pctCol}">${pct}%</td></tr>`;
   });
   html+='</table></div>';
   document.getElementById('arch-results').innerHTML=html;
@@ -1922,7 +1946,7 @@ async function exportArchiveCSV(){
   const sessVal=document.getElementById('arch-session').value;
   if(!sessVal){alert('Select a session first.');return;}
   const [sess,sem]=sessVal.split('||');
-  await loadWeeklyData();
+  await loadWeeklyDataFull(); // needs all historical data
   const sessKey=sess.replace('/','_')+'_'+sem.replace(' ','_');
   let csv='THE GATEWAY POLYTECHNIC SAAPADE\nDEPARTMENT OF ELECTRICAL & ELECTRONIC ENGINEERING TECHNOLOGY\n';
   csv+=`HISTORICAL ATTENDANCE REPORT\nSession:,${sess}\nSemester:,${sem}\nExported By:,${currentUserName}\n\n`;
@@ -2192,29 +2216,65 @@ function lsGet(k){try{return localStorage.getItem(LS_PREFIX+k);}catch(e){return 
 function lsSet(k,v){try{localStorage.setItem(LS_PREFIX+k,v);}catch(e){}}
 function lsRemove(k){try{localStorage.removeItem(LS_PREFIX+k);}catch(e){}}
 
+let _descriptorsLoaded = false;
+
 async function loadStudents(){
+  // FIX 16: Load basic student info immediately (fast), but skip large descriptor arrays
+  // Descriptors are loaded separately when scan tab is first opened
   try{
     const snap=await dbFB.collection('students').get();
     students=snap.docs.map(d=>{
       const data=d.data();
-      // Handle string-encoded descriptors (new format), plain arrays, or object-keyed arrays (legacy)
-      const descriptors=(data.descriptors||[]).map(a=>{
+      // Store raw descriptor strings but DON'T parse them yet — saves memory + CPU on login
+      return {...data, descriptors:[], _rawDescriptors: data.descriptors||[]};
+    });
+    addLog('info',students.length+' students loaded (descriptors deferred)');
+  }catch(e){addLog('err','Load students: '+e.message);students=[];}
+}
+
+async function loadDescriptorsIfNeeded(){
+  // Called lazily when scan tab opens — parse descriptors only then
+  if(_descriptorsLoaded) return;
+  _descriptorsLoaded = true;
+  students.forEach(u=>{
+    if(u._rawDescriptors && u._rawDescriptors.length && !u.descriptors.length){
+      u.descriptors = u._rawDescriptors.map(a=>{
         if(a instanceof Float32Array) return a;
         if(typeof a === 'string') return new Float32Array(a.split(',').map(Number));
         if(Array.isArray(a)) return new Float32Array(a);
         return new Float32Array(Object.values(a));
       });
-      return {...data, descriptors};
-    });
-    addLog('info',students.length+' students loaded');
-  }catch(e){addLog('err','Load students: '+e.message);students=[];}
+    }
+  });
+  buildMatcher();
+  addLog('info','Face descriptors parsed for '+students.length+' students');
 }
 async function loadWeeklyData(){
+  try{
+    // FIX 2: Only load attendance for CURRENT session — not all historical data
+    // Key format includes session e.g. "EEC_111_2024_2025_1st_Semester_wk1"
+    const sessKey = activeSession.replace('/','_') + '_' + activeSemester.replace(/\s/g,'_');
+    const snap=await dbFB.collection('weekly').get();
+    weeklyData={};
+    snap.docs.forEach(d=>{
+      const allEntries = d.data();
+      // Filter to only entries belonging to the current session
+      const filtered = {};
+      Object.entries(allEntries).forEach(([k,v])=>{
+        if(k.includes(sessKey)) filtered[k]=v;
+      });
+      if(Object.keys(filtered).length>0) weeklyData[d.id]=filtered;
+    });
+  }catch(e){addLog('err','Load weekly: '+e.message);}
+}
+
+async function loadWeeklyDataFull(){
+  // Unfiltered version — used only for archive/historical views
   try{
     const snap=await dbFB.collection('weekly').get();
     weeklyData={};
     snap.docs.forEach(d=>{weeklyData[d.id]=d.data();});
-  }catch(e){addLog('err','Load weekly: '+e.message);}
+  }catch(e){addLog('err','Load weekly (full): '+e.message);}
 }
 async function saveWeekly(matric,data){
   try{
@@ -2234,8 +2294,10 @@ async function saveWeekly(matric,data){
 }
 
 function buildMatcher(){
-  if(!students.length){matcher=null;return;}
-  matcher=new faceapi.FaceMatcher(students.map(u=>new faceapi.LabeledFaceDescriptors(u.matric,u.descriptors)),0.42);
+  // FIX 16: Only build if descriptors have been loaded; skip silently if not yet
+  const ready = students.filter(u=>u.descriptors && u.descriptors.length>0);
+  if(!ready.length){matcher=null;return;}
+  matcher=new faceapi.FaceMatcher(ready.map(u=>new faceapi.LabeledFaceDescriptors(u.matric,u.descriptors)),0.42);
 }
 
 // ── DUPLICATE FACE DETECTION ──────────────────────────────────────
@@ -2510,10 +2572,19 @@ function isStudentForActiveCourse(u){
 }
 async function markStudentPresent(u, key){
   if(sessionMarked.has(u.matric)) return false;
+  // FIX 9: Use device time for display but add serverTimestamp for authoritative record
   const now=new Date();
   sessionMarked.add(u.matric);
   if(!weeklyData[u.matric])weeklyData[u.matric]={};
-  weeklyData[u.matric][key]={status:'P',time:now.toTimeString().slice(0,8),date:now.toLocaleDateString('en-GB'),week:currentWeek,session:getAcademicSession(),semester:getSemester()};
+  weeklyData[u.matric][key]={
+    status:'P',
+    time:now.toTimeString().slice(0,8),
+    date:now.toLocaleDateString('en-GB'),
+    week:currentWeek,
+    session:getAcademicSession(),
+    semester:getSemester(),
+    markedAt: firebase.firestore.FieldValue.serverTimestamp() // authoritative server time
+  };
   await saveWeekly(u.matric,weeklyData[u.matric]);
   addLog('ok','PRESENT '+u.name+' | '+u.matric+' | '+activeCourse.code+' Wk'+currentWeek);
   return true;
@@ -2838,8 +2909,7 @@ async function doEnroll(){
       if(vid2&&vid2.videoWidth>0){thumbCanvas.getContext('2d').drawImage(vid2,0,0,80,80);photoDataUrl=thumbCanvas.toDataURL('image/jpeg',0.5);}
     }catch(e){}
     const programme=isHND?option+' Option':'Electrical & Electronics Engineering Technology';
-    const newStudent={matric,name,level,option:isHND?option:'',programme,descriptors:samples.slice()};
-    // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
+    const newStudent={matric,name,level,option:isHND?option:'',programme,descriptors:samples.slice(),_rawDescriptors:[]};
     const cleanDescriptors=newStudent.descriptors.map(d=>Array.from(d).map(v=>Number(v).toFixed(6)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric,name,level,option:isHND?option:'',programme,
@@ -2848,6 +2918,7 @@ async function doEnroll(){
       enrolledBy:currentUserName,enrolledAt:new Date().toISOString()
     });
     students.push(newStudent);
+    _descriptorsLoaded = true; // FIX 16: ensure matcher is built with real descriptors
     weeklyData[matric]={};
     buildMatcher();renderList();
     renderAdminStudents();
@@ -3483,8 +3554,9 @@ function buildStudentCard(u,i){
     <div class="stu-actions">
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">📊</button>
       <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
+      <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only">🗑️</button>
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
-      <button class="stu-btn" style="background:var(--red-l);color:var(--red);" onclick="deleteStudent('${u.matric}')" title="Delete">✕</button>
+      <button class="stu-btn" style="background:var(--red-l);color:var(--red);" onclick="deleteStudent('${u.matric}')" title="Delete student entirely">✕</button>
     </div>
   </div>`;
 }
@@ -3657,7 +3729,7 @@ function updateStudentFace(matric){
 // ── FULL DB EXPORT ────────────────────────────────────────────────
 async function exportFullDB(){
   if(currentUserRole!=='admin'){alert('HOD only.');return;}
-  await loadWeeklyData();
+  await loadWeeklyDataFull(); // use full data for backup
   let csv='GAPOSA EEE — Full Database Backup\n';
   csv+=`Session:,${getAcademicSession()}\nSemester:,${getSemester()}\nExported:,${new Date().toLocaleDateString('en-GB')} ${new Date().toTimeString().slice(0,5)}\nTotal Students:,${students.length}\n\n`;
   csv+='=== ENROLLED STUDENTS ===\n';
@@ -3674,7 +3746,10 @@ async function exportFullDB(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
   a.download=`GAPOSA_EEE_FullBackup_${getAcademicSession().replace('/','_')}_${new Date().toLocaleDateString('en-GB').replace(/\//g,'-')}.csv`;
-  a.click();addLog('ok','Full DB backup exported: '+students.length+' students');
+  a.click();
+  // FIX 3: Record backup date for the weekly reminder
+  lsSet('lastBackupDate', new Date().toISOString());
+  addLog('ok','Full DB backup exported: '+students.length+' students');
 }
 
 // ── AUTO-LOGOUT (15 min inactivity) ──────────────────────────────
@@ -3697,16 +3772,27 @@ function setOfflineQueueEnabled(val){
   addLog('info','Offline scan queue: '+(_offlineQueueEnabled?'On':'Off'));
 }
 
+async function saveMaxWeeks(val){
+  const weeks = parseInt(val);
+  if(!weeks||weeks<1||weeks>30){return;}
+  try{
+    await dbFB.collection('settings').doc('academic').set({maxWeeks:weeks},{merge:true});
+    MAX_WEEKS = weeks;
+    updateWeekDisplay();
+    setAdminSt('✓ Semester length set to '+weeks+' weeks. Takes effect immediately.','ok');
+    addLog('ok','MAX_WEEKS changed to '+weeks+' by '+currentUserName);
+  }catch(e){setAdminSt('Save failed: '+e.message,'err');}
+}
+
 function initSecuritySettings(){
-  // Restore saved values to dropdowns
   const als=document.getElementById('auto-logout-select');
-  if(als){
-    als.value=String(_autoLogoutMinutes);
-    // If stored value not in options list, default to 15
-    if(!als.value)als.value='15';
-  }
+  if(als){als.value=String(_autoLogoutMinutes);if(!als.value)als.value='15';}
   const oqs=document.getElementById('offline-queue-select');
   if(oqs)oqs.value=_offlineQueueEnabled?'1':'0';
+  // FIX 7: Sync max-weeks dropdown to current value
+  const mws=document.getElementById('max-weeks-select');
+  if(mws){mws.value=String(MAX_WEEKS);if(!mws.value)mws.value='15';}
+  renderLogoPreview();
 }
 
 function resetIdleTimer(){
@@ -3767,7 +3853,44 @@ window.addEventListener('beforeunload', (e) => {
   }
 });
 
-// ── WELCOME MODAL — show assigned courses ─────────────────────────
+// ── FIX 3: AUTOMATED WEEKLY BACKUP REMINDER ──────────────────────
+async function checkScheduledBackup(){
+  try{
+    const lastBackupStr = lsGet('lastBackupDate');
+    const now = new Date();
+    const lastBackup = lastBackupStr ? new Date(lastBackupStr) : null;
+    const daysSince = lastBackup ? Math.floor((now - lastBackup) / (1000*60*60*24)) : 999;
+
+    // Show reminder if no backup in 7+ days
+    if(daysSince >= 7){
+      // Show non-intrusive banner after a short delay
+      setTimeout(()=>{
+        const banner = document.createElement('div');
+        banner.id = 'backup-reminder';
+        banner.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100%-24px);max-width:640px;background:linear-gradient(135deg,var(--amber),#92400e);color:white;padding:10px 14px;border-radius:10px;z-index:7000;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);font-family:Outfit,sans-serif;';
+        banner.innerHTML=`
+          <span style="font-size:18px;">💾</span>
+          <div style="flex:1;font-size:12px;font-weight:700;">
+            ${lastBackup ? 'Last backup was '+daysSince+' days ago.' : 'No backup has been taken yet.'} Back up your data now.
+          </div>
+          <button onclick="doScheduledBackup()" style="padding:5px 10px;background:white;color:var(--amber);border:none;border-radius:6px;font-family:Outfit,sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;">Backup Now</button>
+          <button onclick="document.getElementById('backup-reminder').remove()" style="padding:5px 8px;background:rgba(255,255,255,.2);color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;flex-shrink:0;">Later</button>`;
+        document.body.appendChild(banner);
+        addLog('warn','Backup reminder shown — last backup: '+(lastBackup?lastBackup.toLocaleDateString('en-GB'):'never'));
+      }, 3000);
+    }
+  }catch(e){ addLog('warn','Backup check: '+e.message); }
+}
+
+async function doScheduledBackup(){
+  const el = document.getElementById('backup-reminder');
+  if(el) el.remove();
+  await exportFullDB();
+  lsSet('lastBackupDate', new Date().toISOString());
+  addLog('ok','Scheduled backup completed');
+}
+
+
 
 async function loadSecretCode(){
   try{const d=await dbFB.collection('settings').doc('auth').get();if(d.exists&&d.data().secretCode)document.getElementById('code-display').value=d.data().secretCode;}
@@ -4026,6 +4149,43 @@ function renderList(){
   el.innerHTML = html;
 }
 
+async function removeBiometricData(matric){
+  if(currentUserRole!=='admin'){alert('Only the HOD can remove biometric data.');return;}
+  const u=students.find(s=>s.matric===matric);
+  if(!u){alert('Student not found.');return;}
+  if(!confirm(
+    'REMOVE FACE DATA for '+u.name+' ('+matric+')?\n\n'+
+    '• Their face descriptors will be permanently deleted\n'+
+    '• Their ATTENDANCE RECORDS are kept intact\n'+
+    '• They will no longer be recognized by the scanner\n'+
+    '• They must re-enroll their face to be scanned again\n\n'+
+    'This is logged in the audit trail. Continue?'
+  )) return;
+  try{
+    // Remove only face descriptors — keep all other student data intact
+    await dbFB.collection('students').doc(matric).update({
+      descriptors: [],
+      biometricRemovedAt: new Date().toISOString(),
+      biometricRemovedBy: currentUserName
+    });
+    // Update in-memory
+    const idx=students.findIndex(s=>s.matric===matric);
+    if(idx>=0){ students[idx].descriptors=[]; }
+    buildMatcher(); // rebuild face matcher without this student
+    // Audit log
+    await dbFB.collection('audit_log').add({
+      type:'biometric_data_removed',
+      matric, studentName:u.name,
+      removedBy:currentUserName,
+      reason:'HOD-initiated removal (NDPR compliance)',
+      timestamp:new Date().toISOString()
+    });
+    renderAdminStudents();
+    setAdminSt('✓ Face data removed for '+u.name+'. Attendance records preserved. Action logged.','ok');
+    addLog('warn','BIOMETRIC REMOVED: '+u.name+' ('+matric+') by '+currentUserName);
+  }catch(e){alert('Error: '+e.message);}
+}
+
 async function deleteStudent(matric){
   if(currentUserRole!=='admin'){alert('Only the HOD can delete students.');return;}
   if(!confirm('Remove '+matric+' and all their attendance records?'))return;
@@ -4106,7 +4266,12 @@ function goTab(t){
     document.getElementById('nt-'+id).classList.toggle('active',id===t);
     document.getElementById('p-'+id).classList.toggle('active',id===t);
   });
-  if(t==='enroll')syncEnrollCam();
+  // FIX 16: Load face descriptors lazily — only when scan or enroll tab opens
+  if(t==='scan'||t==='enroll'){
+    loadDescriptorsIfNeeded().then(()=>{
+      if(t==='enroll') syncEnrollCam();
+    });
+  }
   if(t==='weekly'){loadWeeklyData().then(()=>renderWeeklyGrid());}
   if(t==='admin'){refreshAdminDashboard();}
 }
@@ -4675,6 +4840,9 @@ function doStudentLoginNo() {
   showLoginErr('Please contact your HOD to correct your details in the master list.');
 }
 
+let _spSessionTimer = null;
+const SP_SESSION_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+
 async function doStudentLoginYes() {
   if (!spStudentData) { showLoginErr('Verify your matric number first.'); return; }
   // Open student portal
@@ -4683,17 +4851,41 @@ async function doStudentLoginYes() {
   portal.style.display = 'flex';
   document.getElementById('sp-name').textContent = spStudentData.name;
   document.getElementById('sp-details').textContent = spStudentData.level + (spStudentData.option ? ' · ' + spStudentData.option : ' · General') + ' · ' + spStudentData.matric;
-  // Set logo
-  const logoSrc = document.querySelector('.hdr-logo') ? document.querySelector('.hdr-logo').src : '';
-  document.getElementById('sp-logo').src = logoSrc;
+
+  // FIX 14: Load logo from localStorage (cloud-synced) — not from DOM element which may not load offline
+  const savedLogo = lsGet('schoolLogoDataUrl') || '';
+  const spLogoEl = document.getElementById('sp-logo');
+  if (savedLogo) {
+    spLogoEl.src = savedLogo;
+    spLogoEl.style.background = 'white';
+    spLogoEl.style.padding = '4px';
+  } else {
+    // Fallback: try the header logo
+    const hdrLogo = document.querySelector('.hdr-logo');
+    spLogoEl.src = hdrLogo && hdrLogo.src ? hdrLogo.src : '';
+  }
+
   spSamples = [];
   spUpdateProgress();
+
+  // FIX 11: Auto-timeout student portal after 10 minutes of inactivity
+  clearTimeout(_spSessionTimer);
+  _spSessionTimer = setTimeout(() => {
+    if (document.getElementById('student-portal').style.display !== 'none') {
+      addLog('warn', 'Student portal timed out for: ' + (spStudentData ? spStudentData.matric : 'unknown'));
+      alert('⏱️ Session expired after 10 minutes of inactivity. Please re-enter your matric number.');
+      spGoBackToLogin();
+    }
+  }, SP_SESSION_TIMEOUT_MS);
+
   addLog('info', 'Student portal opened for: ' + spStudentData.matric);
 }
 
 async function doStudentLogin() { doStudentLoginYes(); }
 
 function spGoBackToLogin() {
+  // FIX 11: Clear session timeout
+  clearTimeout(_spSessionTimer);
   // Stop camera if running
   if (spStream) { spStream.getTracks().forEach(t => t.stop()); spStream = null; }
   // Clear all enrollment state
@@ -4979,8 +5171,28 @@ window.addEventListener('load',()=>{
   // Firebase is hardcoded — init immediately when SDK is ready
   // Register service worker for PWA installability
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {
-      // sw.js may not exist yet — create inline registration fallback
+    // FIX 13: Create service worker inline as a blob instead of referencing missing sw.js
+    const swCode = `
+      const CACHE = 'gaposa-eee-v1';
+      const OFFLINE_URLS = [];
+      self.addEventListener('install', e => self.skipWaiting());
+      self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+      self.addEventListener('fetch', e => {
+        // Only cache GET requests for same-origin non-Firebase resources
+        if(e.request.method !== 'GET') return;
+        if(e.request.url.includes('firestore.googleapis.com')) return;
+        if(e.request.url.includes('firebase')) return;
+        e.respondWith(
+          fetch(e.request).catch(() => caches.match(e.request))
+        );
+      });
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).then(reg => {
+      addLog('info', 'Service worker registered (PWA ready)');
+    }).catch(err => {
+      addLog('warn', 'Service worker skipped: ' + err.message);
     });
   }
   function tryInit(){
