@@ -431,6 +431,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       <div class="ltab" id="lt-register" onclick="setLTab('register')" style="flex:1;min-width:60px">Register</div>
       <div class="ltab" id="lt-student" onclick="setLTab('student')" style="flex:1;min-width:60px">Student</div>
       <div class="ltab" id="lt-hod" onclick="setLTab('hod')" style="flex:1;min-width:60px">HOD</div>
+      <div class="ltab" id="lt-myrecord" onclick="setLTab('myrecord')" style="flex:1;min-width:60px">📊 My Record</div>
     </div>
 
     <!-- LOGIN -->
@@ -502,6 +503,28 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           <button onclick="doStudentLoginYes()" style="flex:1;padding:14px;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;cursor:pointer;">✓</button>
           <button onclick="doStudentLoginNo()" style="flex:1;padding:14px;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;cursor:pointer;">✕</button>
         </div>
+      </div>
+    </div>
+
+    <!-- #5: Student Attendance Self-View + #8: Excuse Submission -->
+    <div class="lform" id="lf-myrecord">
+      <div class="info-box info-blue" style="margin-bottom:12px;">
+        📊 Enter your matric number to view your own attendance summary and submit an absence excuse.
+      </div>
+      <label class="llbl">Your Matric Number</label>
+      <input class="linp" id="mr-matric" placeholder="e.g. 24013631001" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="loadMyRecord(this.value)">
+      <div id="mr-status" style="font-size:11px;margin-top:5px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
+      <div id="mr-results" style="display:none;margin-top:10px;">
+        <!-- Attendance summary will render here -->
+      </div>
+      <!-- Excuse submission -->
+      <div id="mr-excuse-section" style="display:none;margin-top:10px;border-top:1px solid #e2e8f0;padding-top:10px;">
+        <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:8px;">📝 Submit Absence Excuse</div>
+        <input class="linp" id="mr-excuse-week" type="number" min="1" max="15" placeholder="Week number (e.g. 3)" style="margin-bottom:8px;">
+        <input class="linp" id="mr-excuse-course" placeholder="Course code (e.g. EEC 311)" style="margin-bottom:8px;" autocomplete="off">
+        <textarea class="linp" id="mr-excuse-reason" placeholder="Reason for absence (e.g. Medical — attached hospital card)" rows="3" style="resize:none;margin-bottom:8px;"></textarea>
+        <button class="lbtn blue" onclick="submitExcuse()" style="margin-top:0;">Submit Excuse Request</button>
+        <div id="mr-excuse-status" style="font-size:11px;margin-top:6px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
       </div>
     </div>
 
@@ -842,6 +865,24 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
           <div id="course-summary-list" style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Loading...</div>
         </div>
       </div>
+      <!-- #17: Attendance Trend Chart -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">📊</div><span class="card-ttl">Week-by-Week Trend</span></div>
+        <div class="card-body" style="padding:10px;">
+          <div id="trend-chart-container" style="width:100%;min-height:50px;"></div>
+        </div>
+      </div>
+      <!-- #6: Pending Excuse Requests -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hdr">
+          <div class="card-hdr-ico" style="background:var(--orange-l)">📝</div>
+          <span class="card-ttl">Excuse Requests</span>
+          <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()">↻ Refresh</button>
+        </div>
+        <div class="card-body" style="padding:10px;">
+          <div id="excuse-review-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Tap ↻ Refresh to load</div></div>
+        </div>
+      </div>
       <div class="pb"></div>
     </div>
 
@@ -1131,8 +1172,12 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     </div>
 
     <!-- Status -->
-    <div id="sp-status" style="width:100%;padding:10px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,.85);font-weight:500;margin-bottom:14px;text-align:center;line-height:1.5;backdrop-filter:blur(4px);">
+    <div id="sp-status" style="width:100%;padding:10px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,.85);font-weight:500;margin-bottom:8px;text-align:center;line-height:1.5;backdrop-filter:blur(4px);">
       Tap Start Camera to begin enrollment
+    </div>
+    <!-- FIX 4: Liveness instruction banner -->
+    <div id="sp-liveness-banner" style="display:none;width:100%;padding:8px 12px;background:rgba(124,58,237,.25);border:1.5px solid rgba(196,181,253,.4);border-radius:8px;font-size:11px;color:#c4b5fd;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
+      👁️ <span id="sp-liveness-msg">For your last sample — please BLINK once slowly to confirm you are live</span>
     </div>
 
     <div style="font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;">
@@ -1632,7 +1677,7 @@ async function doForgotPassword() {
 }
 
 function setLTab(mode){
-  ['login','register','student','hod'].forEach(m=>{
+  ['login','register','student','hod','myrecord'].forEach(m=>{
     const lt = document.getElementById('lt-'+m);
     const lf = document.getElementById('lf-'+m);
     if(lt) lt.classList.toggle('active',m===mode);
@@ -1643,13 +1688,12 @@ function setLTab(mode){
     login:'New lecturer? Tap <b>Register</b> and enter the code from your HOD.',
     register:'Get the secret code from your HOD.',
     student:'',
-    hod:'HOD / Administrator access only.'
+    hod:'HOD / Administrator access only.',
+    myrecord:'Enter your matric number to see your attendance and submit excuses.'
   };
   document.getElementById('lnote').innerHTML=notes[mode]||'';
-  // Show student hint only on login tab
   const lnote2 = document.getElementById('lnote2');
   if (lnote2) lnote2.style.display = mode === 'login' ? 'block' : 'none';
-  // Load course picker when register tab opened
   if(mode==='register') renderRegCoursePicker();
 }
 
@@ -2477,9 +2521,9 @@ function confirmAdminCourse() {
   document.getElementById('admin-cb-meta').textContent = adminActiveCourse.level + ' · ' + (adminActiveCourse.option||'General') + ' · ' + sem;
   closeM('mc');
   addLog('info', 'Admin course selected: ' + adminActiveCourse.code);
-  // Refresh dashboard with new course
   renderAtRiskList();
   renderCourseSummary();
+  renderAttendanceTrendChart(); // #17 update chart
 }
 
 
@@ -2910,7 +2954,7 @@ async function doEnroll(){
     }catch(e){}
     const programme=isHND?option+' Option':'Electrical & Electronics Engineering Technology';
     const newStudent={matric,name,level,option:isHND?option:'',programme,descriptors:samples.slice(),_rawDescriptors:[]};
-    const cleanDescriptors=newStudent.descriptors.map(d=>Array.from(d).map(v=>Number(v).toFixed(6)).join(','));
+    const cleanDescriptors=newStudent.descriptors.map(d=>Array.from(d).map(v=>Number(v).toFixed(4)).join(','));
     await dbFB.collection('students').doc(matric).set({
       matric,name,level,option:isHND?option:'',programme,
       descriptors:cleanDescriptors,
@@ -2970,11 +3014,11 @@ async function renderWeeklyGrid(){
       const key=baseKey+w;
       const entry=weeklyData[u.matric]&&weeklyData[u.matric][key];
       const val=entry?entry.status:'';
-      const isP=val==='P';const isA=val==='A';const future=w>currentWeek&&!val;
-      if(isP)present++;
-      const bg=isP?'var(--green)':isA?'var(--red-l)':future?'#f8faff':'var(--border)';
-      const col=isP?'#fff':isA?'var(--red)':future?'var(--border2)':'var(--txt3)';
-      const lbl=isP?'P':isA?'A':future?'':'-';
+      const isP=val==='P';const isA=val==='A';const isE=val==='E';const future=w>currentWeek&&!val;
+      if(isP||isE)present++; // Excused counts as present for attendance %
+      const bg=isP?'var(--green)':isE?'var(--purple)':isA?'var(--red-l)':future?'#f8faff':'var(--border)';
+      const col=isP?'#fff':isE?'#fff':isA?'var(--red)':future?'var(--border2)':'var(--txt3)';
+      const lbl=isP?'P':isE?'E':isA?'A':future?'':'-';
       cells+=`<div style="width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0;background:${bg};color:${col};border:1px solid var(--border);" title="${entry&&entry.date?entry.date+' '+entry.time:''}">${lbl}</div>`;
     }
     const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
@@ -3035,7 +3079,7 @@ async function printFullSemesterReport(){
         const pctCols = lvlCourses.map(c => {
           const baseKey = c.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
           let present=0;
-          for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+          for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&(e.status==='P'||e.status==='E'))present++;}
           const pct = currentWeek>0 ? Math.round(present/currentWeek*100) : 0;
           const cls = pct < 75 ? 'low' : 'ok';
           return `<td style="text-align:center;font-size:10px;" class="${cls}">${pct}%</td>`;
@@ -3115,8 +3159,9 @@ async function printWeeklyRegister(){
       const e = weeklyData[u.matric] && weeklyData[u.matric][k];
       if(!e) return `<td style="text-align:center;color:#aaa;">—</td>`;
       const isP = e.status==='P';
-      present += isP?1:0;
-      return `<td style="text-align:center;font-weight:bold;">${isP?'P':'A'}</td>`;
+      const isE = e.status==='E';
+      present += (isP||isE)?1:0;
+      return `<td style="text-align:center;font-weight:bold;">${isP?'P':isE?'E':'A'}</td>`;
     }).join('');
     const pct = currentWeek>0 ? Math.round(present/currentWeek*100) : 0;
     const pctStyle = pct<75 ? 'font-weight:bold;text-decoration:underline;' : 'font-weight:bold;';
@@ -3353,8 +3398,9 @@ async function refreshAdminDashboard(){
   }).join('');
   // At-risk list — across all courses current week
   renderAtRiskList();
-  // Course summary
   renderCourseSummary();
+  renderAttendanceTrendChart(); // #17
+  loadPendingExcuses();         // #6
   loadSecretCode();
 }
 
@@ -3419,7 +3465,7 @@ function renderAtRiskList(){
   const atRisk=[];
   courseStudents.forEach(u=>{
     let present=0;
-    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&(e.status==='P'||e.status==='E'))present++;}
     const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
     if(pct<ATT_THRESHOLD) atRisk.push({...u,pct,present});
   });
@@ -3446,7 +3492,7 @@ function exportAtRiskCSV(){
   csv+='Matric,Name,Level,Option,Present,Total,Attendance%\n';
   courseStudents.forEach(u=>{
     let present=0;
-    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&(e.status==='P'||e.status==='E'))present++;}
     const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
     if(pct<ATT_THRESHOLD) csv+=`"${u.matric}","${u.name}","${u.level}","${u.option||'General'}",${present},${currentWeek},${pct}%\n`;
   });
@@ -3466,7 +3512,7 @@ function renderCourseSummary(){
   let totalPct=0;
   const rows=courseStudents.map(u=>{
     let present=0;
-    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&(e.status==='P'||e.status==='E'))present++;}
     const pct=currentWeek>0?Math.round(present/currentWeek*100):0;
     totalPct+=pct;
     const col=pct<75?'var(--red)':pct>=90?'var(--green)':'var(--amber)';
@@ -3535,7 +3581,7 @@ function buildStudentCard(u,i){
   if(activeCourse){
     const baseKey=activeCourse.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
     let present=0;
-    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&e.status==='P')present++;}
+    for(let w=1;w<=currentWeek;w++){const k=baseKey+w;const e=weeklyData[u.matric]&&weeklyData[u.matric][k];if(e&&(e.status==='P'||e.status==='E'))present++;}
     const pct=currentWeek>0?Math.round(present/currentWeek*100):null;
     if(pct!==null){
       const col=pct<75?'var(--red)':pct>=90?'var(--green)':'var(--amber)';
@@ -3553,6 +3599,7 @@ function buildStudentCard(u,i){
     </div>
     <div class="stu-actions">
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">📊</button>
+      <button class="stu-btn" style="background:var(--teal-l);color:var(--teal);" onclick="viewStudentHistory('${u.matric}')" title="Full history all sessions">📅</button>
       <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
       <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only">🗑️</button>
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
@@ -3618,7 +3665,7 @@ async function viewStudentReport(matric){
     const wkNum=parseInt(parts[4]);
     if(!courses[code])courses[code]={present:0,absent:0,weeks:{},title:''};
     courses[code].weeks[wkNum]={status:v.status,date:v.date||'--',time:v.time||'--'};
-    if(v.status==='P')courses[code].present++;
+    if(v.status==='P'||v.status==='E')courses[code].present++;
     else courses[code].absent++;
     // Try to find course title from COURSES array
     const found=COURSES.find(c=>c.code===code);
@@ -3638,8 +3685,8 @@ async function viewStudentReport(matric){
       allWeeks.forEach(w=>{
         const entry=d.weeks[w];
         if(!entry){weekCells+=`<td style="text-align:center;color:#cbd5e1;font-size:10px">—</td>`;return;}
-        const bg=entry.status==='P'?'#d1fae5':'#fee2e2';
-        const tc=entry.status==='P'?'#065f46':'#991b1b';
+        const bg=entry.status==='P'?'#d1fae5':entry.status==='E'?'#ede9fe':'#fee2e2';
+        const tc=entry.status==='P'?'#065f46':entry.status==='E'?'#5b21b6':'#991b1b';
         weekCells+=`<td style="text-align:center;background:${bg};color:${tc};font-size:10px;font-weight:800">${entry.status}</td>`;
       });
       courseRows+=`<tr>
@@ -3853,7 +3900,349 @@ window.addEventListener('beforeunload', (e) => {
   }
 });
 
-// ── FIX 3: AUTOMATED WEEKLY BACKUP REMINDER ──────────────────────
+// ══════════════════════════════════════════════════════════════════
+// #5: STUDENT ATTENDANCE SELF-VIEW
+// ══════════════════════════════════════════════════════════════════
+let _mrLookupDebounce = null;
+let _mrLookupCount = 0, _mrLookupWindowStart = Date.now();
+
+function loadMyRecord(val) {
+  clearTimeout(_mrLookupDebounce);
+  _mrLookupDebounce = setTimeout(() => _doLoadMyRecord(val.trim()), 700);
+}
+
+async function _doLoadMyRecord(matric) {
+  const statusEl = document.getElementById('mr-status');
+  const resultsEl = document.getElementById('mr-results');
+  const excuseEl = document.getElementById('mr-excuse-section');
+  if (!matric || matric.length < 6) {
+    statusEl.style.display='none'; resultsEl.style.display='none'; excuseEl.style.display='none'; return;
+  }
+  // Rate limit: 5 per minute
+  const now = Date.now();
+  if(now - _mrLookupWindowStart > 60000){ _mrLookupCount=0; _mrLookupWindowStart=now; }
+  _mrLookupCount++;
+  if(_mrLookupCount > 5){
+    statusEl.textContent='⚠️ Too many attempts. Please wait.';
+    statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    return;
+  }
+  statusEl.textContent='🔍 Searching...';
+  statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#e8f0fe;color:#1a56db;border:1px solid #bfdbfe;';
+  resultsEl.style.display='none'; excuseEl.style.display='none';
+
+  try {
+    if(!authFB.currentUser) await authFB.signInAnonymously();
+    // Verify matric exists in master list
+    const masterDoc = await dbFB.collection('masterlist').doc(matric).get();
+    if(!masterDoc.exists){
+      statusEl.textContent='❌ Matric not found. Check your matric number.';
+      statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+      return;
+    }
+    const studentInfo = masterDoc.data();
+    // Check enrollment
+    const enrolledDoc = await dbFB.collection('students').doc(matric).get();
+    const isEnrolled = enrolledDoc.exists;
+
+    // Fetch attendance records
+    const weeklyDoc = await dbFB.collection('weekly').doc(matric).get();
+    const records = weeklyDoc.exists ? weeklyDoc.data() : {};
+
+    // Get current session
+    const sessDoc = await dbFB.collection('settings').doc('academic').get();
+    const sess = sessDoc.exists ? sessDoc.data().session : _autoSession();
+    const sem  = sessDoc.exists ? sessDoc.data().semester : _autoSemester();
+    const sessKey = sess.replace('/','_')+'_'+sem.replace(/\s/g,'_');
+
+    // Group by course
+    const courses = {};
+    Object.entries(records).forEach(([k,v])=>{
+      if(!k.includes(sessKey)) return;
+      const match = k.match(/^(.+?)_\d{4}_\d{4}_/);
+      if(!match) return;
+      const code = match[1].replace(/_/g,' ');
+      if(!courses[code]) courses[code]={present:0,absent:0,total:0};
+      if(v.status==='P') courses[code].present++;
+      else if(v.status==='A') courses[code].absent++;
+      courses[code].total++;
+    });
+
+    statusEl.textContent='✓ Found: '+esc(studentInfo.name);
+    statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#d1fae5;color:#059669;border:1px solid #6ee7b7;';
+
+    const courseEntries = Object.entries(courses);
+    let html = `<div style="background:#f8faff;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:13px;font-weight:800;color:#1a3a6b;margin-bottom:2px;">${esc(studentInfo.name)}</div>
+      <div style="font-size:11px;color:#64748b;">${esc(studentInfo.level)}${studentInfo.option?' · '+esc(studentInfo.option):''} &nbsp;·&nbsp; ${esc(matric)}</div>
+      <div style="font-size:11px;color:#64748b;margin-top:2px;">Session: ${esc(sess)} · ${esc(sem)}</div>
+      <div style="font-size:11px;margin-top:4px;font-weight:700;color:${isEnrolled?'#059669':'#dc2626'};">${isEnrolled?'✅ Face enrolled':'⚠️ Face not enrolled yet'}</div>
+    </div>`;
+
+    if(!courseEntries.length){
+      html += '<div style="font-size:12px;color:#94a3b8;text-align:center;padding:12px;">No attendance records yet for this session.</div>';
+    } else {
+      html += '<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">Attendance by Course</div>';
+      courseEntries.forEach(([code, d])=>{
+        const pct = d.total>0 ? Math.round(d.present/d.total*100) : 0;
+        const col = pct<75?'#dc2626':pct>=90?'#059669':'#d97706';
+        const bg  = pct<75?'#fee2e2':pct>=90?'#d1fae5':'#fef3c7';
+        html += `<div style="background:${bg};border-radius:8px;padding:8px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#0f172a;">${esc(code)}</div>
+            <div style="font-size:10px;color:#64748b;">${d.present} present · ${d.absent} absent of ${d.total} recorded</div>
+          </div>
+          <div style="font-size:16px;font-weight:900;color:${col};">${pct}%</div>
+        </div>`;
+      });
+      // Overall
+      const totalP = courseEntries.reduce((s,[,d])=>s+d.present,0);
+      const totalT = courseEntries.reduce((s,[,d])=>s+d.total,0);
+      const overall = totalT>0?Math.round(totalP/totalT*100):0;
+      html += `<div style="background:#1a3a6b;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <div style="flex:1;font-size:12px;font-weight:700;color:white;">Overall Average</div>
+        <div style="font-size:16px;font-weight:900;color:${overall<75?'#fca5a5':'#6ee7b7'};">${overall}%</div>
+      </div>`;
+    }
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = 'block';
+    excuseEl.style.display = 'block'; // show excuse section
+  } catch(e) {
+    statusEl.textContent = '⚠️ Error: '+e.message;
+    statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// #8: EXCUSE / ABSENCE SUBMISSION
+// ══════════════════════════════════════════════════════════════════
+async function submitExcuse() {
+  const matric  = document.getElementById('mr-matric').value.trim();
+  const week    = parseInt(document.getElementById('mr-excuse-week').value);
+  const course  = document.getElementById('mr-excuse-course').value.trim().toUpperCase();
+  const reason  = document.getElementById('mr-excuse-reason').value.trim();
+  const statusEl= document.getElementById('mr-excuse-status');
+
+  if(!matric||!week||!course||!reason){
+    statusEl.textContent='Please fill in all fields — week, course, and reason.';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    return;
+  }
+  if(reason.length<15){
+    statusEl.textContent='Please provide a more detailed reason (at least 15 characters).';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    return;
+  }
+  try {
+    if(!authFB.currentUser) await authFB.signInAnonymously();
+    await dbFB.collection('excuses').add({
+      matric, week, course, reason,
+      status: 'pending', // HOD reviews and sets to 'approved' or 'rejected'
+      submittedAt: new Date().toISOString()
+    });
+    statusEl.textContent='✅ Excuse submitted! Your HOD will review it and update your record if approved.';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:9px 12px;border-radius:7px;font-weight:600;background:#d1fae5;color:#059669;border:1px solid #6ee7b7;line-height:1.5;';
+    document.getElementById('mr-excuse-week').value='';
+    document.getElementById('mr-excuse-course').value='';
+    document.getElementById('mr-excuse-reason').value='';
+    addLog('info','Excuse submitted by matric: '+matric+' for '+course+' Week '+week);
+  } catch(e) {
+    statusEl.textContent='Submit failed: '+e.message;
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// #6: AT-RISK AUTOMATED ALERTS — HOD sees pending excuses + at-risk summary on dashboard
+// ══════════════════════════════════════════════════════════════════
+async function loadPendingExcuses() {
+  const el = document.getElementById('excuse-review-list');
+  if(!el) return;
+  try {
+    const snap = await dbFB.collection('excuses').where('status','==','pending').orderBy('submittedAt','desc').get();
+    if(snap.empty){ el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:10px;font-weight:700;">✓ No pending excuse requests</div>'; return; }
+    el.innerHTML = snap.docs.map(d=>{
+      const e=d.data(); const id=d.id;
+      const date = e.submittedAt ? new Date(e.submittedAt).toLocaleDateString('en-GB') : '—';
+      return `<div style="background:#fff;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:800;color:var(--txt);">${esc(e.matric)} &nbsp;·&nbsp; ${esc(e.course)} Week ${e.week}</div>
+        <div style="font-size:11px;color:var(--txt2);margin:4px 0;line-height:1.5;">${esc(e.reason)}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:8px;">Submitted: ${date}</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="reviewExcuse('${id}','approved')" style="flex:1;padding:7px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✓ Approve</button>
+          <button onclick="reviewExcuse('${id}','rejected')" style="flex:1;padding:7px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✕ Reject</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">Error: '+e.message+'</div>'; }
+}
+
+async function reviewExcuse(id, decision) {
+  if(currentUserRole!=='admin'){alert('Only the HOD can review excuses.');return;}
+  try {
+    const excuseDoc = await dbFB.collection('excuses').doc(id).get();
+    if(!excuseDoc.exists) return;
+    const e = excuseDoc.data();
+    await dbFB.collection('excuses').doc(id).update({
+      status: decision,
+      reviewedBy: currentUserName,
+      reviewedAt: new Date().toISOString()
+    });
+    // If approved — mark attendance as Excused (E) instead of Absent
+    if(decision === 'approved'){
+      const sessDoc = await dbFB.collection('settings').doc('academic').get();
+      const sess = sessDoc.exists ? sessDoc.data().session : _autoSession();
+      const sem  = sessDoc.exists ? sessDoc.data().semester : _autoSemester();
+      const key = e.course.replace(/\s/g,'_')+'_'+sess.replace('/','_')+'_'+sem.replace(/\s/g,'_')+'_wk'+e.week;
+      const weeklyDoc = await dbFB.collection('weekly').doc(e.matric).get();
+      const existing = weeklyDoc.exists ? weeklyDoc.data() : {};
+      existing[key] = {...(existing[key]||{}), status:'E', excuseApproved:true, approvedBy:currentUserName};
+      await dbFB.collection('weekly').doc(e.matric).set(existing, {merge:true});
+      // Audit log
+      await dbFB.collection('audit_log').add({
+        type:'excuse_approved', matric:e.matric, course:e.course, week:e.week,
+        approvedBy:currentUserName, timestamp:new Date().toISOString()
+      });
+      setAdminSt('✓ Excuse approved — Week '+e.week+' for '+e.matric+' marked Excused (E)','ok');
+    } else {
+      setAdminSt('Excuse rejected for '+e.matric+' Week '+e.week,'warn');
+    }
+    addLog('ok','Excuse '+decision+' for '+e.matric+' | '+e.course+' Wk'+e.week);
+    loadPendingExcuses();
+  } catch(err) { alert('Error: '+err.message); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// #17: ATTENDANCE TREND CHART — week-by-week line chart on dashboard
+// ══════════════════════════════════════════════════════════════════
+function renderAttendanceTrendChart() {
+  const container = document.getElementById('trend-chart-container');
+  if(!container) return;
+  const course = adminActiveCourse || activeCourse;
+  if(!course){ container.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px;">Select a course to view attendance trend</div>'; return; }
+  const courseStudents = getStudentsForCourse(course);
+  if(!courseStudents.length){ container.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">No students enrolled for this course</div>'; return; }
+  const baseKey = course.code.replace(/\s/g,'_')+'_'+getAcademicSession().replace('/','_')+'_'+getSemester().replace(/\s/g,'_')+'_wk';
+
+  // Build week-by-week attendance % data
+  const weeks = [], pcts = [];
+  for(let w=1;w<=currentWeek;w++){
+    let presentCount=0, totalCount=0;
+    courseStudents.forEach(u=>{
+      const k=baseKey+w;
+      const entry=weeklyData[u.matric]&&weeklyData[u.matric][k];
+      if(entry){ totalCount++; if(entry.status==='P'||entry.status==='E') presentCount++; }
+    });
+    if(totalCount>0){ weeks.push('W'+w); pcts.push(Math.round(presentCount/totalCount*100)); }
+  }
+  if(!weeks.length){ container.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">No data yet — finalise a session to see trends</div>'; return; }
+
+  // Draw simple SVG bar/line chart
+  const W=container.clientWidth||300, H=140, pad={top:16,right:16,bottom:28,left:36};
+  const chartW=W-pad.left-pad.right, chartH=H-pad.top-pad.bottom;
+  const barW=Math.max(4, Math.min(20, chartW/weeks.length - 4));
+  const x=(i)=>pad.left + i*(chartW/weeks.length) + chartW/(weeks.length*2);
+  const y=(pct)=>pad.top + chartH - (pct/100)*chartH;
+
+  let bars='', labels='', line='', points='';
+  weeks.forEach((w,i)=>{
+    const px=x(i), py=y(pcts[i]);
+    const col=pcts[i]<75?'#dc2626':pcts[i]>=90?'#059669':'#d97706';
+    bars+=`<rect x="${px-barW/2}" y="${py}" width="${barW}" height="${y(0)-py}" fill="${col}" opacity="0.2" rx="2"/>`;
+    labels+=`<text x="${px}" y="${H-8}" text-anchor="middle" font-size="9" fill="#94a3b8">${w}</text>`;
+    if(i>0){
+      const ppx=x(i-1), ppy=y(pcts[i-1]);
+      const lc=pcts[i]<75?'#dc2626':pcts[i]>=90?'#059669':'#d97706';
+      line+=`<line x1="${ppx}" y1="${ppy}" x2="${px}" y2="${py}" stroke="${lc}" stroke-width="2"/>`;
+    }
+    points+=`<circle cx="${px}" cy="${py}" r="4" fill="${pcts[i]<75?'#dc2626':pcts[i]>=90?'#059669':'#d97706'}" stroke="white" stroke-width="1.5"/>`;
+    points+=`<text x="${px}" y="${py-8}" text-anchor="middle" font-size="9" font-weight="700" fill="${pcts[i]<75?'#dc2626':'#475569'}">${pcts[i]}%</text>`;
+  });
+  // 75% threshold line
+  const threshY = y(75);
+  const threshLine = `<line x1="${pad.left}" y1="${threshY}" x2="${W-pad.right}" y2="${threshY}" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+    <text x="${pad.left+2}" y="${threshY-3}" font-size="8" fill="#dc2626" opacity="0.7">75%</text>`;
+  // Y axis labels
+  let yLabels='';
+  [0,25,50,75,100].forEach(v=>{
+    yLabels+=`<text x="${pad.left-4}" y="${y(v)+4}" text-anchor="end" font-size="8" fill="#cbd5e1">${v}%</text>`;
+  });
+
+  container.innerHTML=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
+    ${yLabels}${threshLine}${bars}${line}${points}${labels}
+  </svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// #18: CROSS-SEMESTER / HISTORICAL STUDENT VIEW
+// ══════════════════════════════════════════════════════════════════
+async function viewStudentHistory(matric) {
+  const u = students.find(s=>s.matric===matric);
+  if(!u){alert('Student not found.');return;}
+  // Load full historical data
+  let freshData={};
+  try{
+    const doc=await dbFB.collection('weekly').doc(matric).get();
+    if(doc.exists) freshData=doc.data();
+  }catch(e){freshData=weeklyData[matric]||{};}
+
+  // Group by session-semester
+  const sessionMap={};
+  Object.entries(freshData).forEach(([k,v])=>{
+    const mSess=k.match(/(\d{4}_\d{4})/);
+    const mSem=k.match(/(1st_Semester|2nd_Semester)/);
+    if(!mSess||!mSem) return;
+    const sessLabel=mSess[1].replace('_','/')+' · '+mSem[1].replace('_',' ');
+    if(!sessionMap[sessLabel]) sessionMap[sessLabel]={present:0,total:0,courses:new Set()};
+    sessionMap[sessLabel].total++;
+    if(v.status==='P'||v.status==='E') sessionMap[sessLabel].present++;
+    const cMatch=k.match(/^([A-Z]+_\d+)/);
+    if(cMatch) sessionMap[sessLabel].courses.add(cMatch[1].replace('_',' '));
+  });
+
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let sectHtml='';
+  Object.entries(sessionMap).sort().reverse().forEach(([sess,d])=>{
+    const pct=d.total>0?Math.round(d.present/d.total*100):0;
+    const col=pct<75?'#dc2626':pct>=90?'#059669':'#d97706';
+    sectHtml+=`<tr>
+      <td style="font-weight:600;font-size:12px;">${esc(sess)}</td>
+      <td style="text-align:center;">${d.present}/${d.total}</td>
+      <td style="text-align:center;font-weight:800;color:${col};">${pct}%</td>
+      <td style="font-size:10px;color:#64748b;">${[...d.courses].join(', ')}</td>
+    </tr>`;
+  });
+  if(!sectHtml) sectHtml='<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:12px;">No historical records found</td></tr>';
+
+  const html=`<html><head><title>Student History — ${esc(u.name)}</title>${getReportStyles()}</head><body>
+  ${getReportHeader('STUDENT ATTENDANCE HISTORY — ALL SESSIONS')}
+  <div class="info-row">
+    <div class="info-cell">Name: <span>${esc(u.name)}</span></div>
+    <div class="info-cell">Matric: <span>${esc(u.matric)}</span></div>
+    <div class="info-cell">Level: <span>${esc(u.level)}${u.option?' · '+esc(u.option):''}</span></div>
+    <div class="info-cell">Report Date: <span>${dateStr}</span></div>
+  </div>
+  <table>
+    <thead><tr><th>Session</th><th style="text-align:center;">Present/Total</th><th style="text-align:center;">Attendance%</th><th>Courses</th></tr></thead>
+    <tbody>${sectHtml}</tbody>
+  </table>
+  <div class="footer">The Gateway Polytechnic, Saapade &nbsp;·&nbsp; EEE Attendance System &nbsp;·&nbsp; Historical Report</div>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);}
+  addLog('info','Student history printed: '+u.name);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// #20: DESCRIPTOR COMPRESSION — when re-enrolling, compress to 4 decimal places
+// (already 6dp from before; change to 4dp to reduce storage ~33%)
+// ══════════════════════════════════════════════════════════════════
+function compressDescriptors(descriptorArray){
+  return descriptorArray.map(d=>Array.from(d).map(v=>Number(v).toFixed(4)).join(','));
+}
+
+
 async function checkScheduledBackup(){
   try{
     const lastBackupStr = lsGet('lastBackupDate');
@@ -4961,9 +5350,85 @@ async function spToggleCam() {
   }
 }
 
+// ── FIX 4: LIVENESS DETECTION ────────────────────────────────────
+// Uses eye landmarks to detect a blink (eye aspect ratio drops when eyes close)
+// EAR (Eye Aspect Ratio) = (p2-p6 + p3-p5) / (2 * p1-p4)
+// When EAR < threshold, eye is considered closed (blink detected)
+let _livenessBlinkDetected = false;
+let _livenessMonitorInterval = null;
+const EAR_BLINK_THRESHOLD = 0.22; // below this = eye closed
+
+function calcEAR(eyePts) {
+  // eyePts: array of 6 {x,y} points for one eye (landmarks)
+  const dist = (a, b) => Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2);
+  const vert1 = dist(eyePts[1], eyePts[5]);
+  const vert2 = dist(eyePts[2], eyePts[4]);
+  const horiz = dist(eyePts[0], eyePts[3]);
+  return (vert1 + vert2) / (2 * horiz);
+}
+
+function startLivenessMonitor() {
+  _livenessBlinkDetected = false;
+  const banner = document.getElementById('sp-liveness-banner');
+  const msg = document.getElementById('sp-liveness-msg');
+  if (banner) banner.style.display = 'block';
+  if (msg) msg.textContent = 'Please BLINK once slowly to confirm you are live';
+
+  let eyeWasOpen = true;
+  const vid = document.getElementById('sp-vid');
+  _livenessMonitorInterval = setInterval(async () => {
+    if (!spStream || _livenessBlinkDetected) { clearInterval(_livenessMonitorInterval); return; }
+    try {
+      const det = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({inputSize:224,scoreThreshold:.5}))
+        .withFaceLandmarks(true);
+      if (!det) return;
+      const lm = det.landmarks.positions;
+      // Left eye: landmarks 36-41, Right eye: 42-47 (68-point model)
+      // TinyFaceLandmarks68 uses same indices
+      const leftEye  = lm.slice(36, 42);
+      const rightEye = lm.slice(42, 48);
+      const earLeft  = calcEAR(leftEye);
+      const earRight = calcEAR(rightEye);
+      const ear = (earLeft + earRight) / 2;
+
+      if (eyeWasOpen && ear < EAR_BLINK_THRESHOLD) {
+        // Eyes just closed — start of blink
+        eyeWasOpen = false;
+      } else if (!eyeWasOpen && ear > EAR_BLINK_THRESHOLD) {
+        // Eyes just opened — blink complete!
+        _livenessBlinkDetected = true;
+        clearInterval(_livenessMonitorInterval);
+        if (banner) banner.style.background = 'rgba(5,150,105,.25)';
+        if (banner) banner.style.borderColor = 'rgba(110,231,183,.4)';
+        if (msg) { msg.style.color = '#6ee7b7'; msg.textContent = '✓ Liveness confirmed! Now tap Capture for your final sample.'; }
+        // Re-enable capture button
+        const capBtn = document.getElementById('sp-cap-btn');
+        if (capBtn) { capBtn.disabled = false; capBtn.style.opacity = '1'; }
+        addLog('info', 'Liveness blink confirmed for: ' + (spStudentData ? spStudentData.matric : '?'));
+      }
+    } catch(e) { /* silently ignore detection errors during liveness check */ }
+  }, 150); // check every 150ms
+}
+
+function stopLivenessMonitor() {
+  clearInterval(_livenessMonitorInterval);
+  _livenessBlinkDetected = false;
+  const banner = document.getElementById('sp-liveness-banner');
+  if (banner) banner.style.display = 'none';
+}
+
 async function spCapture() {
   if (!spStream || !loaded) {
     document.getElementById('sp-status').textContent = 'Camera not active or models loading...'; return;
+  }
+  // FIX 4: On the last sample, require a blink first for liveness proof
+  const nextIdx = spSamples.length;
+  if (nextIdx === SP_SAMPLES_NEEDED - 1 && !_livenessBlinkDetected) {
+    const capBtn = document.getElementById('sp-cap-btn');
+    if (capBtn) { capBtn.disabled = true; capBtn.style.opacity = '.4'; }
+    document.getElementById('sp-status').textContent = '👁️ Blink once slowly for your final sample...';
+    startLivenessMonitor();
+    return;
   }
   document.getElementById('sp-status').textContent = 'Detecting face...';
   const vid = document.getElementById('sp-vid');
@@ -5009,16 +5474,11 @@ function spUpdateProgress() {
 
 function spRetake() {
   spSamples = [];
-  // Reset dot previews
+  stopLivenessMonitor(); // FIX 4: reset liveness state
   for (let i = 0; i < SP_SAMPLES_NEEDED; i++) {
     const dot = document.getElementById('sp-dot' + i);
-    if (dot) {
-      dot.innerHTML = String(i + 1);
-      dot.style.border = '2px dashed rgba(255,255,255,.3)';
-      dot.style.boxShadow = '';
-    }
+    if (dot) { dot.innerHTML = String(i + 1); dot.style.border = '2px dashed rgba(255,255,255,.3)'; dot.style.boxShadow = ''; }
   }
-  // Re-enable capture, disable save
   const capBtn = document.getElementById('sp-cap-btn');
   const saveBtn = document.getElementById('sp-save-btn');
   if (capBtn) { capBtn.disabled = false; capBtn.style.opacity = '1'; }
