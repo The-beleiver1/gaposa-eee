@@ -72,32 +72,34 @@ body{height:100%;font-family:'Outfit',sans-serif;background:#0f2547;color:var(--
 /* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:7777;display:none;flex-direction:column;align-items:center;justify-content:center;background:transparent;padding:20px;overflow-y:auto;}
 #login-screen.show{display:flex;}
-.login-card{background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.6);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.1);}
-.login-logo{width:60px;height:60px;object-fit:contain;border-radius:12px;background:linear-gradient(135deg,#1a3a6b,#1a56db);padding:5px;display:block;margin:0 auto 10px;}
-.login-school{font-size:15px;font-weight:900;color:#1a3a6b;text-align:center;line-height:1.3;}
-.login-dept{font-size:10px;color:#94a3b8;text-align:center;margin-bottom:18px;}
+.login-card{background:rgba(10,25,55,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);}
+.login-logo{width:60px;height:60px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,0.15);padding:5px;display:block;margin:0 auto 10px;}
+.login-school{font-size:15px;font-weight:900;color:#ffffff;text-align:center;line-height:1.3;}
+.login-dept{font-size:10px;color:rgba(255,255,255,0.65);text-align:center;margin-bottom:18px;}
 .ltabs{display:flex;gap:5px;margin-bottom:16px;}
-.ltab{flex:1;padding:9px;border-radius:8px;border:1.5px solid #e2e8f0;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;color:#94a3b8;background:#f8faff;transition:all .2s;}
+.ltab{flex:1;padding:9px;border-radius:8px;border:1.5px solid rgba(255,255,255,.2);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.08);transition:all .2s;}
 .ltab.active{background:linear-gradient(135deg,#1a3a6b,#1a56db);color:white;border-color:transparent;}
 .lform{display:none;} .lform.show{display:block;}
-.llbl{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:5px;margin-top:12px;}
-.linp{width:100%;padding:12px 13px;background:#f8faff;border:1.5px solid #e2e8f0;border-radius:9px;color:#0f172a;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none;}
-.linp:focus{border-color:#1a56db;background:white;}
+.llbl{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.75);margin-bottom:5px;margin-top:12px;}
+.linp{width:100%;padding:12px 13px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,.2);border-radius:9px;color:#ffffff;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none;}
+.linp::placeholder{color:rgba(255,255,255,0.4);}
+.linp:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,0.18);}
 .lbtn{width:100%;padding:14px;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-top:14px;color:white;}
 .lbtn.blue{background:linear-gradient(135deg,#1a3a6b,#1a56db);}
 .lbtn.green{background:linear-gradient(135deg,#059669,#047857);}
 .lbtn.purple{background:linear-gradient(135deg,#7c3aed,#5b21b6);}
-.lerr{background:#fee2e2;border:1.5px solid #fca5a5;border-radius:8px;padding:9px 12px;font-size:12px;color:#dc2626;margin-top:10px;display:none;line-height:1.5;}
-.lnote{font-size:11px;color:#94a3b8;text-align:center;margin-top:10px;line-height:1.5;}
+.lerr{background:rgba(220,38,38,0.25);border:1.5px solid rgba(252,165,165,0.5);border-radius:8px;padding:9px 12px;font-size:12px;color:#fca5a5;margin-top:10px;display:none;line-height:1.5;}
+.lnote{font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:10px;line-height:1.5;}
+.lnote b{color:rgba(255,255,255,0.85);}
 .pw-wrap{position:relative;}
 .pw-wrap .linp{padding-right:44px;}
-.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:4px;line-height:1;}
-.pw-eye:hover{color:#1a56db;}
-.forgot-link{display:block;text-align:right;font-size:11px;color:#1a56db;font-weight:700;cursor:pointer;margin-top:6px;text-decoration:none;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:16px;padding:4px;line-height:1;}
+.pw-eye:hover{color:rgba(255,255,255,0.9);}
+.forgot-link{display:block;text-align:right;font-size:11px;color:rgba(100,180,255,0.9);font-weight:700;cursor:pointer;margin-top:6px;text-decoration:none;}
 .forgot-link:hover{text-decoration:underline;}
 .info-box{border-radius:9px;padding:10px 13px;font-size:12px;margin-bottom:4px;line-height:1.5;}
-.info-blue{background:#e8f0fe;border:1.5px solid #bfdbfe;color:#1a56db;}
-.info-purple{background:#ede9fe;border:1.5px solid #c4b5fd;color:#7c3aed;}
+.info-blue{background:rgba(26,86,219,0.3);border:1.5px solid rgba(191,219,254,0.4);color:#bfdbfe;}
+.info-purple{background:rgba(124,58,237,0.3);border:1.5px solid rgba(196,181,253,0.4);color:#c4b5fd;}
 
 /* HEADER */
 header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:10px 14px;flex-shrink:0;padding-top:calc(10px + env(safe-area-inset-top,0px));box-shadow:0 2px 16px rgba(15,23,42,.3);}
@@ -467,10 +469,10 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       </div>
       <label class="llbl" style="margin-top:12px">Your Assigned Course(s)</label>
       <div style="font-size:11px;color:#475569;margin-bottom:8px;line-height:1.5;">Select all courses you are teaching this semester. You can update this later from your profile.</div>
-      <div id="reg-course-picker" style="max-height:180px;overflow-y:auto;border:1.5px solid #e2e8f0;border-radius:9px;padding:8px;background:#f8faff;margin-bottom:14px;">
+      <div id="reg-course-picker" style="max-height:180px;overflow-y:auto;border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:8px;background:rgba(255,255,255,0.1);margin-bottom:14px;">
         <div style="font-size:11px;color:#94a3b8;text-align:center;padding:8px">Loading courses...</div>
       </div>
-      <div style="font-size:11px;color:#1a56db;font-weight:600;margin-bottom:14px" id="reg-course-count">0 courses selected</div>
+      <div style="font-size:11px;color:rgba(147,197,253,0.9);font-weight:600;margin-bottom:14px" id="reg-course-count">0 courses selected</div>
       <button class="lbtn green" onclick="doRegister()">Create Account →</button>
     </div>
 
@@ -490,20 +492,20 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <!-- STUDENT TAB — Enroll + Attendance Check + Excuse (all-in-one) -->
     <div class="lform" id="lf-student">
       <!-- Student mode toggle -->
-      <div style="display:flex;gap:0;background:#f1f5f9;border-radius:10px;overflow:hidden;margin-bottom:14px;border:1.5px solid #e2e8f0;">
+      <div style="display:flex;gap:0;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;margin-bottom:14px;border:1.5px solid rgba(255,255,255,.15);">
         <button id="st-mode-enroll" onclick="setStudentMode('enroll')"
           style="flex:1;padding:9px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1a3a6b,#1a56db);color:white;transition:all .2s;">
           🎓 Enroll Face
         </button>
         <button id="st-mode-record" onclick="setStudentMode('record')"
-          style="flex:1;padding:9px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;transition:all .2s;">
+          style="flex:1;padding:9px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;">
           📊 My Attendance
         </button>
       </div>
 
       <!-- === ENROLL SECTION === -->
       <div id="st-enroll-section">
-        <div class="info-box" style="background:#fef3c7;border:1.5px solid #fcd34d;color:#92400e;border-radius:9px;padding:10px 13px;font-size:12px;margin-bottom:12px;line-height:1.5;">
+        <div class="info-box" style="background:rgba(217,119,6,0.25);border:1.5px solid rgba(252,211,77,0.4);color:#fcd34d;border-radius:9px;padding:10px 13px;font-size:12px;margin-bottom:12px;line-height:1.5;">
           🎓 Enter your <b>matric number</b> to enroll your face. You only need to do this <b>once</b>.
         </div>
         <label class="llbl">Matric Number</label>
@@ -1724,12 +1726,12 @@ function setStudentMode(mode) {
     enrollSection.style.display = 'block';
     recordSection.style.display = 'none';
     if(enrollBtn){ enrollBtn.style.background='linear-gradient(135deg,#1a3a6b,#1a56db)'; enrollBtn.style.color='white'; }
-    if(recordBtn){ recordBtn.style.background='transparent'; recordBtn.style.color='#94a3b8'; }
+    if(recordBtn){ recordBtn.style.background='transparent'; recordBtn.style.color='rgba(255,255,255,0.5)'; }
   } else {
     enrollSection.style.display = 'none';
     recordSection.style.display = 'block';
     if(recordBtn){ recordBtn.style.background='linear-gradient(135deg,#059669,#047857)'; recordBtn.style.color='white'; }
-    if(enrollBtn){ enrollBtn.style.background='transparent'; enrollBtn.style.color='#94a3b8'; }
+    if(enrollBtn){ enrollBtn.style.background='transparent'; enrollBtn.style.color='rgba(255,255,255,0.5)'; }
     // Clear and reset the record lookup
     const matricEl = document.getElementById('mr-matric');
     if(matricEl) matricEl.value='';
@@ -1807,11 +1809,10 @@ async function doRegister(){
     if(code!==sd.data().secretCode){showLoginErr('Incorrect department code. Contact your HOD.');return;}
     const cred=await authFB.createUserWithEmailAndPassword(email,pass);
     const assignedCourses = [...regSelectedCourses];
-    await dbFB.collection('users').doc(cred.user.uid).set({
-      email, name, role:'pending',
-      assignedCourses,
-      registeredAt: new Date().toISOString()
-    });
+    const regData = { email, name, role:'pending', assignedCourses, registeredAt: new Date().toISOString() };
+    await dbFB.collection('users').doc(cred.user.uid).set(regData);
+    // Also write to pending_registrations (admin-readable without restrictive user rule)
+    try{ await dbFB.collection('pending_registrations').doc(cred.user.uid).set(regData); }catch(e){/* non-critical */}
     // Sign out immediately — they need HOD approval before they can log in
     await authFB.signOut();
     document.getElementById('lerr').style.display='none';
@@ -4353,66 +4354,78 @@ async function renderPendingLecturers(){
   const el = document.getElementById('pending-list');
   const badge = document.getElementById('pending-badge');
   if(!el) return;
-  // Only run if HOD is logged in
-  if(currentUserRole !== 'admin') {
+  if(currentUserRole !== 'admin'){
     el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">HOD access required</div>';
     return;
   }
+
+  // Strategy: try 3 approaches in order
+  // 1. Query users where role==pending (works if admin rule is updated)
+  // 2. Read from pending_registrations collection (new fallback collection)
+  // 3. Show rule fix instructions
+
+  const buildCard = (uid, u) => {
+    const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
+    const courseCount = (u.assignedCourses||[]).length;
+    return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
+      <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${esc(u.name||'Unknown')}</div>
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${esc(u.email||'')} · Registered ${regDate} · ${courseCount} course(s) selected</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
+        <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
+      </div>
+    </div>`;
+  };
+
+  // Approach 1: direct where() query — works if Firestore rule allows admin to read all users
   try{
-    // Query users where role == 'pending' — works because HOD's Firestore rules allow admin to read all user docs
     const snap = await dbFB.collection('users').where('role','==','pending').get();
     badge.textContent = snap.size;
     if(snap.empty){
       el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ No pending approvals</div>';
       return;
     }
-    el.innerHTML = snap.docs.map(d=>{
-      const u=d.data(); const uid=d.id;
-      const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
-      const courseCount = (u.assignedCourses||[]).length;
-      return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
-        <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${esc(u.name||'Unknown')}</div>
-        <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${esc(u.email||'')} · Registered ${regDate} · ${courseCount} course(s) selected</div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
-          <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
-        </div>
-      </div>`;
-    }).join('');
-  }catch(e){
-    // If the rules block the where() query, fall back to fetching all users and filtering client-side
-    try {
-      const allSnap = await dbFB.collection('users').get();
-      const pendingDocs = allSnap.docs.filter(d => d.data().role === 'pending');
-      badge.textContent = pendingDocs.length;
-      if(!pendingDocs.length){
-        el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ No pending approvals</div>';
-        return;
-      }
-      el.innerHTML = pendingDocs.map(d=>{
-        const u=d.data(); const uid=d.id;
-        const regDate = u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-GB') : '—';
-        const courseCount = (u.assignedCourses||[]).length;
-        return `<div style="background:#fff;border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;">
-          <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px;">${esc(u.name||'Unknown')}</div>
-          <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">${esc(u.email||'')} · Registered ${regDate} · ${courseCount} course(s) selected</div>
-          <div style="display:flex;gap:8px;">
-            <button onclick="approveLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approve</button>
-            <button onclick="rejectLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="flex:1;padding:8px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕ Reject</button>
-          </div>
-        </div>`;
-      }).join('');
-    } catch(e2) {
-      el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;line-height:1.6;">⚠ Could not load pending approvals.<br><small>Go to Firebase Console → Firestore → Rules and update the <b>users</b> rule to allow admin to read all users:<br><code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;">allow read: if request.auth != null && (request.auth.uid == uid || get(...).data.role == \'admin\');</code></small></div>';
-      addLog('err','Load pending lecturers: '+e2.message);
+    el.innerHTML = snap.docs.map(d=>buildCard(d.id, d.data())).join('');
+    return;
+  }catch(e){ /* fall through to next approach */ }
+
+  // Approach 2: read from pending_registrations collection (admin-readable, no restriction)
+  try{
+    const snap = await dbFB.collection('pending_registrations').get();
+    badge.textContent = snap.size;
+    if(snap.empty){
+      el.innerHTML='<div style="font-size:12px;color:var(--green);text-align:center;padding:12px;font-weight:700;">✓ No pending approvals</div>';
+      return;
     }
-  }
+    el.innerHTML = snap.docs.map(d=>buildCard(d.id, d.data())).join('');
+    return;
+  }catch(e2){ /* fall through to instruction */ }
+
+  // Approach 3: Show exact Firestore rule fix
+  badge.textContent = '?';
+  el.innerHTML=`<div style="font-size:12px;color:var(--amber);padding:10px;line-height:1.8;background:var(--amber-l);border:1px solid var(--amber-b);border-radius:8px;">
+    ⚠ <b>One-time Firestore rule fix needed.</b><br>
+    In Firebase Console → Firestore → Rules, change the <b>users</b> match to:<br>
+    <code style="display:block;background:#0f172a;color:#34d399;padding:8px;border-radius:6px;margin-top:6px;font-size:10px;line-height:1.6;white-space:pre-wrap;">match /users/{uid} {
+  allow read: if request.auth != null && (
+    request.auth.uid == uid ||
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+  );
+  allow write: if request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+  allow create: if request.auth != null;
+}</code>
+    After publishing those rules, tap <b>↻ Refresh</b> to load approvals.
+  </div>`;
+  addLog('warn','Pending lecturers: Firestore rules need update for admin to read all users');
 }
 
 async function approveLecturer(uid, name){
   if(!confirm('Approve "'+name+'" as a lecturer? They will be able to log in immediately.'))return;
   try{
     await dbFB.collection('users').doc(uid).update({ role:'lecturer', approvedBy:currentUserName, approvedAt:new Date().toISOString() });
+    // Remove from pending_registrations
+    try{ await dbFB.collection('pending_registrations').doc(uid).delete(); }catch(e){}
     await dbFB.collection('audit_log').add({
       type:'lecturer_approved', uid, name, approvedBy:currentUserName, timestamp:new Date().toISOString()
     });
@@ -4427,6 +4440,7 @@ async function rejectLecturer(uid, name){
   if(!confirm('Reject and delete "'+name+'"\'s account? They will need to register again.'))return;
   try{
     await dbFB.collection('users').doc(uid).delete();
+    try{ await dbFB.collection('pending_registrations').doc(uid).delete(); }catch(e){}
     await dbFB.collection('audit_log').add({
       type:'lecturer_rejected', uid, name, rejectedBy:currentUserName, timestamp:new Date().toISOString()
     });
