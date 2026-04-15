@@ -389,6 +389,60 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 .pwa-sub{font-size:10px;color:rgba(255,255,255,.7);}
 .pwa-btn{background:#fff;color:#1a3a6b;border:none;border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
 .pwa-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
+
+/* ── RESPONSIVE DESIGN ─────────────────────────────────────────── */
+/* Desktop: wider shell, visible sidebar for admin */
+@media (min-width:768px){
+  #app-shell{max-width:800px;border-radius:16px;margin:20px auto;min-height:calc(100vh - 40px);min-height:calc(100svh - 40px);}
+  #login-screen .login-card{max-width:520px;padding:36px 32px;}
+  .login-school{font-size:17px;}
+  .card{border-radius:16px;}
+  .mbox{border-radius:20px;margin:auto;max-height:80vh;}
+  .mbg{align-items:center;}
+  .nav-item{font-size:10px;padding:10px 4px;}
+  .nav-item svg{width:20px;height:20px;}
+  header{padding:12px 20px;padding-top:calc(12px + env(safe-area-inset-top,0px));}
+  .pane{padding:16px 20px;}
+  .card-body{padding:16px;}
+  .scan-btn{font-size:17px;padding:18px;}
+  .body{font-size:14px;}
+  /* Wider camera box on desktop */
+  .cam-box{aspect-ratio:16/10;}
+}
+@media (min-width:1024px){
+  #app-shell{max-width:960px;}
+  .pane{padding:20px 28px;}
+  /* 2-col layout for admin panes on wide screens */
+  #apane-dashboard .card:not(:last-child){break-inside:avoid;}
+}
+/* Small phones */
+@media (max-width:380px){
+  .login-card{padding:22px 16px;border-radius:18px;}
+  .ltab{font-size:10px;padding:7px 4px;}
+  .nav-item{font-size:8px;}
+  .card-body{padding:10px;}
+  .hdr-name{font-size:11px;}
+}
+/* Fix the app shell background to not look grey on desktop */
+@media (min-width:768px){
+  body{align-items:center;justify-content:flex-start;}
+  #app-shell{background:rgba(240,244,255,0.94);}
+}
+
+/* ── STANDARDIZED BUTTONS ──────────────────────────────────────── */
+/* Danger = red for destructive actions */
+.btn-danger{background:linear-gradient(135deg,#dc2626,#991b1b) !important;color:#fff !important;border:none !important;}
+/* Primary = blue */
+.btn-primary{background:linear-gradient(135deg,#1a56db,#1a3a6b) !important;color:#fff !important;border:none !important;}
+/* Keep edel (delete X) always red */
+.edel{background:var(--red-l) !important;color:var(--red) !important;border:1px solid var(--red-b) !important;}
+
+/* ── CONSOLIDATED HEADER ───────────────────────────────────────── */
+/* Single compact header bar — no separate session bar on mobile */
+@media (max-width:480px){
+  #session-bar .sb-divider:nth-child(n+4){display:none;}
+  #session-bar .sb-item:nth-child(n+4){display:none;}
+}
 </style>
 </head>
 <body>
@@ -429,52 +483,69 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <div class="login-school">The Gateway Polytechnic, Saapade</div>
     <div class="login-dept">Dept. of Electrical &amp; Electronic Engineering Technology</div>
     <div class="ltabs" style="flex-wrap:wrap;gap:4px">
-      <div class="ltab active" id="lt-login" onclick="setLTab('login')" style="flex:1;min-width:60px">Login</div>
-      <div class="ltab" id="lt-register" onclick="setLTab('register')" style="flex:1;min-width:60px">Register</div>
-      <div class="ltab" id="lt-student" onclick="setLTab('student')" style="flex:1;min-width:60px">Student</div>
-      <div class="ltab" id="lt-hod" onclick="setLTab('hod')" style="flex:1;min-width:60px">HOD</div>
+      <div class="ltab active" id="lt-lecturer" onclick="setLTab('lecturer')" style="flex:1;min-width:60px">🎓 Lecturer</div>
+      <div class="ltab" id="lt-student" onclick="setLTab('student')" style="flex:1;min-width:60px">👤 Student</div>
+      <div class="ltab" id="lt-hod" onclick="setLTab('hod')" style="flex:1;min-width:60px">🛡️ HOD</div>
     </div>
 
-    <!-- LOGIN -->
-    <div class="lform show" id="lf-login">
-      <label class="llbl">Email Address</label>
-      <input class="linp" id="l-email" type="email" placeholder="your@email.com" autocomplete="email">
-      <label class="llbl">Password</label>
-      <div class="pw-wrap">
-        <input class="linp" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-        <button class="pw-eye" type="button" onclick="togglePw('l-pass',this)" title="Show/hide password">👁</button>
+    <!-- LECTURER TAB — Login & Register sub-toggle -->
+    <div class="lform show" id="lf-lecturer">
+      <!-- Sub-toggle -->
+      <div style="display:flex;gap:0;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin-bottom:16px;border:1.5px solid rgba(255,255,255,.12);">
+        <button id="lt-sub-login" onclick="setLecturerSub('login')"
+          style="flex:1;padding:9px 6px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1a3a6b,#1a56db);color:white;transition:all .2s;">
+          🔑 Login
+        </button>
+        <button id="lt-sub-register" onclick="setLecturerSub('register')"
+          style="flex:1;padding:9px 6px;border:none;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;">
+          📝 New? Register
+        </button>
       </div>
-      <span class="forgot-link" onclick="doForgotPassword()">Forgot password?</span>
-      <button class="lbtn blue" onclick="doLogin()">Login →</button>
+      <!-- Login section -->
+      <div id="lec-login-section">
+        <label class="llbl">Email Address</label>
+        <input class="linp" id="l-email" type="email" placeholder="your@email.com" autocomplete="email">
+        <label class="llbl">Password</label>
+        <div class="pw-wrap">
+          <input class="linp" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+          <button class="pw-eye" type="button" onclick="togglePw('l-pass',this)" title="Show/hide password">👁</button>
+        </div>
+        <span class="forgot-link" onclick="doForgotPassword()">Forgot password?</span>
+        <button class="lbtn blue" onclick="doLogin()" style="margin-top:12px;">Login →</button>
+      </div>
+      <!-- Register section -->
+      <div id="lec-register-section" style="display:none;">
+        <div class="info-box info-blue" style="margin-bottom:10px;">🔐 Enter the <b>Department Code</b> from your HOD to register.</div>
+        <label class="llbl">Department Secret Code</label>
+        <input class="linp" id="r-code" placeholder="Enter code from HOD" autocomplete="off">
+        <label class="llbl">Your Full Name</label>
+        <input class="linp" id="r-name" placeholder="Dr. / Mr. / Mrs. Full Name" autocomplete="name">
+        <label class="llbl">Email Address</label>
+        <input class="linp" id="r-email" type="email" placeholder="your@email.com" autocomplete="email">
+        <label class="llbl">Choose Password</label>
+        <div class="pw-wrap">
+          <input class="linp" id="r-pass" type="password" placeholder="Min 6 characters" autocomplete="new-password">
+          <button class="pw-eye" type="button" onclick="togglePw('r-pass',this)">👁</button>
+        </div>
+        <label class="llbl">Confirm Password</label>
+        <div class="pw-wrap">
+          <input class="linp" id="r-pass2" type="password" placeholder="Repeat password" autocomplete="new-password">
+          <button class="pw-eye" type="button" onclick="togglePw('r-pass2',this)">👁</button>
+        </div>
+        <label class="llbl" style="margin-top:10px">Your Assigned Course(s)</label>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px;line-height:1.4;">Select all courses you are teaching this semester.</div>
+        <div id="reg-course-picker" style="max-height:160px;overflow-y:auto;border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:8px;background:rgba(255,255,255,0.1);margin-bottom:10px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;padding:8px">Loading courses...</div>
+        </div>
+        <div style="font-size:11px;color:rgba(147,197,253,0.9);font-weight:600;margin-bottom:12px" id="reg-course-count">0 courses selected</div>
+        <div id="lform-register"></div>
+        <button class="lbtn green" onclick="doRegister()">Create Account →</button>
+      </div>
     </div>
 
-    <!-- REGISTER -->
-    <div class="lform" id="lf-register">
-      <div class="info-box info-blue">🔐 Enter the <b>Department Secret Code</b> from your HOD to self-register.</div>
-      <label class="llbl">Department Secret Code</label>
-      <input class="linp" id="r-code" placeholder="Enter code from HOD" autocomplete="off">
-      <label class="llbl">Your Full Name</label>
-      <input class="linp" id="r-name" placeholder="Dr. / Mr. / Mrs. Full Name" autocomplete="name">
-      <label class="llbl">Email Address</label>
-      <input class="linp" id="r-email" type="email" placeholder="your@email.com" autocomplete="email">
-      <label class="llbl">Choose Password</label>
-      <div class="pw-wrap">
-        <input class="linp" id="r-pass" type="password" placeholder="Min 6 characters" autocomplete="new-password">
-        <button class="pw-eye" type="button" onclick="togglePw('r-pass',this)">👁</button>
-      </div>
-      <label class="llbl">Confirm Password</label>
-      <div class="pw-wrap">
-        <input class="linp" id="r-pass2" type="password" placeholder="Repeat password" autocomplete="new-password">
-        <button class="pw-eye" type="button" onclick="togglePw('r-pass2',this)">👁</button>
-      </div>
-      <label class="llbl" style="margin-top:12px">Your Assigned Course(s)</label>
-      <div style="font-size:11px;color:#475569;margin-bottom:8px;line-height:1.5;">Select all courses you are teaching this semester. You can update this later from your profile.</div>
-      <div id="reg-course-picker" style="max-height:180px;overflow-y:auto;border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:8px;background:rgba(255,255,255,0.1);margin-bottom:14px;">
-        <div style="font-size:11px;color:#94a3b8;text-align:center;padding:8px">Loading courses...</div>
-      </div>
-      <div style="font-size:11px;color:rgba(147,197,253,0.9);font-weight:600;margin-bottom:14px" id="reg-course-count">0 courses selected</div>
-      <button class="lbtn green" onclick="doRegister()">Create Account →</button>
-    </div>
+    <!-- Hidden legacy forms (referenced by some JS) -->
+    <div class="lform" id="lf-login" style="display:none!important;"></div>
+    <div class="lform" id="lf-register" style="display:none!important;"></div>
 
     <!-- HOD -->
     <div class="lform" id="lf-hod">
@@ -531,12 +602,34 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <div id="mr-status" style="font-size:11px;margin-top:5px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
         <div id="mr-results" style="display:none;margin-top:10px;max-height:300px;overflow-y:auto;"></div>
         <!-- Excuse submission -->
-        <div id="mr-excuse-section" style="display:none;margin-top:10px;border-top:1px solid #e2e8f0;padding-top:10px;">
-          <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:8px;">📝 Submit Absence Excuse</div>
-          <input class="linp" id="mr-excuse-week" type="number" min="1" max="15" placeholder="Week number (e.g. 3)" style="margin-bottom:8px;">
-          <input class="linp" id="mr-excuse-course" placeholder="Course code (e.g. EEC 311)" style="margin-bottom:8px;" autocomplete="off">
-          <textarea class="linp" id="mr-excuse-reason" placeholder="Reason for absence (e.g. Medical — attached hospital card)" rows="3" style="resize:none;margin-bottom:8px;"></textarea>
-          <button class="lbtn blue" onclick="submitExcuse()" style="margin-top:0;">Submit Excuse Request</button>
+        <div id="mr-excuse-section" style="display:none;margin-top:10px;border-top:1px solid rgba(255,255,255,.15);padding-top:12px;">
+          <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:10px;">📝 Submit Absence Excuse</div>
+          <label class="llbl">Week Number</label>
+          <input class="linp" id="mr-excuse-week" type="number" min="1" max="15" placeholder="e.g. 3" style="margin-bottom:8px;">
+          <label class="llbl">Course Code</label>
+          <input class="linp" id="mr-excuse-course" placeholder="e.g. EEC 311" style="margin-bottom:8px;" autocomplete="off">
+          <label class="llbl">Type of Absence</label>
+          <select class="linp" id="mr-excuse-type" style="margin-bottom:8px;" onchange="updateExcuseDocLabel()">
+            <option value="">— Select reason type —</option>
+            <option value="Medical">🏥 Medical / Sickness (Hospital Report)</option>
+            <option value="Legal">🚔 Legal / Crime-related (Police Report)</option>
+            <option value="Family">👨‍👩‍👦 Family Emergency</option>
+            <option value="Academic">📚 Academic Clash / Approved Activity</option>
+            <option value="Other">📄 Other (Attach supporting document)</option>
+          </select>
+          <label class="llbl">Reason / Details</label>
+          <textarea class="linp" id="mr-excuse-reason" placeholder="Describe why you were absent (at least 20 characters)..." rows="3" style="resize:none;margin-bottom:8px;"></textarea>
+          <label class="llbl" id="mr-doc-label">Supporting Document (Optional)</label>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:6px;" id="mr-doc-hint">Upload hospital report, police report, or any official letter (JPG/PNG/PDF, max 2MB)</div>
+          <div style="position:relative;margin-bottom:10px;">
+            <input type="file" id="mr-excuse-file" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" onchange="handleExcuseFile(this)">
+            <button onclick="document.getElementById('mr-excuse-file').click()"
+              style="width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1.5px dashed rgba(255,255,255,.3);border-radius:9px;color:rgba(255,255,255,.7);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:center;">
+              📎 Tap to attach document
+            </button>
+            <div id="mr-file-preview" style="margin-top:6px;font-size:11px;color:#6ee7b7;display:none;"></div>
+          </div>
+          <button class="lbtn blue" onclick="submitExcuse()" style="margin-top:0;background:linear-gradient(135deg,#7c3aed,#5b21b6);">✉️ Submit Excuse Request</button>
           <div id="mr-excuse-status" style="font-size:11px;margin-top:6px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
         </div>
       </div>
@@ -546,8 +639,8 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
     <div class="lform" id="lf-myrecord" style="display:none!important;"></div>
 
     <div class="lerr" id="lerr"></div>
-    <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> and enter the code from your HOD.</div>
-    <div class="lnote" id="lnote2" style="margin-top:4px;color:#d97706">🎓 Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
+    <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> inside the Lecturer tab to create your account.</div>
+    <div class="lnote" id="lnote2" style="margin-top:4px;color:#fcd34d;">🎓 Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
   </div>
 </div>
 
@@ -1193,8 +1286,8 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
       Tap Start Camera to begin enrollment
     </div>
     <!-- FIX 4: Liveness instruction banner -->
-    <div id="sp-liveness-banner" style="display:none;width:100%;padding:8px 12px;background:rgba(124,58,237,.25);border:1.5px solid rgba(196,181,253,.4);border-radius:8px;font-size:11px;color:#c4b5fd;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
-      👁️ <span id="sp-liveness-msg">For your last sample — please BLINK once slowly to confirm you are live</span>
+    <div id="sp-liveness-banner" style="display:none;width:100%;padding:10px 12px;background:rgba(124,58,237,.25);border:1.5px solid rgba(196,181,253,.4);border-radius:8px;font-size:12px;color:#c4b5fd;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
+      <span id="sp-liveness-msg">👆 Nod your head DOWN once to confirm you are live</span>
     </div>
 
     <div style="font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;">
@@ -1694,7 +1787,7 @@ async function doForgotPassword() {
 }
 
 function setLTab(mode){
-  ['login','register','student','hod'].forEach(m=>{
+  ['lecturer','student','hod'].forEach(m=>{
     const lt = document.getElementById('lt-'+m);
     const lf = document.getElementById('lf-'+m);
     if(lt) lt.classList.toggle('active',m===mode);
@@ -1702,17 +1795,34 @@ function setLTab(mode){
   });
   document.getElementById('lerr').style.display='none';
   const notes={
-    login:'New lecturer? Tap <b>Register</b> and enter the code from your HOD.',
-    register:'Get the secret code from your HOD.',
-    student:'',
+    lecturer:'New? Tap <b>Register</b> to create your account with your HOD\'s secret code.',
+    student:'Tap <b>Enroll Face</b> to register or <b>My Attendance</b> to view your records.',
     hod:'HOD / Administrator access only.'
   };
   document.getElementById('lnote').innerHTML=notes[mode]||'';
   const lnote2 = document.getElementById('lnote2');
-  if (lnote2) lnote2.style.display = mode === 'login' ? 'block' : 'none';
-  if(mode==='register') renderRegCoursePicker();
-  // Reset student mode to Enroll when switching to student tab
+  if (lnote2) lnote2.style.display = mode === 'lecturer' ? 'block' : 'none';
+  if(mode==='lecturer') renderRegCoursePicker();
   if(mode==='student') setStudentMode('enroll');
+}
+
+function setLecturerSub(sub){
+  const loginSec = document.getElementById('lec-login-section');
+  const regSec = document.getElementById('lec-register-section');
+  const loginBtn = document.getElementById('lt-sub-login');
+  const regBtn = document.getElementById('lt-sub-register');
+  if(sub==='login'){
+    if(loginSec) loginSec.style.display='block';
+    if(regSec) regSec.style.display='none';
+    if(loginBtn){loginBtn.style.background='linear-gradient(135deg,#1a3a6b,#1a56db)';loginBtn.style.color='white';}
+    if(regBtn){regBtn.style.background='transparent';regBtn.style.color='rgba(255,255,255,0.5)';}
+  } else {
+    if(loginSec) loginSec.style.display='none';
+    if(regSec) regSec.style.display='block';
+    if(regBtn){regBtn.style.background='linear-gradient(135deg,#059669,#047857)';regBtn.style.color='white';}
+    if(loginBtn){loginBtn.style.background='transparent';loginBtn.style.color='rgba(255,255,255,0.5)';}
+    renderRegCoursePicker();
+  }
 }
 
 function setStudentMode(mode) {
@@ -1760,12 +1870,13 @@ function clearAllLoginForms(){
   const sm=document.getElementById('st-matric');if(sm)sm.value='';
   const ss=document.getElementById('st-matric-status');if(ss)ss.style.display='none';
   const sd=document.getElementById('st-details-block');if(sd)sd.style.display='none';
-  // Reset all pw-eye buttons to closed state
-  document.querySelectorAll('.pw-eye').forEach(b=>{b.textContent='👁';b.style.color='#94a3b8';});
+  // Reset pw-eye buttons
+  document.querySelectorAll('.pw-eye').forEach(b=>{b.textContent='👁';b.style.color='rgba(255,255,255,0.5)';});
   // Clear error
   const lerr=document.getElementById('lerr');if(lerr){lerr.style.display='none';lerr.textContent='';}
-  // Reset to Login tab
-  setLTab('login');
+  // Reset to Lecturer tab with Login sub-tab
+  setLTab('lecturer');
+  setLecturerSub('login');
 }
 
 function showLogin(){
@@ -4062,39 +4173,98 @@ async function _doLoadMyRecord(matric) {
 // ══════════════════════════════════════════════════════════════════
 // #8: EXCUSE / ABSENCE SUBMISSION
 // ══════════════════════════════════════════════════════════════════
+function updateExcuseDocLabel() {
+  const type = document.getElementById('mr-excuse-type').value;
+  const label = document.getElementById('mr-doc-label');
+  const hint = document.getElementById('mr-doc-hint');
+  const map = {
+    'Medical': ['Hospital Report (Required)', '📋 Attach your hospital attendance card or medical report (JPG/PNG/PDF)'],
+    'Legal': ['Police Report (Required)', '📋 Attach official police report or statement (JPG/PNG/PDF)'],
+    'Family': ['Supporting Document (Optional)', '📋 Death certificate, hospital receipt, or any official proof'],
+    'Academic': ['Official Letter (Required)', '📋 Department approval letter or activity programme (JPG/PNG/PDF)'],
+    'Other': ['Supporting Document', '📋 Any official document supporting your excuse (JPG/PNG/PDF)'],
+  };
+  if(map[type]) {
+    if(label) label.textContent = map[type][0];
+    if(hint) hint.textContent = map[type][1];
+  }
+}
+
+let _excuseFileData = null;
+let _excuseFileName = '';
+
+function handleExcuseFile(input) {
+  const file = input.files[0];
+  const preview = document.getElementById('mr-file-preview');
+  if(!file) { _excuseFileData = null; _excuseFileName = ''; if(preview) preview.style.display='none'; return; }
+  if(file.size > 2 * 1024 * 1024) {
+    alert('File too large. Maximum size is 2MB. Please compress or resize the image.');
+    input.value = ''; _excuseFileData = null; return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    _excuseFileData = e.target.result; // base64 data URL
+    _excuseFileName = file.name;
+    if(preview) {
+      preview.style.display = 'block';
+      preview.innerHTML = `✅ Attached: <b>${file.name}</b> (${(file.size/1024).toFixed(0)}KB)`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 async function submitExcuse() {
-  const matric  = document.getElementById('mr-matric').value.trim();
-  const week    = parseInt(document.getElementById('mr-excuse-week').value);
-  const course  = document.getElementById('mr-excuse-course').value.trim().toUpperCase();
-  const reason  = document.getElementById('mr-excuse-reason').value.trim();
+  const matric  = (document.getElementById('mr-matric')||{}).value?.trim();
+  const week    = parseInt((document.getElementById('mr-excuse-week')||{}).value);
+  const course  = (document.getElementById('mr-excuse-course')||{}).value?.trim().toUpperCase();
+  const excuseType = (document.getElementById('mr-excuse-type')||{}).value;
+  const reason  = (document.getElementById('mr-excuse-reason')||{}).value?.trim();
   const statusEl= document.getElementById('mr-excuse-status');
 
-  if(!matric||!week||!course||!reason){
-    statusEl.textContent='Please fill in all fields — week, course, and reason.';
-    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+  if(!matric||!week||!course||!excuseType||!reason){
+    statusEl.textContent='Please fill in all fields — week, course, type, and reason.';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(252,165,165,.3);';
     return;
   }
-  if(reason.length<15){
-    statusEl.textContent='Please provide a more detailed reason (at least 15 characters).';
-    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+  if(reason.length<20){
+    statusEl.textContent='Please provide a more detailed reason (at least 20 characters).';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(252,165,165,.3);';
     return;
   }
+  // Medical/Legal/Academic require a document
+  if(['Medical','Legal','Academic'].includes(excuseType) && !_excuseFileData) {
+    statusEl.textContent='A supporting document is required for this excuse type. Please attach the relevant report.';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:10px;border-radius:7px;font-weight:600;background:rgba(217,119,6,.25);color:#fcd34d;border:1px solid rgba(252,211,77,.3);line-height:1.5;';
+    return;
+  }
+  statusEl.textContent='⏳ Submitting...';
+  statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);';
   try {
     if(!authFB.currentUser) await authFB.signInAnonymously();
-    await dbFB.collection('excuses').add({
-      matric, week, course, reason,
-      status: 'pending', // HOD reviews and sets to 'approved' or 'rejected'
+    const excuseData = {
+      matric, week, course, excuseType, reason,
+      documentAttached: !!_excuseFileData,
+      documentName: _excuseFileName || '',
+      // Store document as base64 (small files only — max 2MB enforced above)
+      documentData: _excuseFileData || null,
+      status: 'pending',
       submittedAt: new Date().toISOString()
-    });
-    statusEl.textContent='✅ Excuse submitted! Your HOD will review it and update your record if approved.';
-    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:9px 12px;border-radius:7px;font-weight:600;background:#d1fae5;color:#059669;border:1px solid #6ee7b7;line-height:1.5;';
+    };
+    await dbFB.collection('excuses').add(excuseData);
+    statusEl.textContent='✅ Excuse submitted successfully! Your HOD will review it and update your record if approved.';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:10px;border-radius:7px;font-weight:600;background:rgba(5,150,105,.25);color:#6ee7b7;border:1px solid rgba(110,231,183,.3);line-height:1.6;';
+    // Clear form
     document.getElementById('mr-excuse-week').value='';
     document.getElementById('mr-excuse-course').value='';
+    document.getElementById('mr-excuse-type').value='';
     document.getElementById('mr-excuse-reason').value='';
-    addLog('info','Excuse submitted by matric: '+matric+' for '+course+' Week '+week);
+    const fp = document.getElementById('mr-file-preview'); if(fp) fp.style.display='none';
+    const fi = document.getElementById('mr-excuse-file'); if(fi) fi.value='';
+    _excuseFileData = null; _excuseFileName = '';
+    addLog('info','Excuse submitted by matric: '+matric+' for '+course+' Week '+week+' ('+excuseType+')');
   } catch(e) {
     statusEl.textContent='Submit failed: '+e.message;
-    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(252,165,165,.3);';
   }
 }
 
@@ -4110,10 +4280,18 @@ async function loadPendingExcuses() {
     el.innerHTML = snap.docs.map(d=>{
       const e=d.data(); const id=d.id;
       const date = e.submittedAt ? new Date(e.submittedAt).toLocaleDateString('en-GB') : '—';
+      const typeColors = {Medical:'var(--teal)',Legal:'var(--red)',Family:'var(--purple)',Academic:'var(--blue)',Other:'var(--amber)'};
+      const typeColor = typeColors[e.excuseType] || 'var(--txt3)';
+      const hasDoc = e.documentAttached && e.documentData;
+      const docBtn = hasDoc ? `<button onclick="viewExcuseDocument('${id}')" style="padding:4px 8px;background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);border-radius:5px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;margin-bottom:6px;">📎 View ${esc(e.documentName||'Document')}</button>` : '';
       return `<div style="background:#fff;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;">
-        <div style="font-size:12px;font-weight:800;color:var(--txt);">${esc(e.matric)} &nbsp;·&nbsp; ${esc(e.course)} Week ${e.week}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:800;color:var(--txt);">${esc(e.matric)} · ${esc(e.course)} Wk${e.week}</div>
+          ${e.excuseType?`<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(0,0,0,.06);color:${typeColor};">${esc(e.excuseType)}</span>`:''}
+        </div>
         <div style="font-size:11px;color:var(--txt2);margin:4px 0;line-height:1.5;">${esc(e.reason)}</div>
-        <div style="font-size:10px;color:var(--txt3);margin-bottom:8px;">Submitted: ${date}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:6px;">Submitted: ${date} ${e.documentAttached?'· 📎 Document attached':''}</div>
+        ${docBtn}
         <div style="display:flex;gap:8px;">
           <button onclick="reviewExcuse('${id}','approved')" style="flex:1;padding:7px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✓ Approve</button>
           <button onclick="reviewExcuse('${id}','rejected')" style="flex:1;padding:7px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red-b);border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✕ Reject</button>
@@ -4121,6 +4299,25 @@ async function loadPendingExcuses() {
       </div>`;
     }).join('');
   } catch(e) { el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">Error: '+e.message+'</div>'; }
+}
+
+function viewExcuseDocument(excuseId) {
+  // Find the excuse in Firestore and open the attached document
+  dbFB.collection('excuses').doc(excuseId).get().then(doc => {
+    if(!doc.exists || !doc.data().documentData) { alert('Document not available.'); return; }
+    const data = doc.data();
+    const w = window.open('', '_blank');
+    if(!w) { alert('Please allow popups to view documents.'); return; }
+    if(data.documentData.startsWith('data:image')) {
+      w.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;">
+        <img src="${data.documentData}" style="max-width:100%;max-height:100vh;object-fit:contain;" alt="Excuse Document">
+        </body></html>`);
+    } else {
+      // PDF — open in iframe
+      w.document.write(`<html><body style="margin:0;"><iframe src="${data.documentData}" style="width:100%;height:100vh;border:none;"></iframe></body></html>`);
+    }
+    w.document.close();
+  }).catch(e => alert('Error loading document: '+e.message));
 }
 
 async function reviewExcuse(id, decision) {
@@ -4290,39 +4487,61 @@ function compressDescriptors(descriptorArray){
 
 
 async function checkScheduledBackup(){
+  if(currentUserRole !== 'admin') return; // HOD only
   try{
-    const lastBackupStr = lsGet('lastBackupDate');
     const now = new Date();
-    const lastBackup = lastBackupStr ? new Date(lastBackupStr) : null;
-    const daysSince = lastBackup ? Math.floor((now - lastBackup) / (1000*60*60*24)) : 999;
+    const hour = now.getHours();
+    const today = now.toLocaleDateString('en-GB');
+    const lastBackupStr = lsGet('lastBackupDate');
+    const lastDismissStr = lsGet('backupDismissedDate');
 
-    // Show reminder if no backup in 7+ days
-    if(daysSince >= 7){
-      // Show non-intrusive banner after a short delay
-      setTimeout(()=>{
-        const banner = document.createElement('div');
-        banner.id = 'backup-reminder';
-        banner.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100%-24px);max-width:640px;background:linear-gradient(135deg,var(--amber),#92400e);color:white;padding:10px 14px;border-radius:10px;z-index:7000;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);font-family:Outfit,sans-serif;';
-        banner.innerHTML=`
-          <span style="font-size:18px;">💾</span>
-          <div style="flex:1;font-size:12px;font-weight:700;">
-            ${lastBackup ? 'Last backup was '+daysSince+' days ago.' : 'No backup has been taken yet.'} Back up your data now.
-          </div>
-          <button onclick="doScheduledBackup()" style="padding:5px 10px;background:white;color:var(--amber);border:none;border-radius:6px;font-family:Outfit,sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;">Backup Now</button>
-          <button onclick="document.getElementById('backup-reminder').remove()" style="padding:5px 8px;background:rgba(255,255,255,.2);color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;flex-shrink:0;">Later</button>`;
-        document.body.appendChild(banner);
-        addLog('warn','Backup reminder shown — last backup: '+(lastBackup?lastBackup.toLocaleDateString('en-GB'):'never'));
-      }, 3000);
+    // Already backed up today → no reminder
+    if(lastBackupStr){
+      const lastDay = new Date(lastBackupStr).toLocaleDateString('en-GB');
+      if(lastDay === today) return;
     }
+
+    // Before 5PM → schedule check for 5PM
+    if(hour < 17){
+      const msUntil5pm = ((17 - hour) * 3600 - now.getMinutes() * 60 - now.getSeconds()) * 1000;
+      if(msUntil5pm > 0) setTimeout(checkScheduledBackup, msUntil5pm + 500);
+      return;
+    }
+
+    // Already dismissed today
+    if(lastDismissStr === today) return;
+
+    // Show banner
+    if(document.getElementById('backup-reminder')) return;
+    setTimeout(()=>{
+      if(document.getElementById('backup-reminder')) return;
+      const daysSince = lastBackupStr ? Math.floor((now - new Date(lastBackupStr)) / 86400000) : 999;
+      const banner = document.createElement('div');
+      banner.id = 'backup-reminder';
+      banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:640px;z-index:7500;font-family:Outfit,sans-serif;';
+      banner.innerHTML=`<div style="background:linear-gradient(135deg,#d97706,#92400e);color:white;padding:11px 14px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;flex-shrink:0;">💾</span>
+        <div style="flex:1;font-size:12px;font-weight:700;line-height:1.4;">${daysSince < 999?'Last backup <b>'+daysSince+' day'+(daysSince!==1?'s':'')+' ago</b>.':'<b>No backup taken yet today.</b>'} Back up now.</div>
+        <button onclick="doScheduledBackup()" style="padding:7px 12px;background:white;color:#d97706;border:none;border-radius:8px;font-family:Outfit,sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;">Backup Now</button>
+        <button onclick="dismissBackupReminder()" style="padding:7px 10px;background:rgba(255,255,255,.15);color:white;border:none;border-radius:8px;font-size:11px;cursor:pointer;flex-shrink:0;">Later</button>
+      </div>`;
+      document.body.appendChild(banner);
+      addLog('warn','Backup reminder shown. Last: '+(lastBackupStr?new Date(lastBackupStr).toLocaleDateString('en-GB'):'never'));
+    }, 2000);
   }catch(e){ addLog('warn','Backup check: '+e.message); }
+}
+
+function dismissBackupReminder(){
+  const el = document.getElementById('backup-reminder');
+  if(el) el.remove();
+  lsSet('backupDismissedDate', new Date().toLocaleDateString('en-GB'));
 }
 
 async function doScheduledBackup(){
   const el = document.getElementById('backup-reminder');
   if(el) el.remove();
   await exportFullDB();
-  lsSet('lastBackupDate', new Date().toISOString());
-  addLog('ok','Scheduled backup completed');
+  setAdminSt('✓ Database backed up successfully.','ok');
 }
 
 
@@ -4456,13 +4675,22 @@ async function renderLecturerList(){
   const buildRow = (d) => {
     const u=d.data(); const uid=d.id;
     const courseCount=(u.assignedCourses||[]).length;
-    return `<div class="ei">
-      <div class="ein">L</div>
-      <div class="eii">
+    const courses = (u.assignedCourses||[]).slice(0,3).map(k=>{
+      const p=k.split('_'); return p[0]+(p[1]?' '+p[1]:'');
+    }).join(', ') + (courseCount>3?' +more':'');
+    return `<div class="ei" onclick="manageLecturerCourses('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" style="cursor:pointer;" title="Click to manage courses">
+      <div class="ein" style="background:linear-gradient(135deg,var(--blue),var(--navy));color:white;">L</div>
+      <div class="eii" style="flex:1;">
         <div class="ein2">${esc(u.name||'')}</div>
-        <div class="eim">${esc(u.email||'')} · <span style="color:var(--blue);font-weight:700">${courseCount} course${courseCount!==1?'s':''} assigned</span></div>
+        <div class="eim">${esc(u.email||'')}</div>
+        <div style="font-size:10px;color:var(--blue);font-weight:600;margin-top:2px;">📚 ${courseCount} course${courseCount!==1?'s':''}: ${courses||'None assigned'}</div>
       </div>
-      <button class="edel" onclick="deleteLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')" title="Delete lecturer account">✕</button>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button onclick="event.stopPropagation();manageLecturerCourses('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')"
+          style="padding:5px 8px;background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);border-radius:6px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">✏️ Courses</button>
+        <button onclick="event.stopPropagation();deleteLecturer('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')"
+          style="padding:5px 8px;background:var(--red-l);color:var(--red);border:1px solid var(--red-b);border-radius:6px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">✕ Remove</button>
+      </div>
     </div>`;
   };
   try{
@@ -4470,16 +4698,89 @@ async function renderLecturerList(){
     if(snap.empty){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
     el.innerHTML=snap.docs.map(buildRow).join('');
   }catch(e){
-    // Fallback if where() is blocked — read all and filter client-side
     try{
       const allSnap=await dbFB.collection('users').get();
       const lecturers=allSnap.docs.filter(d=>d.data().role==='lecturer');
       if(!lecturers.length){el.innerHTML='<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">No lecturer accounts yet</div>';return;}
       el.innerHTML=lecturers.map(buildRow).join('');
     }catch(e2){
-      el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">⚠ Permission error loading lecturers. Please update your Firestore rules to allow admin to read all user documents.</div>';
+      el.innerHTML='<div style="font-size:12px;color:var(--red);padding:10px;">⚠ Permission error loading lecturers. Please update your Firestore rules.</div>';
       addLog('err','Load lecturers: '+e2.message);
     }
+  }
+}
+
+// ── HOD: MANAGE LECTURER COURSES ─────────────────────────────────
+let _manageLecturerUID = '';
+let _manageLecturerName = '';
+let _manageLecturerCurrentCourses = [];
+
+async function manageLecturerCourses(uid, name) {
+  _manageLecturerUID = uid;
+  _manageLecturerName = name;
+  // Fetch current courses for this lecturer
+  try {
+    const doc = await dbFB.collection('users').doc(uid).get();
+    _manageLecturerCurrentCourses = doc.exists ? (doc.data().assignedCourses || []) : [];
+  } catch(e) { _manageLecturerCurrentCourses = []; }
+
+  // Build course picker modal content
+  const semNum = getSemester().includes('1st') ? 1 : 2;
+  const relevantCourses = COURSES.filter(c => c.sem === semNum);
+
+  let html = `<div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:4px;">📚 Manage Courses: ${esc(name)}</div>
+  <div style="font-size:11px;color:var(--txt3);margin-bottom:12px;">Tick the courses this lecturer is assigned to teach this semester.</div>
+  <div style="max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:9px;padding:8px;background:var(--bg);">`;
+
+  const grouped = {};
+  relevantCourses.forEach(c => {
+    const key = c.level + (c.option ? ' — ' + c.option : '');
+    if(!grouped[key]) grouped[key] = [];
+    grouped[key].push(c);
+  });
+
+  Object.entries(grouped).forEach(([grp, courses]) => {
+    html += `<div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--txt3);letter-spacing:.5px;padding:6px 6px 3px;">${esc(grp)}</div>`;
+    courses.forEach(c => {
+      const key = c.code + '_' + c.level + '_' + (c.option || '');
+      const checked = _manageLecturerCurrentCourses.includes(key) ? 'checked' : '';
+      html += `<label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;cursor:pointer;transition:background .15s;font-size:12px;" 
+        onmouseover="this.style.background='var(--blue-l)'" onmouseout="this.style.background=''">
+        <input type="checkbox" value="${key}" ${checked} style="width:15px;height:15px;cursor:pointer;accent-color:var(--blue);">
+        <span><b>${esc(c.code)}</b> — ${esc(c.title)}</span>
+      </label>`;
+    });
+  });
+  html += `</div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <button onclick="saveLecturerCourses()" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--green),#047857);color:white;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Save Courses</button>
+    <button onclick="closeM('mlec-courses')" style="padding:11px 16px;background:var(--bg);color:var(--txt2);border:1.5px solid var(--border2);border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+  </div>`;
+
+  let modal = document.getElementById('mlec-courses');
+  if(!modal) {
+    modal = document.createElement('div');
+    modal.id = 'mlec-courses';
+    modal.className = 'mbg';
+    modal.innerHTML = '<div class="mbox" id="mlec-courses-body"></div>';
+    document.body.appendChild(modal);
+  }
+  document.getElementById('mlec-courses-body').innerHTML = html;
+  openM('mlec-courses');
+}
+
+async function saveLecturerCourses() {
+  const checkboxes = document.querySelectorAll('#mlec-courses-body input[type=checkbox]');
+  const selected = [];
+  checkboxes.forEach(cb => { if(cb.checked) selected.push(cb.value); });
+  try {
+    await dbFB.collection('users').doc(_manageLecturerUID).update({ assignedCourses: selected });
+    closeM('mlec-courses');
+    setAdminSt('✓ Courses updated for '+_manageLecturerName+' ('+selected.length+' course'+( selected.length!==1?'s':'')+' assigned)','ok');
+    addLog('ok','HOD updated courses for '+_manageLecturerName+': '+selected.length+' courses');
+    renderLecturerList();
+  } catch(e) {
+    alert('Save failed: '+e.message);
   }
 }
 
@@ -5409,69 +5710,101 @@ async function spToggleCam() {
   }
 }
 
-// ── FIX 4: LIVENESS DETECTION ────────────────────────────────────
-// Uses eye landmarks to detect a blink (eye aspect ratio drops when eyes close)
-// EAR (Eye Aspect Ratio) = (p2-p6 + p3-p5) / (2 * p1-p4)
-// When EAR < threshold, eye is considered closed (blink detected)
+// ── FIX 4: ENHANCED LIVENESS — NOD + BLINK AUTO-CAPTURE ─────────
+// Phase 1: Detect head nod (Y-axis movement) → auto-capture sample
+// Phase 2: Detect blink (EAR) → auto-capture final sample
+let _livenessPhase = 'nod'; // 'nod' | 'blink'
+let _livenessNodBaseline = null;
+let _livenessNodDetected = false;
 let _livenessBlinkDetected = false;
 let _livenessMonitorInterval = null;
-const EAR_BLINK_THRESHOLD = 0.22; // below this = eye closed
+const EAR_BLINK_THRESHOLD = 0.20;
+const NOD_THRESHOLD = 18; // pixels of nose Y movement to count as nod
 
 function calcEAR(eyePts) {
-  // eyePts: array of 6 {x,y} points for one eye (landmarks)
   const dist = (a, b) => Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2);
   const vert1 = dist(eyePts[1], eyePts[5]);
   const vert2 = dist(eyePts[2], eyePts[4]);
   const horiz = dist(eyePts[0], eyePts[3]);
-  return (vert1 + vert2) / (2 * horiz);
+  return horiz > 0 ? (vert1 + vert2) / (2 * horiz) : 0.4;
 }
 
-function startLivenessMonitor() {
+function startLivenessMonitor(phase) {
+  _livenessPhase = phase || 'nod';
+  _livenessNodBaseline = null;
+  _livenessNodDetected = false;
   _livenessBlinkDetected = false;
+  clearInterval(_livenessMonitorInterval);
+
   const banner = document.getElementById('sp-liveness-banner');
   const msg = document.getElementById('sp-liveness-msg');
-  if (banner) banner.style.display = 'block';
-  if (msg) msg.textContent = 'Please BLINK once slowly to confirm you are live';
+  if (banner) { banner.style.display = 'block'; banner.style.background='rgba(124,58,237,.25)'; banner.style.borderColor='rgba(196,181,253,.4)'; }
 
+  if (_livenessPhase === 'nod') {
+    if (msg) { msg.style.color='#c4b5fd'; msg.textContent = '👆 NOD your head DOWN once to prove you\'re live...'; }
+  } else {
+    if (msg) { msg.style.color='#c4b5fd'; msg.textContent = '👁️ Now BLINK once slowly for final confirmation...'; }
+  }
+
+  let nodPeakDetected = false;
   let eyeWasOpen = true;
   const vid = document.getElementById('sp-vid');
+
   _livenessMonitorInterval = setInterval(async () => {
-    if (!spStream || _livenessBlinkDetected) { clearInterval(_livenessMonitorInterval); return; }
+    if (!spStream) { clearInterval(_livenessMonitorInterval); return; }
     try {
-      const det = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({inputSize:224,scoreThreshold:.5}))
+      const det = await faceapi.detectSingleFace(vid,
+        new faceapi.TinyFaceDetectorOptions({inputSize:160, scoreThreshold:.45}))
         .withFaceLandmarks(true);
       if (!det) return;
-      const lm = det.landmarks.positions;
-      // Left eye: landmarks 36-41, Right eye: 42-47 (68-point model)
-      // TinyFaceLandmarks68 uses same indices
-      const leftEye  = lm.slice(36, 42);
-      const rightEye = lm.slice(42, 48);
-      const earLeft  = calcEAR(leftEye);
-      const earRight = calcEAR(rightEye);
-      const ear = (earLeft + earRight) / 2;
 
-      if (eyeWasOpen && ear < EAR_BLINK_THRESHOLD) {
-        // Eyes just closed — start of blink
-        eyeWasOpen = false;
-      } else if (!eyeWasOpen && ear > EAR_BLINK_THRESHOLD) {
-        // Eyes just opened — blink complete!
-        _livenessBlinkDetected = true;
-        clearInterval(_livenessMonitorInterval);
-        if (banner) banner.style.background = 'rgba(5,150,105,.25)';
-        if (banner) banner.style.borderColor = 'rgba(110,231,183,.4)';
-        if (msg) { msg.style.color = '#6ee7b7'; msg.textContent = '✓ Liveness confirmed! Now tap Capture for your final sample.'; }
-        // Re-enable capture button
-        const capBtn = document.getElementById('sp-cap-btn');
-        if (capBtn) { capBtn.disabled = false; capBtn.style.opacity = '1'; }
-        addLog('info', 'Liveness blink confirmed for: ' + (spStudentData ? spStudentData.matric : '?'));
+      const lm = det.landmarks.positions;
+      const noseY = lm[33] ? lm[33].y : null; // nose tip
+
+      if (_livenessPhase === 'nod' && noseY !== null) {
+        if (_livenessNodBaseline === null) {
+          _livenessNodBaseline = noseY;
+        } else {
+          const delta = noseY - _livenessNodBaseline;
+          // Nodding down = positive delta
+          if (delta > NOD_THRESHOLD && !nodPeakDetected) {
+            nodPeakDetected = true;
+          }
+          // Head returns to baseline after nod
+          if (nodPeakDetected && delta < NOD_THRESHOLD * 0.5) {
+            // Nod complete — auto-capture this sample!
+            clearInterval(_livenessMonitorInterval);
+            _livenessNodDetected = true;
+            if (banner) { banner.style.background='rgba(5,150,105,.25)'; banner.style.borderColor='rgba(110,231,183,.4)'; }
+            if (msg) { msg.style.color='#6ee7b7'; msg.textContent = '✓ Nod detected! Capturing...'; }
+            setTimeout(() => { spCapture(); }, 300); // auto-capture after brief delay
+          }
+        }
+      } else if (_livenessPhase === 'blink') {
+        const leftEye = lm.slice(36, 42);
+        const rightEye = lm.slice(42, 48);
+        const ear = (calcEAR(leftEye) + calcEAR(rightEye)) / 2;
+
+        if (eyeWasOpen && ear < EAR_BLINK_THRESHOLD) {
+          eyeWasOpen = false;
+        } else if (!eyeWasOpen && ear > EAR_BLINK_THRESHOLD) {
+          // Blink complete — auto-capture!
+          clearInterval(_livenessMonitorInterval);
+          _livenessBlinkDetected = true;
+          if (banner) { banner.style.background='rgba(5,150,105,.25)'; banner.style.borderColor='rgba(110,231,183,.4)'; }
+          if (msg) { msg.style.color='#6ee7b7'; msg.textContent = '✓ Blink confirmed! Capturing final sample...'; }
+          setTimeout(() => { spCapture(); }, 300); // auto-capture
+        }
       }
-    } catch(e) { /* silently ignore detection errors during liveness check */ }
-  }, 150); // check every 150ms
+    } catch(e) { /* ignore detection errors */ }
+  }, 100); // check every 100ms — faster than before
 }
 
 function stopLivenessMonitor() {
   clearInterval(_livenessMonitorInterval);
+  _livenessNodDetected = false;
   _livenessBlinkDetected = false;
+  _livenessPhase = 'nod';
   const banner = document.getElementById('sp-liveness-banner');
   if (banner) banner.style.display = 'none';
 }
@@ -5480,13 +5813,22 @@ async function spCapture() {
   if (!spStream || !loaded) {
     document.getElementById('sp-status').textContent = 'Camera not active or models loading...'; return;
   }
-  // FIX 4: On the last sample, require a blink first for liveness proof
   const nextIdx = spSamples.length;
+
+  // Sample 2 (index 1): trigger NOD liveness → auto-captures
+  if (nextIdx === 1 && !_livenessNodDetected) {
+    const capBtn = document.getElementById('sp-cap-btn');
+    if (capBtn) { capBtn.disabled = true; capBtn.style.opacity = '.4'; }
+    document.getElementById('sp-status').textContent = '👆 Nod your head down once...';
+    startLivenessMonitor('nod');
+    return;
+  }
+  // Sample 4 (index 3 = last): trigger BLINK liveness → auto-captures
   if (nextIdx === SP_SAMPLES_NEEDED - 1 && !_livenessBlinkDetected) {
     const capBtn = document.getElementById('sp-cap-btn');
     if (capBtn) { capBtn.disabled = true; capBtn.style.opacity = '.4'; }
-    document.getElementById('sp-status').textContent = '👁️ Blink once slowly for your final sample...';
-    startLivenessMonitor();
+    document.getElementById('sp-status').textContent = '👁️ Blink once slowly...';
+    startLivenessMonitor('blink');
     return;
   }
   document.getElementById('sp-status').textContent = 'Detecting face...';
@@ -5587,15 +5929,32 @@ async function spSaveEnrollment() {
   btn.textContent = '⏳ Saving to cloud...';
   statusEl.textContent = 'Face verified — saving your enrollment...';
   try {
+    // Ensure anonymous auth is active before writing
+    if (!authFB.currentUser) {
+      try { await authFB.signInAnonymously(); } catch(authErr) { /* continue anyway */ }
+    }
     const programme = (level === 'HND 1' || level === 'HND 2') ? option + ' Option' : 'Electrical & Electronics Engineering Technology';
-    // Store each descriptor as a comma-joined string — Firebase forbids nested arrays
-    const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v).toFixed(6)).join(','));
-    await dbFB.collection('students').doc(matric).set({
+    const cleanDescriptors = spSamples.map(d => Array.from(d).map(v => Number(v).toFixed(4)).join(','));
+    const enrollData = {
       matric, name, level, option: option || '', programme,
       descriptors: cleanDescriptors,
       enrolledAt: new Date().toISOString(),
       enrolledByStudent: true
-    });
+    };
+    try {
+      await dbFB.collection('students').doc(matric).set(enrollData);
+    } catch(writeErr) {
+      // If permission denied, show HOD-friendly error
+      if(writeErr.code === 'permission-denied' || writeErr.message.includes('permission')) {
+        statusEl.innerHTML = '⚠️ <b>Firestore rule update needed.</b><br>Ask HOD to add this rule:<br><code style="font-size:9px;background:rgba(0,0,0,.3);padding:3px 6px;border-radius:4px;display:block;margin-top:4px;">match /students/{m} { allow write: if request.auth != null; }</code>';
+        statusEl.style.background = 'rgba(217,119,6,.25)';
+        statusEl.style.color = '#fcd34d';
+        btn.textContent = '🎓 Submit & Enroll';
+        btn.disabled = false;
+        return;
+      }
+      throw writeErr;
+    }
     // Add to local students array (keep Float32Array for in-memory matching)
     students.push({ matric, name, level, option: option || '', programme, descriptors: spSamples.map(d => new Float32Array(d)) });
     buildMatcher();
