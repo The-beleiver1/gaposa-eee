@@ -69,13 +69,13 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
 #app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(240,245,255,0.96);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:flex;flex-direction:column;min-height:100vh;min-height:100svh;position:relative;z-index:2;box-shadow:0 0 100px rgba(0,30,100,.6);}
 
 /* LOADING */
-#ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(150deg,#001133,#0035A0,#0057FF);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
+#ld{position:fixed;inset:0;z-index:8888;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
 .ld-ring{width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:#00C6A7;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ld-logo-row{display:flex;align-items:center;gap:12px;}
 .ld-logo-img{width:56px;height:56px;object-fit:contain;border-radius:14px;background:white;padding:4px;box-shadow:0 4px 20px rgba(0,87,255,.4);}
-.ld-school{font-size:17px;font-weight:900;color:#fff;line-height:1.2;}
-.ld-sub{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.5px;}
+.ld-school{font-size:17px;font-weight:900;color:#fff;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.ld-sub{font-size:10px;color:rgba(255,255,255,.85);letter-spacing:.5px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 .ld-bar{width:220px;height:4px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden;}
 .ld-fill{height:100%;background:linear-gradient(90deg,#0057FF,#00C6A7);border-radius:4px;transition:width .4s;width:0%;}
 .ld-msg{font-size:11px;color:rgba(255,255,255,.75);font-family:'JetBrains Mono';text-align:center;}
@@ -827,6 +827,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         </div>
         <div class="row2">
           <button class="btn bb" id="bcam" onclick="toggleCam()" disabled>▶ Start Camera</button>
+          <button class="btn bo" id="bflip" onclick="flipCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;">🔄</button>
           <button class="btn bo" id="blive" onclick="toggleLive()" disabled>◉ Live</button>
         </div>
         <div class="st" id="sbox">Loading AI models...</div>
@@ -908,9 +909,14 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
         <div class="ecam" id="ecambox">
           <div class="eph" id="eph">
             <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-            <p>Go to <b>Scan tab → Start Camera</b>, then return here</p>
+            <p>Tap <b>Start Camera</b> below to begin</p>
           </div>
           <video id="evid" autoplay muted playsinline webkit-playsinline></video>
+        </div>
+        <!-- Enroll camera controls (HOD only) -->
+        <div style="display:flex;gap:8px;margin-bottom:10px;" id="enroll-cam-controls">
+          <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1">▶ Start Camera</button>
+          <button class="btn bo" id="benroll-flip" onclick="flipEnrollCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;">🔄</button>
         </div>
         <div class="prog-w">
           <div class="prog-l"><span>Face Samples</span><span id="slbl">0 / 5</span></div>
@@ -1813,8 +1819,8 @@ async function bootApp(){
 
   mk(3);bar(90,'Loading student database...');
   await loadActiveSessionFromDB();
-  await loadStudents();   // fast — no descriptor parsing
-  await loadMasterList();
+  await Promise.race([loadStudents(), new Promise(r=>setTimeout(r,6000))]);
+  await Promise.race([loadMasterList(), new Promise(r=>setTimeout(r,6000))]);
   bar(100,'Ready!');
   loaded=true;
   // FIX 16: Don't buildMatcher here — descriptors load lazily when scan tab opens
@@ -2041,6 +2047,7 @@ async function doLogout(){
   currentUser=null;currentUserRole=null;currentUserName=null;
   // Stop any active camera streams
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  if(enrollStream){enrollStream.getTracks().forEach(t=>t.stop());enrollStream=null;}
   if(spStream){spStream.getTracks().forEach(t=>t.stop());spStream=null;}
   // Reset session state
   sessionMarked=new Set();
@@ -2066,9 +2073,13 @@ function showMainApp(){
   const roleLabel=currentUserRole==='admin'?'HOD / Administrator':'Lecturer';
   document.getElementById('hdr-user').textContent=currentUserName+' ('+roleLabel+')';
   document.getElementById('bcam').disabled=false;
+  const bflip=document.getElementById('bflip');if(bflip)bflip.disabled=false;
   if(currentUserRole==='admin'){
     document.getElementById('nt-admin').style.display='flex';
     document.getElementById('nt-enroll').style.display='flex';
+    // HOD sees enroll cam controls
+    const ecc=document.getElementById('enroll-cam-controls');
+    if(ecc) ecc.style.display='flex';
   } else {
     // Lecturers: hide enroll tab and admin-only controls
     document.getElementById('nt-enroll').style.display='none';
@@ -2762,6 +2773,7 @@ function confirmAdminCourse() {
 
 
 // ── CAMERA ────────────────────────────────────────────────────────
+let currentFacingMode = 'user'; // 'user' = front, 'environment' = rear
 async function toggleCam(){
   if(stream){stopCam();return;}
   const btn=document.getElementById('bcam');
@@ -2799,18 +2811,131 @@ async function toggleCam(){
 function stopCam(){
   if(liveOn)stopLive();
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  // If enroll stream was sharing the same stream, clear it too
+  if(enrollStream){enrollStream.getTracks().forEach(t=>t.stop());enrollStream=null;}
   const vid=document.getElementById('vid'),evid=document.getElementById('evid');
   vid.style.display='none';vid.srcObject=null;evid.style.display='none';evid.srcObject=null;
   document.getElementById('cph').style.display='flex';document.getElementById('eph').style.display='flex';
   document.getElementById('cbadge').textContent='OFF';document.getElementById('cbadge').classList.remove('live');
   document.getElementById('bcam').textContent='▶ Start Camera';document.getElementById('bcam').className='btn bb';
+  const benrollCam=document.getElementById('benroll-cam');
+  if(benrollCam){benrollCam.textContent='▶ Start Camera';benrollCam.className='btn bb';}
+  const benrollFlip=document.getElementById('benroll-flip');
+  if(benrollFlip) benrollFlip.disabled=true;
   document.getElementById('bscan').disabled=true;document.getElementById('bmulti').disabled=true;document.getElementById('blive').disabled=true;document.getElementById('bcap').disabled=true;
   document.getElementById('cfaces').textContent='Faces: 0';
   clearOC();setS('Camera stopped.','warn');addLog('warn','Camera stopped');stopFPS();
 }
+async function flipCam(){
+  if(!stream){addLog('warn','Start camera first before flipping.'); return;}
+  currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+  const btn = document.getElementById('bflip');
+  if(btn){btn.textContent='⏳';btn.disabled=true;}
+  stream.getTracks().forEach(t=>t.stop()); stream=null;
+  const vid=document.getElementById('vid');
+  try{
+    let s=null;
+    const constraints=[
+      {video:{facingMode:{exact:currentFacingMode},width:{ideal:640},height:{ideal:480}}},
+      {video:{facingMode:currentFacingMode,width:{ideal:640},height:{ideal:480}}},
+      {video:{facingMode:currentFacingMode}},
+      {video:true}
+    ];
+    for(const c of constraints){try{s=await navigator.mediaDevices.getUserMedia(c);break;}catch(e){continue;}}
+    if(!s)throw new Error('Camera not available');
+    stream=s;
+    vid.srcObject=s;vid.style.display='block';
+    await vid.play().catch(()=>{});
+    syncEnrollCam();
+    addLog('info','Camera flipped to: '+(currentFacingMode==='user'?'Front':'Rear'));
+    setS('Camera: '+(currentFacingMode==='user'?'Front (selfie)':'Rear')+' — ready to scan.','ok');
+  }catch(e){
+    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user'; // revert
+    addLog('err','Flip failed: '+e.message);
+    setS('Flip failed: this device may only have one camera.','warn');
+  }
+  if(btn){btn.textContent='🔄';btn.disabled=false;}
+}
+
+// ── ENROLL TAB CAMERA (HOD only — independent of scan tab) ────────
+let enrollStream = null;
+let enrollFacingMode = 'environment'; // HOD enroll defaults to rear camera
+
+async function toggleEnrollCam(){
+  const btn = document.getElementById('benroll-cam');
+  const flipBtn = document.getElementById('benroll-flip');
+  if(enrollStream){
+    enrollStream.getTracks().forEach(t=>t.stop()); enrollStream=null;
+    // Also clear shared stream if it was the same
+    if(stream===enrollStream) stream=null;
+    const evid=document.getElementById('evid');
+    evid.style.display='none'; evid.srcObject=null;
+    document.getElementById('eph').style.display='flex';
+    if(btn){btn.textContent='▶ Start Camera';btn.className='btn bb';}
+    if(flipBtn) flipBtn.disabled=true;
+    document.getElementById('bcap').disabled=true;
+    setER('Camera stopped.','');
+    return;
+  }
+  if(btn){btn.textContent='⏳ Starting...';btn.disabled=true;}
+  try{
+    let s=null;
+    const constraints=[
+      {video:{facingMode:{ideal:enrollFacingMode},width:{ideal:640},height:{ideal:480}}},
+      {video:{facingMode:enrollFacingMode}},{video:true},{video:{}}
+    ];
+    for(const c of constraints){try{s=await navigator.mediaDevices.getUserMedia(c);break;}catch(e){continue;}}
+    if(!s) throw new Error('No camera available');
+    enrollStream=s;
+    // Share stream so scan tab can also use it
+    stream=s;
+    const evid=document.getElementById('evid');
+    evid.srcObject=s; evid.style.display='block';
+    await evid.play().catch(()=>{});
+    document.getElementById('eph').style.display='none';
+    if(btn){btn.textContent='■ Stop Camera';btn.disabled=false;btn.className='btn br';}
+    if(flipBtn) flipBtn.disabled=false;
+    document.getElementById('bcap').disabled=false;
+    setER('Camera ready — capture '+ SAMPLES_NEEDED +' face samples.','ok');
+    addLog('info','Enroll camera started ('+(enrollFacingMode==='environment'?'Rear':'Front')+')');
+  }catch(e){
+    if(btn){btn.textContent='▶ Start Camera';btn.disabled=false;}
+    setER('Camera error: '+(e.name==='NotAllowedError'?'Permission denied — tap 🔒 → Camera → Allow':e.message),'err');
+    addLog('err','Enroll cam: '+e.message);
+  }
+}
+
+async function flipEnrollCam(){
+  if(!enrollStream){ return; }
+  enrollFacingMode = enrollFacingMode === 'environment' ? 'user' : 'environment';
+  const flipBtn = document.getElementById('benroll-flip');
+  if(flipBtn){flipBtn.textContent='⏳';flipBtn.disabled=true;}
+  enrollStream.getTracks().forEach(t=>t.stop()); enrollStream=null;
+  const evid = document.getElementById('evid');
+  try{
+    let s=null;
+    const constraints=[
+      {video:{facingMode:{exact:enrollFacingMode},width:{ideal:640},height:{ideal:480}}},
+      {video:{facingMode:enrollFacingMode}},{video:true}
+    ];
+    for(const c of constraints){try{s=await navigator.mediaDevices.getUserMedia(c);break;}catch(e){continue;}}
+    if(!s) throw new Error('No camera available');
+    enrollStream=s; stream=s;
+    evid.srcObject=s; evid.style.display='block';
+    await evid.play().catch(()=>{});
+    addLog('info','Enroll camera flipped to: '+(enrollFacingMode==='environment'?'Rear':'Front'));
+    setER('Camera: '+(enrollFacingMode==='environment'?'Rear':'Front (selfie)')+' active.','ok');
+  }catch(e){
+    enrollFacingMode = enrollFacingMode === 'environment' ? 'user' : 'environment'; // revert
+    addLog('err','Enroll flip: '+e.message);
+    setER('Flip failed — device may only have one camera.','warn');
+  }
+  if(flipBtn){flipBtn.textContent='🔄';flipBtn.disabled=false;}
+}
 function syncEnrollCam(){
   const evid=document.getElementById('evid'),eph=document.getElementById('eph');
-  if(stream){evid.srcObject=stream;evid.style.display='block';eph.style.display='none';evid.play().catch(()=>{});}
+  const src=enrollStream||stream;
+  if(src){evid.srcObject=src;evid.style.display='block';eph.style.display='none';evid.play().catch(()=>{});}
   else{evid.style.display='none';eph.style.display='flex';}
 }
 function startFPS(){fpsi=setInterval(()=>{document.getElementById('cfps').textContent=fps+'fps';fps=0;},1000);}
@@ -2821,7 +2946,7 @@ function drawB(ctx,b,lbl,col){
   ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.strokeRect(b.x,b.y,b.width,b.height);
   ctx.fillStyle=col;const tw=ctx.measureText(lbl).width;
   ctx.fillRect(b.x,b.y-22,tw+14,20);
-  ctx.fillStyle='#fff';ctx.font='bold 11px 'Plus Jakarta Sans',sans-serif';ctx.fillText(lbl,b.x+7,b.y-7);
+  ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.fillText(lbl,b.x+7,b.y-7);
 }
 function toggleLive(){if(liveOn)stopLive();else startLive();}
 function startLive(){liveOn=true;document.getElementById('blive').textContent='◉ Stop';document.getElementById('blive').className='btn br';liveLoop();}
@@ -3095,7 +3220,7 @@ function getStudentsForCourse(course){
 
 // ── ENROLL ────────────────────────────────────────────────────────
 async function capSample(){
-  if(!stream||!loaded){setER('Start camera on Scan tab first.','err');return;}
+  if((!stream && !enrollStream)||!loaded){setER('Start camera first.','err');return;}
   setER('Detecting face...','info');
   const vid=document.getElementById('evid');
   if(!vid.srcObject){setER('Camera not active. Go to Scan tab and start camera.','err');return;}
@@ -4595,7 +4720,7 @@ async function checkScheduledBackup(){
       const daysSince = lastBackupStr ? Math.floor((now - new Date(lastBackupStr)) / 86400000) : 999;
       const banner = document.createElement('div');
       banner.id = 'backup-reminder';
-      banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:640px;z-index:7500;font-family:'Plus Jakarta Sans',sans-serif;';
+      banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:640px;z-index:7500;font-family:\'Plus Jakarta Sans\',sans-serif;';
       banner.innerHTML=`<div style="background:linear-gradient(135deg,#FF9500,#CC7700);color:white;padding:11px 14px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;flex-shrink:0;">💾</span>
         <div style="flex:1;font-size:12px;font-weight:700;line-height:1.4;">${daysSince < 999?'Last backup <b>'+daysSince+' day'+(daysSince!==1?'s':'')+' ago</b>.':'<b>No backup taken yet today.</b>'} Back up now.</div>
@@ -6150,13 +6275,45 @@ window.addEventListener('load',()=>{
       addLog('warn', 'Service worker skipped: ' + err.message);
     });
   }
-  function tryInit(){
-    if(typeof firebase==='undefined'){setTimeout(tryInit,100);return;}
-    if(initFirebase()){bootApp();}
-    else{
-      document.getElementById('ld').style.display='none';
-      document.getElementById('lmsg').textContent='Firebase failed. Check internet.';
+  // ── FORCED LOADER ESCAPE ─────────────────────────────────────────
+  // If anything hangs, dismiss the loader after 12s max
+  const BOOT_DEADLINE = setTimeout(()=>{
+    const l=document.getElementById('ld');
+    if(l&&l.style.display!=='none'){
+      console.warn('Boot timeout — forcing login screen');
+      l.style.opacity='0';
+      setTimeout(()=>{ l.style.display='none'; showLogin(); },500);
     }
+  }, 12000);
+
+  function tryInit(){
+    // Give Firebase SDK scripts max 8 seconds to load
+    const sdkDeadline = Date.now() + 8000;
+    function attempt(){
+      if(typeof firebase!=='undefined'){
+        clearTimeout(BOOT_DEADLINE);
+        if(initFirebase()){
+          bootApp().finally(()=>clearTimeout(BOOT_DEADLINE));
+        } else {
+          clearTimeout(BOOT_DEADLINE);
+          const l=document.getElementById('ld');
+          l.style.opacity='0';
+          setTimeout(()=>{ l.style.display='none'; showLogin(); },500);
+        }
+        return;
+      }
+      if(Date.now() < sdkDeadline){
+        setTimeout(attempt, 100);
+      } else {
+        // Firebase SDK never loaded — show login anyway
+        console.warn('Firebase SDK load timeout — proceeding offline');
+        clearTimeout(BOOT_DEADLINE);
+        const l=document.getElementById('ld');
+        l.style.opacity='0';
+        setTimeout(()=>{ l.style.display='none'; showLogin(); },500);
+      }
+    }
+    attempt();
   }
   tryInit();
 });
