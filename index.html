@@ -955,6 +955,25 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
   transition:color .18s;
 }
 .pwa-close:hover{color:#fff;}
+
+/* ── ICON GLOW SYSTEM ─────────────────────────────────────────────────────── */
+.icon-glow          { filter: drop-shadow(0 0 5px currentColor); }
+.icon-glow-blue     { filter: drop-shadow(0 0 6px rgba(19,102,245,.65)); }
+.icon-glow-teal     { filter: drop-shadow(0 0 6px rgba(0,198,167,.65)); }
+.icon-glow-green    { filter: drop-shadow(0 0 6px rgba(0,192,106,.65)); }
+.icon-glow-red      { filter: drop-shadow(0 0 6px rgba(240,58,95,.65)); }
+.icon-glow-amber    { filter: drop-shadow(0 0 6px rgba(232,146,10,.65)); }
+.icon-glow-purple   { filter: drop-shadow(0 0 6px rgba(110,91,240,.65)); }
+.nav-item.active svg { filter: drop-shadow(0 2px 7px rgba(19,102,245,.50)); transform: translateY(-1px); }
+/* Loading screen background fix */
+#ld {
+  background: linear-gradient(150deg,rgba(0,17,51,.95) 0%,rgba(0,40,120,.88) 50%,rgba(0,87,255,.60) 100%) !important;
+}
+/* pw-eye button reset for SVG */
+.pw-eye { background:none;border:none;cursor:pointer;padding:0 6px;display:flex;align-items:center;color:rgba(255,255,255,.5); }
+.pw-eye:hover { color:rgba(255,255,255,.85); }
+/* pwa-icon size fix */
+.pwa-icon { display:flex;align-items:center;justify-content:center;font-size:inherit; }
 </style>
 </head>
 <body>
@@ -995,9 +1014,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div class="login-school">The Gateway Polytechnic, Saapade</div>
     <div class="login-dept">Dept. of Electrical &amp; Electronic Engineering Technology</div>
     <div class="ltabs" style="flex-wrap:wrap;gap:4px">
-      <div class="ltab active" id="lt-lecturer" onclick="setLTab('lecturer')" style="flex:1;min-width:60px">🎓 Lecturer</div>
-      <div class="ltab" id="lt-student" onclick="setLTab('student')" style="flex:1;min-width:60px">👤 Student</div>
-      <div class="ltab" id="lt-hod" onclick="setLTab('hod')" style="flex:1;min-width:60px">🛡️ HOD</div>
+      <div class="ltab active" id="lt-lecturer" onclick="setLTab('lecturer')" style="flex:1;min-width:60px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Lecturer</div>
+      <div class="ltab" id="lt-student" onclick="setLTab('student')" style="flex:1;min-width:60px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Student</div>
+      <div class="ltab" id="lt-hod" onclick="setLTab('hod')" style="flex:1;min-width:60px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> HOD</div>
     </div>
 
     <!-- LECTURER TAB — Login & Register sub-toggle -->
@@ -1006,11 +1025,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <div style="display:flex;gap:0;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin-bottom:16px;border:1.5px solid rgba(255,255,255,.12);">
         <button id="lt-sub-login" onclick="setLecturerSub('login')"
           style="flex:1;padding:9px 6px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#003DCC,#0057FF);color:white;transition:all .2s;">
-          🔑 Login
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5 17 6l3 3-1.5 1.5"/></svg> Login
         </button>
         <button id="lt-sub-register" onclick="setLecturerSub('register')"
           style="flex:1;padding:9px 6px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;">
-          📝 New? Register
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> New? Register
         </button>
       </div>
       <!-- Login section -->
@@ -1020,14 +1039,14 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <label class="llbl">Password</label>
         <div class="pw-wrap">
           <input class="linp" id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-          <button class="pw-eye" type="button" onclick="togglePw('l-pass',this)" title="Show/hide password">👁</button>
+          <button class="pw-eye" type="button" onclick="togglePw('l-pass',this)" title="Show/hide password"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
         <span class="forgot-link" onclick="doForgotPassword()">Forgot password?</span>
         <button class="lbtn blue" onclick="doLogin()" style="margin-top:12px;">Login →</button>
       </div>
       <!-- Register section -->
       <div id="lec-register-section" style="display:none;">
-        <div class="info-box info-blue" style="margin-bottom:10px;">🔐 Enter the <b>Department Code</b> from your HOD to register.</div>
+        <div class="info-box info-blue" style="margin-bottom:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Enter the <b>Department Code</b> from your HOD to register.</div>
         <label class="llbl">Department Secret Code</label>
         <input class="linp" id="r-code" placeholder="Enter code from HOD" autocomplete="off">
         <label class="llbl">Your Full Name</label>
@@ -1037,12 +1056,12 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <label class="llbl">Choose Password</label>
         <div class="pw-wrap">
           <input class="linp" id="r-pass" type="password" placeholder="Min 6 characters" autocomplete="new-password">
-          <button class="pw-eye" type="button" onclick="togglePw('r-pass',this)">👁</button>
+          <button class="pw-eye" type="button" onclick="togglePw('r-pass',this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
         <label class="llbl">Confirm Password</label>
         <div class="pw-wrap">
           <input class="linp" id="r-pass2" type="password" placeholder="Repeat password" autocomplete="new-password">
-          <button class="pw-eye" type="button" onclick="togglePw('r-pass2',this)">👁</button>
+          <button class="pw-eye" type="button" onclick="togglePw('r-pass2',this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
         <label class="llbl" style="margin-top:10px">Your Assigned Course(s)</label>
         <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:6px;line-height:1.4;">Select all courses you are teaching this semester.</div>
@@ -1061,13 +1080,13 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 
     <!-- HOD -->
     <div class="lform" id="lf-hod">
-      <div class="info-box info-purple">🛡️ HOD / Administrator login — full system access.</div>
+      <div class="info-box info-purple"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> HOD / Administrator login — full system access.</div>
       <label class="llbl">Admin Email</label>
       <input class="linp" id="a-email" type="email" placeholder="admin@gaposa.edu.ng" autocomplete="email">
       <label class="llbl">Admin Password</label>
       <div class="pw-wrap">
         <input class="linp" id="a-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-        <button class="pw-eye" type="button" onclick="togglePw('a-pass',this)">👁</button>
+        <button class="pw-eye" type="button" onclick="togglePw('a-pass',this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <button class="lbtn purple" onclick="doAdminLogin()">Admin Login →</button>
     </div>
@@ -1078,18 +1097,18 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <div style="display:flex;gap:0;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;margin-bottom:14px;border:1.5px solid rgba(255,255,255,.15);">
         <button id="st-mode-enroll" onclick="setStudentMode('enroll')"
           style="flex:1;padding:9px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#003DCC,#0057FF);color:white;transition:all .2s;">
-          🎓 Enroll Face
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Enroll Face
         </button>
         <button id="st-mode-record" onclick="setStudentMode('record')"
           style="flex:1;padding:9px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;">
-          📊 My Attendance
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> My Attendance
         </button>
       </div>
 
       <!-- === ENROLL SECTION === -->
       <div id="st-enroll-section">
         <div class="info-box" style="background:rgba(217,119,6,0.25);border:1.5px solid rgba(252,211,77,0.4);color:#fcd34d;border-radius:9px;padding:10px 13px;font-size:12px;margin-bottom:12px;line-height:1.5;">
-          🎓 Enter your <b>matric number</b> to enroll your face. You only need to do this <b>once</b>.
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Enter your <b>matric number</b> to enroll your face. You only need to do this <b>once</b>.
         </div>
         <label class="llbl">Matric Number</label>
         <input class="linp" id="st-matric" placeholder="Enter your matric number" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkStudentMasterList(this.value)">
@@ -1115,7 +1134,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div id="mr-results" style="display:none;margin-top:10px;max-height:300px;overflow-y:auto;"></div>
         <!-- Excuse submission -->
         <div id="mr-excuse-section" style="display:none;margin-top:10px;border-top:1px solid rgba(255,255,255,.15);padding-top:12px;">
-          <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:10px;">📝 Submit Absence Excuse</div>
+          <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Submit Absence Excuse</div>
           <label class="llbl">Week Number</label>
           <input class="linp" id="mr-excuse-week" type="number" min="1" max="15" placeholder="e.g. 3" style="margin-bottom:8px;">
           <label class="llbl">Course Code</label>
@@ -1137,11 +1156,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
             <input type="file" id="mr-excuse-file" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" onchange="handleExcuseFile(this)">
             <button onclick="document.getElementById('mr-excuse-file').click()"
               style="width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1.5px dashed rgba(255,255,255,.3);border-radius:9px;color:rgba(255,255,255,.7);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:center;">
-              📎 Tap to attach document
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Tap to attach document
             </button>
             <div id="mr-file-preview" style="margin-top:6px;font-size:11px;color:#6EE7B7;display:none;"></div>
           </div>
-          <button class="lbtn blue" onclick="submitExcuse()" style="margin-top:0;background:linear-gradient(135deg,#7B61FF,#5A40E0);">✉️ Submit Excuse Request</button>
+          <button class="lbtn blue" onclick="submitExcuse()" style="margin-top:0;background:linear-gradient(135deg,#7B61FF,#5A40E0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Excuse Request</button>
           <div id="mr-excuse-status" style="font-size:11px;margin-top:6px;display:none;padding:7px 10px;border-radius:7px;font-weight:600;"></div>
         </div>
       </div>
@@ -1152,7 +1171,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 
     <div class="lerr" id="lerr"></div>
     <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> inside the Lecturer tab to create your account.</div>
-    <div class="lnote" id="lnote2" style="margin-top:4px;color:#fcd34d;">🎓 Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
+    <div class="lnote" id="lnote2" style="margin-top:4px;color:#fcd34d;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
   </div>
 </div>
 
@@ -1176,13 +1195,13 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 
 <!-- SESSION BAR -->
 <div class="session-bar" id="session-bar" style="display:none">
-  <div class="sb-item">📅 <span class="sb-val" id="sb-date">--</span></div>
+  <div class="sb-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> <span class="sb-val" id="sb-date">--</span></div>
   <div class="sb-divider">|</div>
-  <div class="sb-item">⏰ <span class="sb-val" id="sb-time">--:--</span></div>
+  <div class="sb-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span class="sb-val" id="sb-time">--:--</span></div>
   <div class="sb-divider">|</div>
-  <div class="sb-item">🎓 Session: <span class="sb-val" id="sb-session">--</span></div>
+  <div class="sb-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Session: <span class="sb-val" id="sb-session">--</span></div>
   <div class="sb-divider">|</div>
-  <div class="sb-item">📚 Sem: <span class="sb-val" id="sb-sem">--</span></div>
+  <div class="sb-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Sem: <span class="sb-val" id="sb-sem">--</span></div>
 </div>
 
 <div class="nav" id="main-nav" style="display:none">
@@ -1213,7 +1232,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
   <!-- SCAN TAB -->
   <div class="pane active" id="p-scan">
     <div class="course-banner" onclick="openCourseModal()">
-      <div class="cb-icon">📚</div>
+      <div class="cb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
       <div class="cb-info">
         <div class="cb-lbl">Active Course — tap to change</div>
         <div class="cb-course" id="cb-course">Tap to Select a Course</div>
@@ -1232,8 +1251,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
       </div>
       <div class="ws-date" id="ws-date-row">
-        <span>📅</span><span id="ws-date-val">--</span>
-        <span style="margin-left:8px">⏰</span><span id="ws-time-val">--</span>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span id="ws-date-val">--</span>
+        <span style="margin-left:8px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span id="ws-time-val">--</span>
       </div>
       <div class="ws-manual">
         <span class="ws-manual-lbl">Manual adjust if needed:</span>
@@ -1265,7 +1284,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <div class="row2">
           <button class="btn bb" id="bcam" onclick="toggleCam()" disabled>▶ Start Camera</button>
-          <button class="btn bo" id="bflip" onclick="flipCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;">🔄</button>
+          <button class="btn bo" id="bflip" onclick="flipCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
           <button class="btn bo" id="blive" onclick="toggleLive()" disabled>◉ Live</button>
         </div>
         <div class="st" id="sbox">Loading AI models...</div>
@@ -1275,10 +1294,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <div class="row2">
           <button class="scan-btn" id="bscan" onclick="doScan()" disabled style="flex:1;margin:0">
-            🎯 &nbsp;Scan 1 Face
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> &nbsp;Scan 1 Face
           </button>
           <button class="scan-btn" id="bmulti" onclick="doMultiScan()" disabled style="flex:1;margin:0;background:linear-gradient(135deg,#7B61FF,#5A40E0);box-shadow:0 4px 20px rgba(123,97,255,.4)">
-            👥 &nbsp;Scan Row (Multi)
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> &nbsp;Scan Row (Multi)
           </button>
         </div>
         <!-- Multi-scan live results ticker -->
@@ -1287,11 +1306,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <div id="multi-results-list"></div>
         </div>
         <button class="finalise-btn" id="bfin" onclick="finaliseSession()" disabled>
-          ✅ &nbsp;Finalise — Mark Remaining Absent
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> &nbsp;Finalise — Mark Remaining Absent
         </button>
         <!-- Offline Queue Status -->
         <div id="offline-queue-banner" style="display:none;background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:9px 13px;font-size:11px;color:var(--amber);font-weight:700;align-items:center;gap:8px;margin-top:2px;">
-          <span style="font-size:14px;">📵</span>
+          <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></span>
           <span id="offline-queue-msg">0 offline scans pending sync</span>
           <button onclick="flushOfflineQueue()" style="margin-left:auto;padding:3px 9px;background:var(--amber);color:white;border:none;border-radius:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;cursor:pointer;">Sync Now</button>
         </div>
@@ -1302,9 +1321,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
   <!-- WEEKLY REGISTER TAB -->
   <div class="pane" id="p-weekly">
     <div class="sh" style="margin-bottom:10px">
-      <div class="shtt">📋 Weekly Register</div>
+      <div class="shtt"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Weekly Register</div>
       <div style="display:flex;gap:6px">
-        <button class="smbtn" onclick="printWeeklyRegister()">🖨️ Print</button>
+        <button class="smbtn" onclick="printWeeklyRegister()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>
       </div>
     </div>
     <div class="card" style="margin-bottom:11px">
@@ -1315,7 +1334,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
     </div>
     <div class="warn-banner" id="warn-banner">
-      <div class="wb-ttl">⚠️ Below 75% Attendance — Action Required</div>
+      <div class="wb-ttl"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Below 75% Attendance — Action Required</div>
       <div id="warn-list"></div>
     </div>
     <div style="background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);overflow-x:auto;">
@@ -1342,7 +1361,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <div class="card-body">
         <div style="background:var(--green-l);border:1.5px solid var(--green-b);border-radius:var(--rs);padding:10px 13px;margin-bottom:12px;font-size:12px;color:var(--green);font-weight:600;line-height:1.5;">
-          ✅ <b>Enroll Once Per Level</b> — Student enrolled under ND 1 is available for ALL ND 1 courses automatically. No re-enrollment needed per course!
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> <b>Enroll Once Per Level</b> — Student enrolled under ND 1 is available for ALL ND 1 courses automatically. No re-enrollment needed per course!
         </div>
         <div class="ecam" id="ecambox">
           <div class="eph" id="eph">
@@ -1354,7 +1373,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <!-- Enroll camera controls (HOD only) -->
         <div style="display:flex;gap:8px;margin-bottom:10px;" id="enroll-cam-controls">
           <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1">▶ Start Camera</button>
-          <button class="btn bo" id="benroll-flip" onclick="flipEnrollCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;">🔄</button>
+          <button class="btn bo" id="benroll-flip" onclick="flipEnrollCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
         </div>
         <div class="prog-w">
           <div class="prog-l"><span>Face Samples</span><span id="slbl">0 / 5</span></div>
@@ -1362,7 +1381,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div><div class="sdot" id="sd2">3</div><div class="sdot" id="sd3">4</div><div class="sdot" id="sd4">5</div></div>
         <button class="cap-btn" id="bcap" onclick="capSample()" disabled>📷 &nbsp;Tap to Capture Face Sample</button>
-        <button class="btn bo" id="bretake" onclick="retakeEnrollSamples()" style="width:100%;margin-bottom:10px;display:none">🔄 Retake — Clear All Samples</button>
+        <button class="btn bo" id="bretake" onclick="retakeEnrollSamples()" style="width:100%;margin-bottom:10px;display:none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Retake — Clear All Samples</button>
         <div class="st" id="ereg">Start camera on Scan tab first, then capture 5 samples from different angles.</div>
         <hr>
         <div class="fr">
@@ -1396,12 +1415,12 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="fr" id="nd-note" style="display:none">
           <div class="st info" style="margin:0">ND students enrolled under <b>Electrical &amp; Electronics Engineering Technology</b> (General)</div>
         </div>
-        <button class="enroll-btn" id="breg" onclick="doEnroll()" disabled>🎓 &nbsp;Enroll Student &amp; Save to Cloud</button>
+        <button class="enroll-btn" id="breg" onclick="doEnroll()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> &nbsp;Enroll Student &amp; Save to Cloud</button>
         <hr>
         <div class="sh" style="margin-bottom:8px">
-          <div class="shtt">👥 Enrolled (<span id="ecnt">0</span>)</div>
+          <div class="shtt"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Enrolled (<span id="ecnt">0</span>)</div>
           <div style="display:flex;gap:6px">
-            <button class="smbtn" onclick="printEnrolledStudents()">🖨️ Print</button>
+            <button class="smbtn" onclick="printEnrolledStudents()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>
             <button class="smbtn" style="color:var(--red)" id="btn-clearall" onclick="confirmClearAll()">Clear All</button>
           </div>
         </div>
@@ -1423,9 +1442,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
   <div class="pane" id="p-admin">
     <!-- Admin Sub-Tabs -->
     <div style="display:flex;gap:0;background:var(--navy2);border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:var(--sh2);">
-      <button class="atab active" id="atab-dash" onclick="setAdminTab('dash')">📊<span>Dashboard</span></button>
-      <button class="atab" id="atab-students" onclick="setAdminTab('students')">👥<span>Students</span></button>
-      <button class="atab" id="atab-master" onclick="setAdminTab('master')">📋<span>Master List</span></button>
+      <button class="atab active" id="atab-dash" onclick="setAdminTab('dash')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Dashboard</span></button>
+      <button class="atab" id="atab-students" onclick="setAdminTab('students')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Students</span></button>
+      <button class="atab" id="atab-master" onclick="setAdminTab('master')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg><span>Master List</span></button>
       <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')">👨‍🏫<span>Lecturers</span></button>
       <button class="atab" id="atab-settings" onclick="setAdminTab('settings')">⚙️<span>Settings</span></button>
     </div>
@@ -1438,12 +1457,12 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <div style="font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Current Session</div>
           <div style="font-size:15px;font-weight:900;color:#fff;margin-top:2px;"><span id="admin-sess-display">--</span> · <span id="admin-sem-display">--</span></div>
         </div>
-        <div style="font-size:24px;">🎓</div>
+        <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
       </div>
 
       <!-- HOD Course Picker — controls at-risk list & attendance overview -->
       <div class="course-banner" onclick="openAdminCourseModal()" style="margin-bottom:14px;">
-        <div class="cb-icon">📚</div>
+        <div class="cb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <div class="cb-info">
           <div class="cb-lbl">Viewing Course — tap to change</div>
           <div class="cb-course" id="admin-cb-course">Tap to Select a Course</div>
@@ -1454,25 +1473,25 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Stats grid -->
       <div class="stats" style="margin-bottom:14px;">
         <div class="stat s1" onclick="setAdminTab('students')" style="cursor:pointer;" title="View all enrolled students">
-          <div style="font-size:22px;margin-bottom:4px;">👥</div>
+          <div style="margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="sl">Total Students</div><div class="sv" id="a-total">0</div><div class="ss">Tap to view list</div>
         </div>
         <div class="stat s2" onclick="goTab('weekly')" style="cursor:pointer;" title="View weekly attendance register">
-          <div style="font-size:22px;margin-bottom:4px;">📚</div>
+          <div style="margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
           <div class="sl">Courses Active</div><div class="sv" id="a-courses">0</div><div class="ss">Tap to view register</div>
         </div>
         <div class="stat s3" onclick="scrollToAtRisk()" style="cursor:pointer;" title="View students below 75%">
-          <div style="font-size:22px;margin-bottom:4px;">⚠️</div>
+          <div style="margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <div class="sl">Below 75%</div><div class="sv" id="a-warn">0</div><div class="ss">Tap to view list</div>
         </div>
         <div class="stat s4" onclick="goTab('logs')" style="cursor:pointer;" title="View system scan logs">
-          <div style="font-size:22px;margin-bottom:4px;">📅</div>
+          <div style="margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <div class="sl">Scans This Week</div><div class="sv" id="a-sessions">0</div><div class="ss">Week <span id="a-wknum">--</span></div>
         </div>
       </div>
       <!-- Level breakdown -->
       <div class="card" style="margin-bottom:14px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--blue-l)">📊</div><span class="card-ttl">Students by Level</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--blue-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg></div><span class="card-ttl">Students by Level</span></div>
         <div class="card-body" style="padding:10px;">
           <div id="level-breakdown" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
         </div>
@@ -1498,7 +1517,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- #17: Attendance Trend Chart -->
       <div class="card" style="margin-bottom:14px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">📊</div><span class="card-ttl">Week-by-Week Trend</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg></div><span class="card-ttl">Week-by-Week Trend</span></div>
         <div class="card-body" style="padding:10px;">
           <div id="trend-chart-container" style="width:100%;min-height:50px;"></div>
         </div>
@@ -1506,7 +1525,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- #6: Pending Excuse Requests -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--orange-l)">📝</div>
+          <div class="card-hdr-ico" style="background:var(--orange-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg></div>
           <span class="card-ttl">Excuse Requests</span>
           <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()">↻ Refresh</button>
         </div>
@@ -1522,7 +1541,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Search + actions -->
       <div style="display:flex;gap:8px;margin-bottom:10px;">
         <input class="inp" id="admin-student-search" placeholder="🔍 Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
-        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;" onclick="printAdminStudents()">🖨️</button>
+        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;" onclick="printAdminStudents()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
         <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="exportFullDB()">⤓ DB</button>
       </div>
       <!-- Level tabs -->
@@ -1541,7 +1560,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div id="apane-master" class="apane">
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--green-l)">📋</div>
+          <div class="card-hdr-ico" style="background:var(--green-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/><rect x='8' y='2' width='8' height='4' rx='1' ry='1'/></svg></div>
           <span class="card-ttl">Master Student List</span>
           <span class="cbadge" id="master-count-badge">0 students</span>
         </div>
@@ -1554,7 +1573,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
             <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()">⤓ Template</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-            <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="openPrintMasterModal()">🖨️ Print List</button>
+            <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="openPrintMasterModal()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print List</button>
             <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()">🗑️ Clear All</button>
           </div>
           <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
@@ -1595,14 +1614,14 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
       </div>
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">🔑</div><span class="card-ttl">Department Registration Code</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx='7.5' cy='15.5' r='5.5'/><path d='M21 2l-9.6 9.6'/><path d='M15.5 7.5 17 6l3 3-1.5 1.5'/></svg></div><span class="card-ttl">Department Registration Code</span></div>
         <div class="card-body">
           <div style="background:var(--purple-l);border:1.5px solid var(--purple-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--purple);margin-bottom:12px;line-height:1.5;">
             Share this code with lecturers for self-registration. Change anytime to revoke access.
           </div>
           <div style="display:flex;gap:8px;margin-bottom:12px;">
             <input class="inp" id="code-display" placeholder="No code set yet" readonly style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;letter-spacing:2px;background:#fff;flex:1;">
-            <button class="btn bo" style="flex:none;padding:0 14px;font-size:16px;" onclick="copyCode()" title="Copy">📋</button>
+            <button class="btn bo" style="flex:none;padding:0 14px;" onclick="copyCode()" title="Copy"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></button>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:10px;">
             <input class="inp" id="new-code" placeholder="Set new code e.g. GAPOSA-EEE-2025" autocomplete="off" spellcheck="false" style="flex:1;font-size:13px;">
@@ -1657,10 +1676,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- Export -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)">🖨️</div><span class="card-ttl">Reports & Export</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--green-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points='6 9 6 2 18 2 18 9'/><path d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/><rect x='6' y='14' width='12' height='8'/></svg></div><span class="card-ttl">Reports & Export</span></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="printFullSemesterReport()">🖨️ Full Semester Report</button>
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="printFullSemesterReport()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Full Semester Report</button>
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
           </div>
         </div>
@@ -1668,7 +1687,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Audit Log -->
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--red-l)">🔐</div>
+          <div class="card-hdr-ico" style="background:var(--red-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg></div>
           <span class="card-ttl">Audit Log</span>
           <div style="display:flex;gap:6px;margin-left:auto">
             <button class="smbtn" onclick="exportAuditLogCSV()">⤓ CSV</button>
@@ -1695,7 +1714,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- Auto-logout + Offline Queue settings -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--amber-l)">🔒</div><span class="card-ttl">Security & Behaviour</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--amber-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg></div><span class="card-ttl">Security & Behaviour</span></div>
         <div class="card-body">
           <!-- Auto-logout -->
           <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
@@ -1780,8 +1799,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <div style="display:flex;flex-direction:column;gap:8px;width:110px;flex-shrink:0;">
         <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);">▶ Start Camera</button>
         <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);">📷 Capture Face Sample</button>
-        <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;">🔄 Retake</button>
-        <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#00C06A,#008F4E);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(0,192,106,.3);">🎓 Submit &amp; Enroll</button>
+        <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Retake</button>
+        <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#00C06A,#008F4E);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(0,192,106,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit &amp; Enroll</button>
       </div>
     </div>
 
@@ -1821,39 +1840,39 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 
 <!-- MODALS -->
 <div class="mbg" id="ms"><div class="mbox">
-  <div class="mico s">✅</div><div class="mtt s">Attendance Marked!</div>
+  <div class="mico s"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="mtt s">Attendance Marked!</div>
   <div class="mb">Present — Week <span id="m-wk"></span><br><span class="mu" id="mname"></span><span class="md" id="mdept"></span><span class="mt" id="mtime"></span></div>
   <button class="mbtn s" onclick="closeM('ms')">Accept ✓</button>
 </div></div>
 
 <div class="mbg" id="me"><div class="mbox">
-  <div class="mico e">⚠️</div><div class="mtt e">Unknown Face</div>
+  <div class="mico e"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="mtt e">Unknown Face</div>
   <div class="mb">Not recognised. Enrol this student first, or try in better lighting.</div>
   <button class="mbtn e" onclick="closeM('me')">Dismiss</button>
 </div></div>
 
 <div class="mbg" id="men"><div class="mbox">
-  <div class="mico en">🎓</div><div class="mtt en">Enrolled!</div>
+  <div class="mico en"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div class="mtt en">Enrolled!</div>
   <div class="mb">Saved to Firebase ✓<br><span class="mu" id="mregn"></span></div>
   <button class="mbtn en" onclick="closeM('men')">Done 🎉</button>
 </div></div>
 
 <!-- DUPLICATE FACE MODAL -->
 <div class="mbg" id="mdupe"><div class="mbox">
-  <div style="text-align:center;margin-bottom:8px;font-size:52px;line-height:1;">🚫</div>
+  <div style="text-align:center;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow icon-glow-red"><circle cx='12' cy='12' r='10'/><line x1='4.93' y1='4.93' x2='19.07' y2='19.07'/></svg></div>
   <div style="font-size:18px;font-weight:900;color:var(--red);text-align:center;margin-bottom:10px;">Face Already Registered!</div>
   <div style="background:var(--red-l);border:1.5px solid var(--red-b);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--red);line-height:1.7;margin-bottom:12px;text-align:center;">
     This face closely matches an existing enrollment in the database.<br>
     <span id="dupe-match-info" style="font-size:11px;color:var(--txt2);display:block;margin-top:6px;font-weight:600;"></span>
   </div>
   <div style="background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--amber);line-height:1.6;margin-bottom:16px;">
-    ⚠️ Duplicate face enrollments violate attendance policy. This attempt has been logged and flagged.
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Duplicate face enrollments violate attendance policy. This attempt has been logged and flagged.
   </div>
   <button class="mbtn e" onclick="closeDupeModal()" style="width:100%;">Understood — Go Back</button>
 </div></div>
 
 <div class="mbg" id="mfin"><div class="mbox">
-  <div class="mico w">📋</div><div class="mtt w">Session Finalised!</div>
+  <div class="mico w"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div><div class="mtt w">Session Finalised!</div>
   <div class="mb" id="mfin-body">Session closed.</div>
   <button class="mbtn w" onclick="closeM('mfin')">OK ✓</button>
 </div></div>
@@ -2279,7 +2298,7 @@ function togglePw(inputId, btn) {
     btn.style.color = '#0057FF';
   } else {
     inp.type = 'password';
-    btn.textContent = '👁';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     btn.style.color = '#94a3b8';
   }
 }
@@ -2294,7 +2313,7 @@ async function doForgotPassword() {
   document.getElementById('lerr').style.display = 'none';
   try {
     await authFB.sendPasswordResetEmail(email);
-    showLoginErr('✅ Password reset email sent to ' + email + '. Check your inbox (and spam folder).');
+    showLoginErr('✓ Password reset email sent to ' + email + '. Check your inbox (and spam folder).');
     document.getElementById('lerr').style.backgroundColor = 'rgba(0,192,106,.1)';
     document.getElementById('lerr').style.borderColor = '#6EE7B7';
     document.getElementById('lerr').style.color = '#00C06A';
@@ -2392,7 +2411,7 @@ function clearAllLoginForms(){
   const ss=document.getElementById('st-matric-status');if(ss)ss.style.display='none';
   const sd=document.getElementById('st-details-block');if(sd)sd.style.display='none';
   // Reset pw-eye buttons
-  document.querySelectorAll('.pw-eye').forEach(b=>{b.textContent='👁';b.style.color='rgba(255,255,255,0.5)';});
+  document.querySelectorAll('.pw-eye').forEach(b=>{b.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';b.style.color='rgba(255,255,255,0.5)';});
   // Clear error
   const lerr=document.getElementById('lerr');if(lerr){lerr.style.display='none';lerr.textContent='';}
   // Reset to Lecturer tab with Login sub-tab
@@ -2552,7 +2571,7 @@ function showWelcome(){
       });
       wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);">📚 <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
     } else if(currentUserRole==='admin'){
-      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--teal);background:var(--teal-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--teal-b);">🛡️ Full system access — all courses visible</div>';
+      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--teal);background:var(--teal-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--teal-b);">Full system access — all courses visible</div>';
     } else {wlcExtra.innerHTML='';}
   }
   const wl=document.getElementById('mwelcome');
@@ -3240,7 +3259,7 @@ async function toggleCam(){
   }catch(e){
     btn.textContent='▶ Start Camera';btn.disabled=false;
     let m=e.message;
-    if(e.name==='NotAllowedError')m='Camera denied. Tap 🔒 → Camera → Allow.';
+    if(e.name==='NotAllowedError')m='Camera denied. Tap [lock] → Camera → Allow.';
     else if(e.name==='NotFoundError')m='No camera found.';
     else if(e.name==='NotReadableError')m='Camera in use by another app.';
     setS(m,'err');addLog('err',e.name+': '+e.message);
@@ -3292,7 +3311,7 @@ async function flipCam(){
     addLog('err','Flip failed: '+e.message);
     setS('Flip failed: this device may only have one camera.','warn');
   }
-  if(btn){btn.textContent='🔄';btn.disabled=false;}
+  if(btn){btn.textContent='↺';btn.disabled=false;}
 }
 
 // ── ENROLL TAB CAMERA (HOD only — independent of scan tab) ────────
@@ -3338,7 +3357,7 @@ async function toggleEnrollCam(){
     addLog('info','Enroll camera started ('+(enrollFacingMode==='environment'?'Rear':'Front')+')');
   }catch(e){
     if(btn){btn.textContent='▶ Start Camera';btn.disabled=false;}
-    setER('Camera error: '+(e.name==='NotAllowedError'?'Permission denied — tap 🔒 → Camera → Allow':e.message),'err');
+    setER('Camera error: '+(e.name==='NotAllowedError'?'Permission denied — tap [lock] → Camera → Allow':e.message),'err');
     addLog('err','Enroll cam: '+e.message);
   }
 }
@@ -3368,7 +3387,7 @@ async function flipEnrollCam(){
     addLog('err','Enroll flip: '+e.message);
     setER('Flip failed — device may only have one camera.','warn');
   }
-  if(flipBtn){flipBtn.textContent='🔄';flipBtn.disabled=false;}
+  if(flipBtn){flipBtn.textContent='↺';flipBtn.disabled=false;}
 }
 function syncEnrollCam(){
   const evid=document.getElementById('evid'),eph=document.getElementById('eph');
@@ -3566,7 +3585,7 @@ async function doMultiScan(){
     // Render results ticker
     resultsList.innerHTML=resultItems.map(r=>`
       <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:${r.bg};border-radius:6px;margin-bottom:4px;">
-        <div style="font-size:13px;">${r.status==='present'?'✅':r.status==='already'?'🔄':'❓'}</div>
+        <div style="font-size:13px;">${r.status==='present'?'✓':r.status==='already'?'↻':'?'}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:12px;font-weight:700;color:${r.col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.label}</div>
           ${r.sub?`<div style="font-size:10px;color:rgba(255,255,255,.4);">${r.sub}</div>`:''}
@@ -3576,8 +3595,8 @@ async function doMultiScan(){
 
     const total=dets.length;
     const parts=[];
-    if(presentCount) parts.push(`✅ ${presentCount} marked present`);
-    if(alreadyCount) parts.push(`🔄 ${alreadyCount} already done`);
+    if(presentCount) parts.push(`✓ ${presentCount} marked present`);
+    if(alreadyCount) parts.push(`↻ ${alreadyCount} already done`);
     if(unknownCount) parts.push(`❓ ${unknownCount} unknown`);
     setS(`Multi-scan: ${total} face${total!==1?'s':''} detected. ${parts.join(' · ')}`,presentCount>0?'ok':'warn');
     addLog('ok',`Multi-scan: ${total} detected, ${presentCount} marked, ${alreadyCount} already, ${unknownCount} unknown — ${activeCourse.code} Wk${currentWeek}`);
@@ -3593,11 +3612,11 @@ async function doMultiScan(){
 }
 
 function resetMultiBtn(){
-  const b=document.getElementById('bmulti');if(b){b.disabled=false;b.textContent='👥 Scan Row (Multi)';}
+  const b=document.getElementById('bmulti');if(b){b.disabled=false;b.textContent='Scan Row (Multi)';}
   const s=document.getElementById('bscan');if(s)s.disabled=false;
 }
 function resetScanBtn(){
-  const b=document.getElementById('bscan');b.disabled=false;b.textContent='🎯 Scan 1 Face';
+  const b=document.getElementById('bscan');b.disabled=false;b.textContent='Scan 1 Face';
   const mb=document.getElementById('bmulti');if(mb)mb.disabled=false;
 }
 
@@ -3619,7 +3638,7 @@ async function finaliseSession(){
   const confirmed=confirm(
     'FINALISE ATTENDANCE — Week '+currentWeek+'\n'+
     'Course: '+activeCourse.code+' — '+activeCourse.title+'\n\n'+
-    '✅ Already marked present: '+alreadyPresent+' students\n'+
+    'Already marked present: '+alreadyPresent+' students\n'+
     '❌ Will be marked ABSENT: '+willBeAbsent+' students\n\n'+
     'This will mark '+willBeAbsent+' student(s) as absent. Continue?'
   );
@@ -3641,9 +3660,9 @@ async function finaliseSession(){
   renderWeeklyGrid();
   document.getElementById('mfin-body').innerHTML=
     `<b>${esc(activeCourse.code)}</b><br>${esc(getAcademicSession())} · ${esc(getSemester())} · Week ${currentWeek}<br><br>`+
-    `✅ <b style="color:var(--green)">${presentCount} Present</b><br>`+
+    `<b style="color:var(--green)">${presentCount} Present</b><br>`+
     `❌ <b style="color:var(--red)">${absentCount} Absent</b><br>`+
-    `📊 Total: ${courseStudents.length} students`;
+    `Total: ${courseStudents.length} students`;
   openM('mfin');
   addLog('ok',`Finalised: ${presentCount}P ${absentCount}A — ${activeCourse.code} Wk${currentWeek}`);
 }
@@ -3727,20 +3746,20 @@ async function doEnroll(){
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
   if(dupeResult && dupeResult.fetchFailed){
     btn.disabled=false;
-    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    btn.textContent='Enroll Student & Save to Cloud';
     setER('⚠️ Cannot verify — database unreachable. Check Firestore rules: students collection needs read: if true.','err');
     return;
   }
   if(dupeResult){
     btn.disabled=false;
-    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    btn.textContent='Enroll Student & Save to Cloud';
     setER('⛔ Duplicate face detected — enrollment blocked.','err');
     showDupeModal(dupeResult, matric);
     return;
   }
   // ── END DUPLICATE CHECK ──────────────────────────────────────────
 
-  btn.textContent='💾 Saving to Firebase...';
+  btn.textContent='Saving to Firebase...';
   try{
     // Capture a small photo thumbnail
     let photoDataUrl='';
@@ -3770,7 +3789,7 @@ async function doEnroll(){
   }catch(e){
     setER('Failed: '+e.message,'err');
     btn.disabled=false;
-    btn.textContent='🎓 Enroll Student & Save to Cloud';
+    btn.textContent='Enroll Student & Save to Cloud';
   }
 }
 
@@ -3785,7 +3804,7 @@ function resetEnrollForm(){
   document.getElementById('slbl').textContent='0 / '+SAMPLES_NEEDED;
   document.getElementById('sprog').style.width='0%';
   document.getElementById('breg').disabled=true;
-  document.getElementById('breg').textContent='🎓 Enroll Student & Save to Cloud';
+  document.getElementById('breg').textContent='Enroll Student & Save to Cloud';
   for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);s.innerHTML=String(i+1);s.classList.remove('done');}
   setER('Capture '+SAMPLES_NEEDED+' samples to enroll another student.','');
 }
@@ -4231,7 +4250,7 @@ function showLevelStudents(lvl) {
               <div style="font-size:12px;font-weight:700;color:var(--txt)">${u.name}</div>
               <div style="font-size:10px;color:var(--txt3);font-family:'JetBrains Mono';">${u.matric}</div>
             </div>
-            <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">📊 Report</button>
+            <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">Report</button>
           </div>`).join('');
       });
     } else {
@@ -4242,7 +4261,7 @@ function showLevelStudents(lvl) {
             <div style="font-size:12px;font-weight:700;color:var(--txt)">${u.name}</div>
             <div style="font-size:10px;color:var(--txt3);font-family:'JetBrains Mono';">${u.matric}</div>
           </div>
-          <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">📊 Report</button>
+          <button onclick="viewStudentReport('${u.matric}')" style="background:${bg};color:${col};border:1px solid ${brd};border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;font-weight:700;">Report</button>
         </div>`).join('');
     }
     el.innerHTML = html;
@@ -4395,8 +4414,8 @@ function buildStudentCard(u,i){
       ${pctBadge}
     </div>
     <div class="stu-actions">
-      <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">📊</button>
-      <button class="stu-btn" style="background:var(--teal-l);color:var(--teal);" onclick="viewStudentHistory('${u.matric}')" title="Full history all sessions">📅</button>
+      <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">Chart</button>
+      <button class="stu-btn" style="background:var(--teal-l);color:var(--teal);" onclick="viewStudentHistory('${u.matric}')" title="Full history all sessions">History</button>
       <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
       <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only">🗑️</button>
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
@@ -4720,7 +4739,7 @@ async function _doLoadMyRecord(matric) {
   if(now - _mrLookupWindowStart > 60000){ _mrLookupCount=0; _mrLookupWindowStart=now; }
   _mrLookupCount++;
   if(_mrLookupCount > 5){
-    statusEl.textContent='⚠️ Too many attempts. Please wait.';
+    statusEl.textContent='Too many attempts. Please wait.';
     statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
     return;
   }
@@ -4773,7 +4792,7 @@ async function _doLoadMyRecord(matric) {
       <div style="font-size:13px;font-weight:800;color:#003DCC;margin-bottom:2px;">${esc(studentInfo.name)}</div>
       <div style="font-size:11px;color:#64748b;">${esc(studentInfo.level)}${studentInfo.option?' · '+esc(studentInfo.option):''} &nbsp;·&nbsp; ${esc(matric)}</div>
       <div style="font-size:11px;color:#64748b;margin-top:2px;">Session: ${esc(sess)} · ${esc(sem)}</div>
-      <div style="font-size:11px;margin-top:4px;font-weight:700;color:${isEnrolled?'#00C06A':'#FF3B5C'};">${isEnrolled?'✅ Face enrolled':'⚠️ Face not enrolled yet'}</div>
+      <div style="font-size:11px;margin-top:4px;font-weight:700;color:${isEnrolled?'#00C06A':'#FF3B5C'};">${isEnrolled?'✓ Face enrolled':'⚠ Face not enrolled yet'}</div>
     </div>`;
 
     if(!courseEntries.length){
@@ -4805,7 +4824,7 @@ async function _doLoadMyRecord(matric) {
     resultsEl.style.display = 'block';
     excuseEl.style.display = 'block'; // show excuse section
   } catch(e) {
-    statusEl.textContent = '⚠️ Error: '+e.message;
+    statusEl.textContent = 'Error: '+e.message;
     statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
   }
 }
@@ -4847,7 +4866,7 @@ function handleExcuseFile(input) {
     _excuseFileName = file.name;
     if(preview) {
       preview.style.display = 'block';
-      preview.innerHTML = `✅ Attached: <b>${file.name}</b> (${(file.size/1024).toFixed(0)}KB)`;
+      preview.innerHTML = `✓ Attached: <b>${file.name}</b> (${(file.size/1024).toFixed(0)}KB)`;
     }
   };
   reader.readAsDataURL(file);
@@ -4891,7 +4910,7 @@ async function submitExcuse() {
       submittedAt: new Date().toISOString()
     };
     await dbFB.collection('excuses').add(excuseData);
-    statusEl.textContent='✅ Excuse submitted successfully! Your HOD will review it and update your record if approved.';
+    statusEl.textContent='✓ Excuse submitted successfully! Your HOD will review it and update your record if approved.';
     statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:10px;border-radius:7px;font-weight:600;background:rgba(0,192,106,.25);color:#6EE7B7;border:1px solid rgba(110,231,183,.3);line-height:1.6;';
     // Clear form
     document.getElementById('mr-excuse-week').value='';
@@ -5323,7 +5342,7 @@ async function renderLecturerList(){
       <div class="eii" style="flex:1;">
         <div class="ein2">${esc(u.name||'')}</div>
         <div class="eim">${esc(u.email||'')}</div>
-        <div style="font-size:10px;color:var(--blue);font-weight:600;margin-top:2px;">📚 ${courseCount} course${courseCount!==1?'s':''}: ${courses||'None assigned'}</div>
+        <div style="font-size:10px;color:var(--blue);font-weight:600;margin-top:2px;">${courseCount} course${courseCount!==1?'s':''}: ${courses||'None assigned'}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
         <button onclick="event.stopPropagation();manageLecturerCourses('${uid}','${(u.name||'').replace(/'/g,'&#39;')}')"
@@ -5368,7 +5387,7 @@ async function manageLecturerCourses(uid, name) {
   const semNum = getSemester().includes('1st') ? 1 : 2;
   const relevantCourses = COURSES.filter(c => c.sem === semNum);
 
-  let html = `<div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:4px;">📚 Manage Courses: ${esc(name)}</div>
+  let html = `<div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:4px;">Manage Courses: ${esc(name)}</div>
   <div style="font-size:11px;color:var(--txt3);margin-bottom:12px;">Tick the courses this lecturer is assigned to teach this semester.</div>
   <div style="max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:9px;padding:8px;background:var(--bg);">`;
 
@@ -5393,7 +5412,7 @@ async function manageLecturerCourses(uid, name) {
   });
   html += `</div>
   <div style="display:flex;gap:8px;margin-top:12px;">
-    <button onclick="saveLecturerCourses()" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);color:white;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">💾 Save Courses</button>
+    <button onclick="saveLecturerCourses()" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);color:white;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Save Courses</button>
     <button onclick="closeM('mlec-courses')" style="padding:11px 16px;background:var(--bg);color:var(--txt2);border:1.5px solid var(--border2);border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
   </div>`;
 
@@ -6155,7 +6174,7 @@ async function _doCheckStudentMasterList(val) {
   if(now - _spLookupWindowStart > 60000){ _spLookupCount = 0; _spLookupWindowStart = now; }
   _spLookupCount++;
   if(_spLookupCount > SP_RATE_LIMIT){
-    statusEl.textContent = '⚠️ Too many attempts. Please wait a moment before trying again.';
+    statusEl.textContent = 'Too many attempts. Please wait a moment before trying again.';
     statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
     return;
   }
@@ -6170,7 +6189,7 @@ async function _doCheckStudentMasterList(val) {
       await authFB.signInAnonymously();
     }
   } catch(e) {
-    statusEl.textContent = '⚠️ System error: Anonymous sign-in not enabled. HOD must enable it in Firebase Console → Authentication → Sign-in providers → Anonymous.';
+    statusEl.textContent = 'System error: Anonymous sign-in not enabled. HOD must enable it in Firebase Console → Authentication → Sign-in providers → Anonymous.';
     statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,149,0,.1);color:#FF9500;border:1px solid #fcd34d;';
     addLog('err', 'Anonymous auth failed: ' + e.message);
     return;
@@ -6181,7 +6200,7 @@ async function _doCheckStudentMasterList(val) {
     const enrolledDoc = await dbFB.collection('students').doc(val).get();
     if (enrolledDoc.exists) {
       const ed = enrolledDoc.data();
-      statusEl.innerHTML = `✅ <b>Already Enrolled!</b><br><span style="font-weight:400">${ed.name ? ed.name+' is' : 'This matric is'} already registered in the face attendance system. No action needed — attend class and the scanner will recognise you automatically.</span>`;
+      statusEl.innerHTML = `<b>Already Enrolled!</b><br><span style="font-weight:400">${ed.name ? ed.name+' is' : 'This matric is'} already registered in the face attendance system. No action needed — attend class and the scanner will recognise you automatically.</span>`;
       statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:10px 13px;border-radius:9px;font-weight:700;background:rgba(0,192,106,.1);color:#065f46;border:1.5px solid #6EE7B7;line-height:1.7;';
       detailsEl.style.display = 'none';
       addLog('info', 'Re-enroll attempt blocked — already enrolled: ' + val);
@@ -6209,11 +6228,11 @@ async function _doCheckStudentMasterList(val) {
     detailsEl.style.display = 'block';
   } catch(e) {
     if (e.code === 'permission-denied' || e.message.includes('permission') || e.message.includes('Missing')) {
-      statusEl.textContent = '⚠️ Permission denied. HOD must set Firestore rule: match /masterlist/{m} { allow read: if true; }';
+      statusEl.textContent = 'Permission denied. HOD must set Firestore rule: match /masterlist/{m} { allow read: if true; }';
       statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,149,0,.1);color:#FF9500;border:1px solid #fcd34d;';
       addLog('err', 'Masterlist permission denied: ' + e.message);
     } else {
-      statusEl.textContent = '⚠️ Error: ' + e.message;
+      statusEl.textContent = 'Error: ' + e.message;
       statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;';
       addLog('err', 'Masterlist check error: ' + e.message);
     }
@@ -6879,7 +6898,7 @@ window.addEventListener('load',()=>{
 
 <!-- PWA INSTALL BANNER -->
 <div id="pwa-banner">
-  <div class="pwa-icon">📲</div>
+  <div class="pwa-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
   <div class="pwa-text">
     <div class="pwa-title">Install GAPOSA Attendance</div>
     <div class="pwa-sub">Add to home screen for quick access — works offline</div>
