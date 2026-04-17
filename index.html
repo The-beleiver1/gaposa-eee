@@ -111,8 +111,64 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
 .lnote b{color:rgba(255,255,255,0.8);}
 .pw-wrap{position:relative;}
 .pw-wrap .linp{padding-right:44px;}
-.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.45);font-size:16px;padding:4px;line-height:1;}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);padding:4px;display:flex;align-items:center;justify-content:center;line-height:1;}
 .pw-eye:hover{color:rgba(255,255,255,0.9);}
+/* ══════════════════════════════════════════
+   ICON-GLOW — Lucide-style SVG icon system
+   High-tech instrument-panel feel
+══════════════════════════════════════════ */
+.icon-glow {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+  /* Subtle coloured aura matching the icon's text colour */
+  filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 1px currentColor);
+  opacity: 0.88;
+  transition: filter .22s ease, opacity .22s ease, transform .18s ease;
+}
+.icon-glow:hover,
+button:hover .icon-glow,
+a:hover .icon-glow {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 2px currentColor);
+  transform: scale(1.08);
+}
+/* Size variants */
+.card-hdr-ico .icon-glow   { width: 16px; height: 16px; }
+.nav-item     .icon-glow   { width: 20px; height: 20px; }
+.atab         .icon-glow   { width: 18px; height: 18px; }
+.btn          .icon-glow,
+.smbtn        .icon-glow,
+.enroll-btn   .icon-glow,
+.scan-btn     .icon-glow,
+.finalise-btn .icon-glow,
+.cap-btn      .icon-glow   { width: 18px; height: 18px; }
+.lbtn         .icon-glow   { width: 20px; height: 20px; }
+.pw-eye       .icon-glow   { width: 20px; height: 20px; opacity: 0.6; }
+
+/* Colour-locked glow variants for fixed-colour contexts */
+.icon-glow-red   { filter: drop-shadow(0 0 5px var(--red))   drop-shadow(0 0 2px var(--red)); }
+.icon-glow-amber { filter: drop-shadow(0 0 5px var(--amber)) drop-shadow(0 0 2px var(--amber)); }
+.icon-glow-green { filter: drop-shadow(0 0 5px var(--green)) drop-shadow(0 0 2px var(--green)); }
+
+/* Nav active icon gets stronger glow */
+.nav-item.active .icon-glow {
+  filter: drop-shadow(0 0 8px var(--brand)) drop-shadow(0 0 3px var(--brand));
+  opacity: 1;
+}
+/* atab active icon */
+.atab.active .icon-glow {
+  filter: drop-shadow(0 0 6px #7DD3FF) drop-shadow(0 0 2px #7DD3FF);
+  opacity: 1;
+}
+/* Scan/camera action buttons — bolder glow on hover */
+.scan-btn:not(:disabled):hover .icon-glow {
+  filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 4px currentColor);
+}
+
+
 .forgot-link{display:block;text-align:right;font-size:11px;color:rgba(100,198,255,0.9);font-weight:700;cursor:pointer;margin-top:6px;text-decoration:none;}
 .forgot-link:hover{text-decoration:underline;}
 .info-box{border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:4px;line-height:1.5;}
@@ -167,7 +223,7 @@ header{background:linear-gradient(135deg,#0035CC,#0057FF);padding:10px 14px;flex
 
 /* NAV */
 .nav{display:flex;background:#fff;flex-shrink:0;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,57,204,.06);}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px;gap:3px;font-size:9px;font-weight:800;color:var(--txt3);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;position:relative;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;gap:4px;font-size:9px;font-weight:800;color:var(--txt3);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;position:relative;}
 .nav-item svg{width:18px;height:18px;fill:currentColor;transition:all .2s;}
 .nav-item.active{color:var(--brand);border-bottom-color:var(--brand);}
 .nav-item.active svg{filter:drop-shadow(0 2px 6px rgba(0,87,255,.4));}
@@ -285,7 +341,7 @@ header{background:linear-gradient(135deg,#0035CC,#0057FF);padding:10px 14px;flex
 .mono{font-family:'JetBrains Mono';font-size:10px;}
 
 /* ADMIN TABS */
-.atab{flex:1;padding:10px 4px;background:transparent;border:none;color:rgba(255,255,255,.45);font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;border-bottom:3px solid transparent;}
+.atab{flex:1;padding:10px 4px 8px;background:transparent;border:none;color:rgba(255,255,255,.45);font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;border-bottom:3px solid transparent;line-height:1.2;}
 .atab span{display:block;}
 .atab.active{color:#7DD3FF;border-bottom-color:#7DD3FF;background:rgba(125,211,255,.1);}
 .apane{display:none;}.apane.active{display:block;}
@@ -1126,7 +1182,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- === MY ATTENDANCE SECTION === -->
       <div id="st-record-section" style="display:none;">
         <div class="info-box info-blue" style="margin-bottom:12px;">
-          📊 Enter your matric number to view your attendance and submit an absence excuse.
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Enter your matric number to view your attendance and submit an absence excuse.
         </div>
         <label class="llbl">Matric Number</label>
         <input class="linp" id="mr-matric" placeholder="e.g. 24013631001" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="loadMyRecord(this.value)">
@@ -1142,11 +1198,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <label class="llbl">Type of Absence</label>
           <select class="linp" id="mr-excuse-type" style="margin-bottom:8px;" onchange="updateExcuseDocLabel()">
             <option value="">— Select reason type —</option>
-            <option value="Medical">🏥 Medical / Sickness (Hospital Report)</option>
-            <option value="Legal">🚔 Legal / Crime-related (Police Report)</option>
-            <option value="Family">👨‍👩‍👦 Family Emergency</option>
-            <option value="Academic">📚 Academic Clash / Approved Activity</option>
-            <option value="Other">📄 Other (Attach supporting document)</option>
+            <option value="Medical">Medical / Sickness (Hospital Report)</option>
+            <option value="Legal">Legal / Crime-related (Police Report)</option>
+            <option value="Family">Family Emergency</option>
+            <option value="Academic">Academic Clash / Approved Activity</option>
+            <option value="Other">Other (Attach supporting document)</option>
           </select>
           <label class="llbl">Reason / Details</label>
           <textarea class="linp" id="mr-excuse-reason" placeholder="Describe why you were absent (at least 20 characters)..." rows="3" style="resize:none;margin-bottom:8px;"></textarea>
@@ -1283,9 +1339,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           </div>
         </div>
         <div class="row2">
-          <button class="btn bb" id="bcam" onclick="toggleCam()" disabled>▶ Start Camera</button>
+          <button class="btn bb" id="bcam" onclick="toggleCam()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera</button>
           <button class="btn bo" id="bflip" onclick="flipCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
-          <button class="btn bo" id="blive" onclick="toggleLive()" disabled>◉ Live</button>
+          <button class="btn bo" id="blive" onclick="toggleLive()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Live</button>
         </div>
         <div class="st" id="sbox">Loading AI models...</div>
         <div class="conf" id="confwrap">
@@ -1372,7 +1428,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <!-- Enroll camera controls (HOD only) -->
         <div style="display:flex;gap:8px;margin-bottom:10px;" id="enroll-cam-controls">
-          <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1">▶ Start Camera</button>
+          <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera</button>
           <button class="btn bo" id="benroll-flip" onclick="flipEnrollCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
         </div>
         <div class="prog-w">
@@ -1380,7 +1436,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <div class="prog-t"><div class="prog-f" id="sprog" style="width:0%"></div></div>
         </div>
         <div class="sdots"><div class="sdot" id="sd0">1</div><div class="sdot" id="sd1">2</div><div class="sdot" id="sd2">3</div><div class="sdot" id="sd3">4</div><div class="sdot" id="sd4">5</div></div>
-        <button class="cap-btn" id="bcap" onclick="capSample()" disabled>📷 &nbsp;Tap to Capture Face Sample</button>
+        <button class="cap-btn" id="bcap" onclick="capSample()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Tap to Capture Face Sample</button>
         <button class="btn bo" id="bretake" onclick="retakeEnrollSamples()" style="width:100%;margin-bottom:10px;display:none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Retake — Clear All Samples</button>
         <div class="st" id="ereg">Start camera on Scan tab first, then capture 5 samples from different angles.</div>
         <hr>
@@ -1432,7 +1488,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <button onclick="setEnrollTab('HND 1')" id="etab-HND1" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 1</button>
           <button onclick="setEnrollTab('HND 2')" id="etab-HND2" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 2</button>
         </div>
-        <input class="inp" id="enroll-search" placeholder="🔍 Search name or matric..." oninput="renderList()" style="margin-bottom:8px;font-size:13px;padding:10px 13px;">
+        <input class="inp" id="enroll-search" placeholder="Search name or matric..." oninput="renderList()" style="margin-bottom:8px;font-size:13px;padding:10px 13px;">
         <div id="elist"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students enrolled yet</div></div>
       </div>
     </div>
@@ -1445,8 +1501,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <button class="atab active" id="atab-dash" onclick="setAdminTab('dash')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Dashboard</span></button>
       <button class="atab" id="atab-students" onclick="setAdminTab('students')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Students</span></button>
       <button class="atab" id="atab-master" onclick="setAdminTab('master')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg><span>Master List</span></button>
-      <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')">👨‍🏫<span>Lecturers</span></button>
-      <button class="atab" id="atab-settings" onclick="setAdminTab('settings')">⚙️<span>Settings</span></button>
+      <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Lecturers</span></button>
+      <button class="atab" id="atab-settings" onclick="setAdminTab('settings')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
     </div>
 
     <!-- ── DASHBOARD ── -->
@@ -1499,10 +1555,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- At-risk students -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--red-l)">🚨</div>
+          <div class="card-hdr-ico" style="background:var(--red-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <span class="card-ttl">Students At Risk</span>
           <span class="cbadge" id="atrisk-badge" style="background:var(--red-l);color:var(--red);border-color:var(--red-b);">0</span>
-          <button class="smbtn" style="margin-left:auto" onclick="exportAtRiskCSV()">⤓ Export</button>
+          <button class="smbtn" style="margin-left:auto" onclick="exportAtRiskCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div id="atrisk-list" style="max-height:220px;overflow-y:auto;font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Select a course to see at-risk students</div>
@@ -1510,7 +1566,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- Course attendance chart -->
       <div class="card" style="margin-bottom:14px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">📈</div><span class="card-ttl">Attendance Overview</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><span class="card-ttl">Attendance Overview</span></div>
         <div class="card-body">
           <div id="course-summary-list" style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Loading...</div>
         </div>
@@ -1527,7 +1583,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="card-hdr">
           <div class="card-hdr-ico" style="background:var(--orange-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg></div>
           <span class="card-ttl">Excuse Requests</span>
-          <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div id="excuse-review-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Tap ↻ Refresh to load</div></div>
@@ -1540,9 +1596,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div id="apane-students" class="apane">
       <!-- Search + actions -->
       <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <input class="inp" id="admin-student-search" placeholder="🔍 Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
+        <input class="inp" id="admin-student-search" placeholder="Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
         <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;" onclick="printAdminStudents()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
-        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="exportFullDB()">⤓ DB</button>
+        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="exportFullDB()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> DB</button>
       </div>
       <!-- Level tabs -->
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
@@ -1566,15 +1622,15 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <div class="card-body">
           <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:12px;line-height:1.6;">
-            📌 Upload the official CSV list. Students can only self-enroll if their matric exists here. Uploading again only <b>adds new names</b> — nothing is deleted.
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Upload the official CSV list. Students can only self-enroll if their matric exists here. Uploading again only <b>adds new names</b> — nothing is deleted.
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-            <button class="btn bb" style="font-size:12px;padding:11px" onclick="document.getElementById('csv-upload').click()">📁 Upload CSV</button>
-            <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()">⤓ Template</button>
+            <button class="btn bb" style="font-size:12px;padding:11px" onclick="document.getElementById('csv-upload').click()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload CSV</button>
+            <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Template</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
             <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="openPrintMasterModal()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print List</button>
-            <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()">🗑️ Clear All</button>
+            <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Clear All</button>
           </div>
           <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
           <div class="st" id="master-st" style="margin-bottom:10px;"></div>
@@ -1588,7 +1644,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
             <button onclick="setMasterTab('HND 2|Power')" id="mtab-HND2P" class="mtab-btn">HND 2 · Power</button>
             <button onclick="setMasterTab('HND 2|Elec')" id="mtab-HND2E" class="mtab-btn">HND 2 · E&amp;T</button>
           </div>
-          <input class="inp" id="master-filter" placeholder="🔍 Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
+          <input class="inp" id="master-filter" placeholder="Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
           <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;">Total: <span id="master-list-count">0</span> students</div>
           <div id="master-list-body" style="max-height:350px;overflow-y:auto;"></div>
         </div>
@@ -1601,14 +1657,14 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Pending Approvals -->
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--amber-l)">⏳</div>
+          <div class="card-hdr-ico" style="background:var(--amber-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <span class="card-ttl">Pending Approvals</span>
           <span class="cbadge" id="pending-badge" style="background:var(--amber-l);color:var(--amber);border-color:var(--amber-b)">0</span>
-          <button class="smbtn" style="margin-left:auto" onclick="renderPendingLecturers()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="renderPendingLecturers()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border:1px solid var(--amber-b);border-radius:7px;padding:7px 10px;margin-bottom:10px;line-height:1.5;">
-            ⚠ New lecturer registrations require your approval before they can log in.
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> New lecturer registrations require your approval before they can log in.
           </div>
           <div id="pending-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">Loading...</div></div>
         </div>
@@ -1632,9 +1688,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--blue-l)">👨‍🏫</div>
+          <div class="card-hdr-ico" style="background:var(--blue-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <span class="card-ttl">Registered Lecturers</span>
-          <button class="smbtn" style="margin-left:auto" onclick="renderLecturerList()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="renderLecturerList()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div id="lec-list"></div>
@@ -1647,11 +1703,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div id="apane-settings" class="apane">
       <!-- Academic session -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="card-ttl">Academic Session</span></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-            <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()">🗓️ Change Session</button>
-            <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5A40E0);" onclick="openArchive()">🗂️ Historical Records</button>
+            <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Change Session</button>
+            <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5A40E0);" onclick="openArchive()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Historical Records</button>
           </div>
           <!-- FIX 7: HOD-configurable max weeks -->
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
@@ -1680,7 +1736,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="printFullSemesterReport()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Full Semester Report</button>
-            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> Full Database Backup</button>
           </div>
         </div>
       </div>
@@ -1690,8 +1746,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <div class="card-hdr-ico" style="background:var(--red-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg></div>
           <span class="card-ttl">Audit Log</span>
           <div style="display:flex;gap:6px;margin-left:auto">
-            <button class="smbtn" onclick="exportAuditLogCSV()">⤓ CSV</button>
-            <button class="smbtn" onclick="loadAuditLog()">↻ Load</button>
+            <button class="smbtn" onclick="exportAuditLogCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> CSV</button>
+            <button class="smbtn" onclick="loadAuditLog()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Load</button>
           </div>
         </div>
         <div class="card-body" style="padding:10px;">
@@ -1703,13 +1759,13 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- School Logo for Reports -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)">🖼️</div><span class="card-ttl">School Logo for Reports</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="card-ttl">School Logo for Reports</span></div>
         <div class="card-body">
           <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6;">
             Upload your school logo to appear on all printed reports (Master List, Student Reports, etc). Saved locally on this device.
           </div>
           <div id="logo-preview-area" style="margin-bottom:10px;"></div>
-          <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()">🖼️ Upload School Logo (PNG/JPG, max 500KB)</button>
+          <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload School Logo (PNG/JPG, max 500KB)</button>
         </div>
       </div>
       <!-- Auto-logout + Offline Queue settings -->
@@ -1744,7 +1800,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
               <option value="0">Off</option>
             </select>
           </div>
-          <button class="btn br" style="width:100%;padding:12px;" onclick="doLogout()">🚪 Logout Now</button>
+          <button class="btn br" style="width:100%;padding:12px;" onclick="doLogout()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout Now</button>
         </div>
       </div>
       <div class="pb"></div>
@@ -1790,15 +1846,15 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Camera box -->
       <div style="flex:1;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.2);position:relative;aspect-ratio:1/1;box-shadow:0 8px 32px rgba(0,0,0,.4);" id="sp-cam-box">
         <div id="sp-cam-ph" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(0,0,0,.5);">
-          <div style="font-size:36px;">📷</div>
+          <div style="font-size:36px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
           <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-align:center;padding:0 8px;">Camera not started</div>
         </div>
         <video id="sp-vid" autoplay muted playsinline webkit-playsinline style="width:100%;height:100%;object-fit:cover;display:none;"></video>
       </div>
       <!-- Right-side buttons -->
       <div style="display:flex;flex-direction:column;gap:8px;width:110px;flex-shrink:0;">
-        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);">▶ Start Camera</button>
-        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);">📷 Capture Face Sample</button>
+        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera</button>
+        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Face Sample</button>
         <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Retake</button>
         <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#00C06A,#008F4E);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(0,192,106,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit &amp; Enroll</button>
       </div>
@@ -1827,7 +1883,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     </div>
     <!-- FIX 4: Liveness instruction banner -->
     <div id="sp-liveness-banner" style="display:none;width:100%;padding:10px 12px;background:rgba(123,97,255,.25);border:1.5px solid rgba(180,168,255,.4);border-radius:8px;font-size:12px;color:#C4B5FD;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
-      <span id="sp-liveness-msg">👆 Nod your head DOWN once to confirm you are live</span>
+      <span id="sp-liveness-msg"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2.5"/></svg> Nod your head DOWN once to confirm you are live</span>
     </div>
 
     <div style="font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;">
@@ -1854,7 +1910,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 <div class="mbg" id="men"><div class="mbox">
   <div class="mico en"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><div class="mtt en">Enrolled!</div>
   <div class="mb">Saved to Firebase ✓<br><span class="mu" id="mregn"></span></div>
-  <button class="mbtn en" onclick="closeM('men')">Done 🎉</button>
+  <button class="mbtn en" onclick="closeM('men')">Done ✓</button>
 </div></div>
 
 <!-- DUPLICATE FACE MODAL -->
@@ -1883,7 +1939,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div style="font-size:17px;font-weight:900;color:var(--navy)">Select Course</div>
     <button class="smbtn" onclick="closeM('mc')">Close</button>
   </div>
-  <input class="inp" id="csearch" placeholder="🔍 Search by code, title or level..." oninput="filterCourses()" style="font-size:13px;padding:11px;margin-bottom:10px">
+  <input class="inp" id="csearch" placeholder="Search by code, title or level..." oninput="filterCourses()" style="font-size:13px;padding:11px;margin-bottom:10px">
   <div class="clist-modal" id="clist"></div>
   <button class="mbtn en" id="mc-confirm-btn" onclick="confirmCourse()">✓ Confirm Course</button>
 </div></div>
@@ -2294,7 +2350,7 @@ function togglePw(inputId, btn) {
   const inp = document.getElementById(inputId);
   if (inp.type === 'password') {
     inp.type = 'text';
-    btn.textContent = '🙈';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
     btn.style.color = '#0057FF';
   } else {
     inp.type = 'password';
@@ -2470,7 +2526,7 @@ async function doRegister(){
     // Show pending message instead of logging them in
     const el = document.getElementById('lform-register');
     if(el) el.innerHTML = `<div style="background:rgba(0,192,106,.1);border:1.5px solid #6EE7B7;border-radius:10px;padding:16px;text-align:center;margin-top:8px;">
-      <div style="font-size:20px;margin-bottom:6px;">✅</div>
+      <div style="font-size:20px;margin-bottom:6px;color:var(--green);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <div style="font-size:14px;font-weight:800;color:#065f46;margin-bottom:4px">Registration Submitted!</div>
       <div style="font-size:12px;color:#008F4E;line-height:1.6">Your account for <b>${name}</b> is pending HOD approval.<br>You will be notified when access is granted. Return to <b>Login</b> after approval.</div>
     </div>`;
@@ -2569,7 +2625,7 @@ function showWelcome(){
         const parts=k.split('_');
         return parts[0]+(parts[1]?' '+parts[1]:'');
       });
-      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);">📚 <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
+      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
     } else if(currentUserRole==='admin'){
       wlcExtra.innerHTML='<div style="font-size:11px;color:var(--teal);background:var(--teal-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--teal-b);">Full system access — all courses visible</div>';
     } else {wlcExtra.innerHTML='';}
@@ -2809,15 +2865,15 @@ async function loadAuditLog() {
     const snap = await dbFB.collection('audit_log').orderBy('timestamp','desc').limit(60).get();
     if (snap.empty) { el.innerHTML = '<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">No audit events recorded yet</div>'; return; }
     const typeLabels = {
-      'attendance_correction': { icon:'✏️', color:'var(--amber)', bg:'var(--amber-l)' },
-      'week_change':           { icon:'📅', color:'var(--blue)',  bg:'var(--blue-l)'  },
-      'lecturer_approved':     { icon:'✅', color:'var(--green)', bg:'var(--green-l)' },
-      'lecturer_rejected':     { icon:'❌', color:'var(--red)',   bg:'var(--red-l)'   },
+      'attendance_correction': { icon:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>', color:'var(--amber)', bg:'var(--amber-l)' },
+      'week_change':           { icon:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>', color:'var(--blue)',  bg:'var(--blue-l)'  },
+      'lecturer_approved':     { icon:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>', color:'var(--green)', bg:'var(--green-l)' },
+      'lecturer_rejected':     { icon:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', color:'var(--red)',   bg:'var(--red-l)'   },
     };
     el.innerHTML = snap.docs.map(d => {
       const a = d.data();
       const ts = a.timestamp ? new Date(a.timestamp).toLocaleString('en-GB') : '—';
-      const style = typeLabels[a.type] || { icon:'📋', color:'var(--txt2)', bg:'var(--bg)' };
+      const style = typeLabels[a.type] || { icon:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>', color:'var(--txt2)', bg:'var(--bg)' };
       let detail = '';
       if (a.type === 'attendance_correction')
         detail = `${a.studentName} (${a.matric}) · ${a.course} Wk${a.week} · ${a.oldStatus} → ${a.newStatus} · by ${a.correctedBy}`;
@@ -3112,7 +3168,7 @@ function showDupeModal(dupeResult, blockedMatric) {
   const matchInfo = `Matches: ${dupeResult.student.name} · ${dupeResult.student.matric} · ${dupeResult.student.level} — ${dupeResult.confidence}% similarity`;
   document.getElementById('dupe-match-info').textContent = matchInfo;
   openM('mdupe');
-  addLog('warn', '🚫 DUPLICATE FACE BLOCKED: ' + blockedMatric + ' matches ' + dupeResult.student.matric + ' [' + dupeResult.confidence + '%]');
+  addLog('warn', 'DUPLICATE FACE BLOCKED: ' + blockedMatric + ' matches ' + dupeResult.student.matric + ' [' + dupeResult.confidence + '%]');
 }
 
 function closeDupeModal() {
@@ -3234,7 +3290,7 @@ let currentFacingMode = 'user'; // 'user' = front, 'environment' = rear
 async function toggleCam(){
   if(stream){stopCam();return;}
   const btn=document.getElementById('bcam');
-  btn.textContent='⏳ Starting...';btn.disabled=true;
+  btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Starting...';btn.disabled=true;
   try{
     let s=null;
     for(const c of[
@@ -3257,7 +3313,7 @@ async function toggleCam(){
     addLog('info','Camera: '+s.getVideoTracks()[0].label);
     startFPS();syncEnrollCam();
   }catch(e){
-    btn.textContent='▶ Start Camera';btn.disabled=false;
+    btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';btn.disabled=false;
     let m=e.message;
     if(e.name==='NotAllowedError')m='Camera denied. Tap [lock] → Camera → Allow.';
     else if(e.name==='NotFoundError')m='No camera found.';
@@ -3274,9 +3330,9 @@ function stopCam(){
   vid.style.display='none';vid.srcObject=null;evid.style.display='none';evid.srcObject=null;
   document.getElementById('cph').style.display='flex';document.getElementById('eph').style.display='flex';
   document.getElementById('cbadge').textContent='OFF';document.getElementById('cbadge').classList.remove('live');
-  document.getElementById('bcam').textContent='▶ Start Camera';document.getElementById('bcam').className='btn bb';
+  document.getElementById('bcam').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';document.getElementById('bcam').className='btn bb';
   const benrollCam=document.getElementById('benroll-cam');
-  if(benrollCam){benrollCam.textContent='▶ Start Camera';benrollCam.className='btn bb';}
+  if(benrollCam){benrollCam.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';benrollCam.className='btn bb';}
   const benrollFlip=document.getElementById('benroll-flip');
   if(benrollFlip) benrollFlip.disabled=true;
   document.getElementById('bscan').disabled=true;document.getElementById('bmulti').disabled=true;document.getElementById('blive').disabled=true;document.getElementById('bcap').disabled=true;
@@ -3287,7 +3343,7 @@ async function flipCam(){
   if(!stream){addLog('warn','Start camera first before flipping.'); return;}
   currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
   const btn = document.getElementById('bflip');
-  if(btn){btn.textContent='⏳';btn.disabled=true;}
+  if(btn){btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>';btn.disabled=true;}
   stream.getTracks().forEach(t=>t.stop()); stream=null;
   const vid=document.getElementById('vid');
   try{
@@ -3328,13 +3384,13 @@ async function toggleEnrollCam(){
     const evid=document.getElementById('evid');
     evid.style.display='none'; evid.srcObject=null;
     document.getElementById('eph').style.display='flex';
-    if(btn){btn.textContent='▶ Start Camera';btn.className='btn bb';}
+    if(btn){btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';btn.className='btn bb';}
     if(flipBtn) flipBtn.disabled=true;
     document.getElementById('bcap').disabled=true;
     setER('Camera stopped.','');
     return;
   }
-  if(btn){btn.textContent='⏳ Starting...';btn.disabled=true;}
+  if(btn){btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Starting...';btn.disabled=true;}
   try{
     let s=null;
     const constraints=[
@@ -3356,7 +3412,7 @@ async function toggleEnrollCam(){
     setER('Camera ready — capture '+ SAMPLES_NEEDED +' face samples.','ok');
     addLog('info','Enroll camera started ('+(enrollFacingMode==='environment'?'Rear':'Front')+')');
   }catch(e){
-    if(btn){btn.textContent='▶ Start Camera';btn.disabled=false;}
+    if(btn){btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';btn.disabled=false;}
     setER('Camera error: '+(e.name==='NotAllowedError'?'Permission denied — tap [lock] → Camera → Allow':e.message),'err');
     addLog('err','Enroll cam: '+e.message);
   }
@@ -3366,7 +3422,7 @@ async function flipEnrollCam(){
   if(!enrollStream){ return; }
   enrollFacingMode = enrollFacingMode === 'environment' ? 'user' : 'environment';
   const flipBtn = document.getElementById('benroll-flip');
-  if(flipBtn){flipBtn.textContent='⏳';flipBtn.disabled=true;}
+  if(flipBtn){flipBtn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>';flipBtn.disabled=true;}
   enrollStream.getTracks().forEach(t=>t.stop()); enrollStream=null;
   const evid = document.getElementById('evid');
   try{
@@ -3406,8 +3462,8 @@ function drawB(ctx,b,lbl,col){
   ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.fillText(lbl,b.x+7,b.y-7);
 }
 function toggleLive(){if(liveOn)stopLive();else startLive();}
-function startLive(){liveOn=true;document.getElementById('blive').textContent='◉ Stop';document.getElementById('blive').className='btn br';liveLoop();}
-function stopLive(){liveOn=false;if(liveAF)cancelAnimationFrame(liveAF);document.getElementById('blive').textContent='◉ Live';document.getElementById('blive').className='btn bo';clearOC();}
+function startLive(){liveOn=true;document.getElementById('blive').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Stop';document.getElementById('blive').className='btn br';liveLoop();}
+function stopLive(){liveOn=false;if(liveAF)cancelAnimationFrame(liveAF);document.getElementById('blive').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Live';document.getElementById('blive').className='btn bo';clearOC();}
 async function liveLoop(){
   if(!liveOn||!stream)return;
   const vid=document.getElementById('vid');sizeOC();
@@ -3456,7 +3512,7 @@ async function doScan(){
   if(!loaded){setS('Models loading...','warn');return;}
   if(!activeCourse){setS('Select a course first — tap the course banner.','warn');openCourseModal();return;}
   const btn=document.getElementById('bscan');
-  btn.disabled=true;btn.textContent='⏳ Scanning...';
+  btn.disabled=true;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Scanning...';
   document.getElementById('bmulti').disabled=true;
   setS('Scanning...','info');
   document.getElementById('confwrap').classList.remove('show');
@@ -3519,7 +3575,7 @@ async function doMultiScan(){
 
   const btn=document.getElementById('bmulti');
   const sBtn=document.getElementById('bscan');
-  btn.disabled=true;btn.textContent='⏳ Detecting faces...';
+  btn.disabled=true;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Detecting faces...';
   sBtn.disabled=true;
   document.getElementById('confwrap').classList.remove('show');
   setS('Multi-scan: detecting all faces in frame...','info');
@@ -3585,7 +3641,7 @@ async function doMultiScan(){
     // Render results ticker
     resultsList.innerHTML=resultItems.map(r=>`
       <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:${r.bg};border-radius:6px;margin-bottom:4px;">
-        <div style="font-size:13px;">${r.status==='present'?'✓':r.status==='already'?'↻':'?'}</div>
+        <div style="font-size:13px;">${r.status==='present'?'✓':r.status==='already'?'↺':'?'}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:12px;font-weight:700;color:${r.col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.label}</div>
           ${r.sub?`<div style="font-size:10px;color:rgba(255,255,255,.4);">${r.sub}</div>`:''}
@@ -3597,7 +3653,7 @@ async function doMultiScan(){
     const parts=[];
     if(presentCount) parts.push(`✓ ${presentCount} marked present`);
     if(alreadyCount) parts.push(`↻ ${alreadyCount} already done`);
-    if(unknownCount) parts.push(`❓ ${unknownCount} unknown`);
+    if(unknownCount) parts.push(`? ${unknownCount} unknown`);
     setS(`Multi-scan: ${total} face${total!==1?'s':''} detected. ${parts.join(' · ')}`,presentCount>0?'ok':'warn');
     addLog('ok',`Multi-scan: ${total} detected, ${presentCount} marked, ${alreadyCount} already, ${unknownCount} unknown — ${activeCourse.code} Wk${currentWeek}`);
     if(presentCount>0) renderWeeklyGrid();
@@ -3639,7 +3695,7 @@ async function finaliseSession(){
     'FINALISE ATTENDANCE — Week '+currentWeek+'\n'+
     'Course: '+activeCourse.code+' — '+activeCourse.title+'\n\n'+
     'Already marked present: '+alreadyPresent+' students\n'+
-    '❌ Will be marked ABSENT: '+willBeAbsent+' students\n\n'+
+    '✗ Will be marked ABSENT: '+willBeAbsent+' students\n\n'+
     'This will mark '+willBeAbsent+' student(s) as absent. Continue?'
   );
   if(!confirmed){setS('Finalise cancelled.','warn');return;}
@@ -3661,7 +3717,7 @@ async function finaliseSession(){
   document.getElementById('mfin-body').innerHTML=
     `<b>${esc(activeCourse.code)}</b><br>${esc(getAcademicSession())} · ${esc(getSemester())} · Week ${currentWeek}<br><br>`+
     `<b style="color:var(--green)">${presentCount} Present</b><br>`+
-    `❌ <b style="color:var(--red)">${absentCount} Absent</b><br>`+
+    `✗ <b style="color:var(--red)">${absentCount} Absent</b><br>`+
     `Total: ${courseStudents.length} students`;
   openM('mfin');
   addLog('ok',`Finalised: ${presentCount}P ${absentCount}A — ${activeCourse.code} Wk${currentWeek}`);
@@ -3740,7 +3796,7 @@ async function doEnroll(){
   // ── LIVE DUPLICATE FACE CHECK ────────────────────────────────────
   const btn=document.getElementById('breg');
   btn.disabled=true;
-  btn.textContent='🔍 Checking for duplicate face...';
+  btn.textContent='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Checking for duplicate face...';
   setER('Scanning database for duplicate face — please wait...','info');
   const isFaceUpdate = (faceUpdateMatric !== null && faceUpdateMatric === matric);
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
@@ -3753,7 +3809,7 @@ async function doEnroll(){
   if(dupeResult){
     btn.disabled=false;
     btn.textContent='Enroll Student & Save to Cloud';
-    setER('⛔ Duplicate face detected — enrollment blocked.','err');
+    setER('<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Duplicate face detected — enrollment blocked.','err');
     showDupeModal(dupeResult, matric);
     return;
   }
@@ -4416,8 +4472,8 @@ function buildStudentCard(u,i){
     <div class="stu-actions">
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">Chart</button>
       <button class="stu-btn" style="background:var(--teal-l);color:var(--teal);" onclick="viewStudentHistory('${u.matric}')" title="Full history all sessions">History</button>
-      <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
-      <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only">🗑️</button>
+      <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+      <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
       <button class="stu-btn" style="background:var(--red-l);color:var(--red);" onclick="deleteStudent('${u.matric}')" title="Delete student entirely">✕</button>
     </div>
@@ -4582,7 +4638,7 @@ function updateStudentFace(matric){
   document.getElementById('slbl').textContent='0 / '+SAMPLES_NEEDED;
   document.getElementById('sprog').style.width='0%';
   document.getElementById('breg').disabled=true;
-  document.getElementById('breg').textContent='📷 Update Face Data';
+  document.getElementById('breg').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Update Face Data';
   setER('Capture '+SAMPLES_NEEDED+' new face samples for '+u.name,'info');
   // Navigate to enroll tab
   goTab('enroll');
@@ -4743,7 +4799,7 @@ async function _doLoadMyRecord(matric) {
     statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
     return;
   }
-  statusEl.textContent='🔍 Searching...';
+  statusEl.textContent='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Searching...';
   statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#e8f0fe;color:#0057FF;border:1px solid #bfdbfe;';
   resultsEl.style.display='none'; excuseEl.style.display='none';
 
@@ -4752,7 +4808,7 @@ async function _doLoadMyRecord(matric) {
     // Verify matric exists in master list
     const masterDoc = await dbFB.collection('masterlist').doc(matric).get();
     if(!masterDoc.exists){
-      statusEl.textContent='❌ Matric not found. Check your matric number.';
+      statusEl.textContent='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Matric not found. Check your matric number.';
       statusEl.style.cssText='font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
       return;
     }
@@ -4837,11 +4893,11 @@ function updateExcuseDocLabel() {
   const label = document.getElementById('mr-doc-label');
   const hint = document.getElementById('mr-doc-hint');
   const map = {
-    'Medical': ['Hospital Report (Required)', '📋 Attach your hospital attendance card or medical report (JPG/PNG/PDF)'],
-    'Legal': ['Police Report (Required)', '📋 Attach official police report or statement (JPG/PNG/PDF)'],
-    'Family': ['Supporting Document (Optional)', '📋 Death certificate, hospital receipt, or any official proof'],
-    'Academic': ['Official Letter (Required)', '📋 Department approval letter or activity programme (JPG/PNG/PDF)'],
-    'Other': ['Supporting Document', '📋 Any official document supporting your excuse (JPG/PNG/PDF)'],
+    'Medical': ['Hospital Report (Required)', 'Attach your hospital attendance card or medical report (JPG/PNG/PDF)'],
+    'Legal': ['Police Report (Required)', 'Attach official police report or statement (JPG/PNG/PDF)'],
+    'Family': ['Supporting Document (Optional)', 'Death certificate, hospital receipt, or any official proof'],
+    'Academic': ['Official Letter (Required)', 'Department approval letter or activity programme (JPG/PNG/PDF)'],
+    'Other': ['Supporting Document', 'Any official document supporting your excuse (JPG/PNG/PDF)'],
   };
   if(map[type]) {
     if(label) label.textContent = map[type][0];
@@ -4896,7 +4952,7 @@ async function submitExcuse() {
     statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:10px;border-radius:7px;font-weight:600;background:rgba(217,119,6,.25);color:#fcd34d;border:1px solid rgba(252,211,77,.3);line-height:1.5;';
     return;
   }
-  statusEl.textContent='⏳ Submitting...';
+  statusEl.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Submitting...';
   statusEl.style.cssText='font-size:11px;margin-top:6px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);';
   try {
     if(!authFB.currentUser) await authFB.signInAnonymously();
@@ -4942,14 +4998,14 @@ async function loadPendingExcuses() {
       const typeColors = {Medical:'var(--teal)',Legal:'var(--red)',Family:'var(--purple)',Academic:'var(--blue)',Other:'var(--amber)'};
       const typeColor = typeColors[e.excuseType] || 'var(--txt3)';
       const hasDoc = e.documentAttached && e.documentData;
-      const docBtn = hasDoc ? `<button onclick="viewExcuseDocument('${id}')" style="padding:4px 8px;background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);border-radius:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;cursor:pointer;margin-bottom:6px;">📎 View ${esc(e.documentName||'Document')}</button>` : '';
+      const docBtn = hasDoc ? `<button onclick="viewExcuseDocument('${id}')" style="padding:4px 8px;background:var(--blue-l);color:var(--blue);border:1px solid var(--blue-b);border-radius:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;cursor:pointer;margin-bottom:6px;"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"icon-glow\"><path d=\"M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48\"/></svg> View ${esc(e.documentName||'Document')}</button>` : '';
       return `<div style="background:#fff;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
           <div style="font-size:12px;font-weight:800;color:var(--txt);">${esc(e.matric)} · ${esc(e.course)} Wk${e.week}</div>
           ${e.excuseType?`<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(0,0,0,.06);color:${typeColor};">${esc(e.excuseType)}</span>`:''}
         </div>
         <div style="font-size:11px;color:var(--txt2);margin:4px 0;line-height:1.5;">${esc(e.reason)}</div>
-        <div style="font-size:10px;color:var(--txt3);margin-bottom:6px;">Submitted: ${date} ${e.documentAttached?'· 📎 Document attached':''}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-bottom:6px;">Submitted: ${date} ${e.documentAttached?'· <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Document attached':''}</div>
         ${docBtn}
         <div style="display:flex;gap:8px;">
           <button onclick="reviewExcuse('${id}','approved')" style="flex:1;padding:7px;background:linear-gradient(135deg,var(--green),#008F4E);color:white;border:none;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✓ Approve</button>
@@ -5179,7 +5235,7 @@ async function checkScheduledBackup(){
       banner.id = 'backup-reminder';
       banner.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:640px;z-index:7500;font-family:\'Plus Jakarta Sans\',sans-serif;';
       banner.innerHTML=`<div style="background:linear-gradient(135deg,#FF9500,#CC7700);color:white;padding:11px 14px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;flex-shrink:0;">💾</span>
+        <span style="flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>
         <div style="flex:1;font-size:12px;font-weight:700;line-height:1.4;">${daysSince < 999?'Last backup <b>'+daysSince+' day'+(daysSince!==1?'s':'')+' ago</b>.':'<b>No backup taken yet today.</b>'} Back up now.</div>
         <button onclick="doScheduledBackup()" style="padding:7px 12px;background:white;color:#FF9500;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;">Backup Now</button>
         <button onclick="dismissBackupReminder()" style="padding:7px 10px;background:rgba(255,255,255,.15);color:white;border:none;border-radius:8px;font-size:11px;cursor:pointer;flex-shrink:0;">Later</button>
@@ -6180,7 +6236,7 @@ async function _doCheckStudentMasterList(val) {
   }
 
   // Show searching indicator immediately
-  statusEl.textContent = '🔍 Searching...';
+  statusEl.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Searching...';
   statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:#e8f0fe;color:#0057FF;border:1px solid #bfdbfe;';
 
   // Ensure anonymous auth — required for Firestore access
@@ -6215,7 +6271,7 @@ async function _doCheckStudentMasterList(val) {
   try {
     const doc = await dbFB.collection('masterlist').doc(val).get();
     if (!doc.exists) {
-      statusEl.textContent = '❌ Matric number not found in master list. Contact your HOD.';
+      statusEl.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Matric number not found in master list. Contact your HOD.';
       statusEl.style.cssText = 'font-size:11px;margin-top:5px;display:block;padding:7px 10px;border-radius:7px;font-weight:600;background:rgba(255,59,92,.1);color:#FF3B5C;border:1px solid #FF8FA3;';
       return;
     }
@@ -6281,7 +6337,7 @@ async function doStudentLoginYes() {
   _spSessionTimer = setTimeout(() => {
     if (document.getElementById('student-portal').style.display !== 'none') {
       addLog('warn', 'Student portal timed out for: ' + (spStudentData ? spStudentData.matric : 'unknown'));
-      alert('⏱️ Session expired after 10 minutes of inactivity. Please re-enter your matric number.');
+      alert('Session expired after 10 minutes of inactivity. Please re-enter your matric number.');
       spGoBackToLogin();
     }
   }, SP_SESSION_TIMEOUT_MS);
@@ -6305,7 +6361,7 @@ function spGoBackToLogin() {
   const retakeBtn = document.getElementById('sp-retake-btn');
   if(capBtn){capBtn.disabled=true;capBtn.style.opacity='.4';}
   if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.4';}
-  if(camBtn){camBtn.textContent='▶ Start Camera';camBtn.disabled=false;camBtn.style.display='';}
+  if(camBtn){camBtn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';camBtn.disabled=false;camBtn.style.display='';}
   if(retakeBtn){retakeBtn.style.display='none';}
   // Reset dots
   for(let i=0;i<SP_SAMPLES_NEEDED;i++){
@@ -6343,10 +6399,10 @@ async function spToggleCam() {
     document.getElementById('sp-cam-ph').style.display = 'flex';
     document.getElementById('sp-cap-btn').disabled = true;
     document.getElementById('sp-cap-btn').style.opacity = '.4';
-    btn.textContent = '▶ Start Camera';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera';
     return;
   }
-  btn.textContent = '⏳ Starting...'; btn.disabled = true;
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Starting...'; btn.disabled = true;
   try {
     let s = null;
     for (const c of [
@@ -6364,8 +6420,8 @@ async function spToggleCam() {
     btn.textContent = '■ Stop Camera'; btn.disabled = false;
     document.getElementById('sp-status').textContent = 'Camera active — tap Capture to take face sample';
   } catch(e) {
-    btn.textContent = '▶ Start Camera'; btn.disabled = false;
-    document.getElementById('sp-status').textContent = 'Camera error: ' + (e.name === 'NotAllowedError' ? 'Permission denied. Tap 🔒 → Camera → Allow' : e.message);
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera'; btn.disabled = false;
+    document.getElementById('sp-status').textContent = 'Camera error: ' + (e.name === 'NotAllowedError' ? 'Permission denied. Tap the lock icon → Camera → Allow' : e.message);
   }
 }
 
@@ -6400,9 +6456,9 @@ function startLivenessMonitor(phase) {
   if (banner) { banner.style.display = 'block'; banner.style.background='rgba(123,97,255,.25)'; banner.style.borderColor='rgba(180,168,255,.4)'; }
 
   if (_livenessPhase === 'nod') {
-    if (msg) { msg.style.color='#C4B5FD'; msg.textContent = '👆 NOD your head DOWN once to prove you\'re live...'; }
+    if (msg) { msg.style.color='#C4B5FD'; msg.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> NOD your head DOWN once to prove you\'re live...'; }
   } else {
-    if (msg) { msg.style.color='#C4B5FD'; msg.textContent = '👁️ Now BLINK once slowly for final confirmation...'; }
+    if (msg) { msg.style.color='#C4B5FD'; msg.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Now BLINK once slowly for final confirmation...'; }
   }
 
   let nodPeakDetected = false;
@@ -6478,7 +6534,7 @@ async function spCapture() {
   if (nextIdx === 1 && !_livenessNodDetected) {
     const capBtn = document.getElementById('sp-cap-btn');
     if (capBtn) { capBtn.disabled = true; capBtn.style.opacity = '.4'; }
-    document.getElementById('sp-status').textContent = '👆 Nod your head down once...';
+    document.getElementById('sp-status').textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Nod your head down once...';
     startLivenessMonitor('nod');
     return;
   }
@@ -6486,7 +6542,7 @@ async function spCapture() {
   if (nextIdx === SP_SAMPLES_NEEDED - 1 && !_livenessBlinkDetected) {
     const capBtn = document.getElementById('sp-cap-btn');
     if (capBtn) { capBtn.disabled = true; capBtn.style.opacity = '.4'; }
-    document.getElementById('sp-status').textContent = '👁️ Blink once slowly...';
+    document.getElementById('sp-status').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Blink once slowly...';
     startLivenessMonitor('blink');
     return;
   }
@@ -6553,7 +6609,7 @@ async function spSaveEnrollment() {
   const statusEl = document.getElementById('sp-status');
 
   // ── LIVE DUPLICATE FACE CHECK ────────────────────────────────────
-  btn.textContent = '🔍 Checking database...';
+  btn.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Checking database...';
   btn.disabled = true;
   btn.style.opacity = '1';
   statusEl.textContent = 'Checking database for duplicate face — please wait...';
@@ -6564,7 +6620,7 @@ async function spSaveEnrollment() {
   // excludeMatric = null since this is a brand new enrollment
   const dupeResult = await checkFaceDuplicateLive(spSamples, null);
   if (dupeResult && dupeResult.fetchFailed) {
-    btn.textContent = '🎓 Submit & Enroll';
+    btn.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit & Enroll';
     btn.disabled = false;
     btn.style.opacity = '1';
     statusEl.textContent = '⚠️ Cannot verify face — database unreachable. Ask your HOD to check Firestore rules (students: read if true).';
@@ -6574,10 +6630,10 @@ async function spSaveEnrollment() {
     return;
   }
   if (dupeResult) {
-    btn.textContent = '🎓 Submit & Enroll';
+    btn.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit & Enroll';
     btn.disabled = false;
     btn.style.opacity = '1';
-    statusEl.textContent = '⛔ Duplicate face detected — enrollment blocked.';
+    statusEl.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Duplicate face detected — enrollment blocked.';
     statusEl.style.background = 'rgba(220,38,38,.2)';
     statusEl.style.color = '#FF8FA3';
     showDupeModal(dupeResult, matric);
@@ -6585,7 +6641,7 @@ async function spSaveEnrollment() {
   }
   // ── END DUPLICATE CHECK ──────────────────────────────────────────
 
-  btn.textContent = '⏳ Saving to cloud...';
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Saving to cloud...';
   statusEl.textContent = 'Face verified — saving your enrollment...';
   try {
     // Ensure anonymous auth is active before writing
@@ -6608,7 +6664,7 @@ async function spSaveEnrollment() {
         statusEl.innerHTML = '⚠️ <b>Firestore rule update needed.</b><br>Ask HOD to add this rule:<br><code style="font-size:9px;background:rgba(0,0,0,.3);padding:3px 6px;border-radius:4px;display:block;margin-top:4px;">match /students/{m} { allow write: if request.auth != null; }</code>';
         statusEl.style.background = 'rgba(217,119,6,.25)';
         statusEl.style.color = '#fcd34d';
-        btn.textContent = '🎓 Submit & Enroll';
+        btn.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit & Enroll';
         btn.disabled = false;
         return;
       }
@@ -6620,7 +6676,7 @@ async function spSaveEnrollment() {
     // Stop camera
     if (spStream) { spStream.getTracks().forEach(t => t.stop()); spStream = null; }
     // Show success
-    statusEl.innerHTML = '✅ <b>Enrollment complete!</b> Your face has been saved. You will now be marked present by face scan in class.';
+    statusEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> <b>Enrollment complete!</b> Your face has been saved. You will now be marked present by face scan in class.';
     statusEl.style.background = 'rgba(52,211,153,.2)';
     statusEl.style.color = '#00D68F';
     document.getElementById('sp-cam-btn').style.display = 'none';
@@ -6636,7 +6692,7 @@ async function spSaveEnrollment() {
     addLog('ok', 'Student self-enrolled: ' + matric + ' — ' + name);
   } catch(e) {
     statusEl.textContent = 'Save failed: ' + e.message;
-    btn.textContent = '🎓 Submit & Enroll';
+    btn.textContent = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit & Enroll';
     btn.disabled = false;
     btn.style.opacity = '1';
   }
@@ -6802,7 +6858,7 @@ window.addEventListener('load',()=>{
 <!-- WELCOME MODAL -->
 <div class="mbg" id="mwelcome" style="z-index:9999">
   <div class="mbox" style="text-align:center;padding:28px 24px">
-    <div style="font-size:48px;margin-bottom:8px">👋</div>
+    <div style="font-size:48px;margin-bottom:8px;color:var(--brand);"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></div>
     <div style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:6px" id="wlc-name">Welcome</div>
     <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px" id="wlc-role">Lecturer</div>
     <div style="font-size:11px;color:var(--txt3);margin-bottom:18px" id="wlc-session">--</div>
@@ -6817,11 +6873,11 @@ window.addEventListener('load',()=>{
 <!-- SESSION MANAGER MODAL -->
 <div class="mbg" id="msession">
   <div class="mbox">
-    <div class="mico w">🗓️</div>
+    <div class="mico w"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
     <div class="mtt w">Set Academic Session</div>
     <div class="mb">
       <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b);margin-bottom:14px;line-height:1.5">
-        ⚠ Changing semester will reset the week counter to Week 1 for all users.
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Changing semester will reset the week counter to Week 1 for all users.
       </div>
       <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Academic Session</label>
       <input class="inp" id="sm-session" placeholder="e.g. 2024/2025" style="margin-bottom:12px;font-family:'JetBrains Mono';font-weight:700;font-size:15px">
@@ -6843,7 +6899,7 @@ window.addEventListener('load',()=>{
 <div class="mbg" id="marchive">
   <div class="mbox" style="max-height:85vh;overflow-y:auto">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="font-size:17px;font-weight:900;color:var(--navy)">🗂️ Historical Records</div>
+      <div style="font-size:17px;font-weight:900;color:var(--navy);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Historical Records</div>
       <button class="smbtn" onclick="closeM('marchive')">Close</button>
     </div>
     <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Academic Session · Semester</label>
@@ -6857,7 +6913,7 @@ window.addEventListener('load',()=>{
     <div id="arch-results" style="margin-bottom:12px">
       <div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px">Select a session above to view records</div>
     </div>
-    <button class="enroll-btn" onclick="exportArchiveCSV()" style="background:linear-gradient(135deg,var(--green),#008F4E)">📥 Export This Archive as CSV</button>
+    <button class="enroll-btn" onclick="exportArchiveCSV()" style="background:linear-gradient(135deg,var(--green),#008F4E)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export This Archive as CSV</button>
   </div>
 </div>
 
@@ -6876,7 +6932,7 @@ window.addEventListener('load',()=>{
 <div class="mbg" id="mprint-master">
   <div class="mbox">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:17px;font-weight:900;color:var(--navy)">🖨️ Print Master List</div>
+      <div style="font-size:17px;font-weight:900;color:var(--navy);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Master List</div>
       <button class="smbtn" onclick="closeM('mprint-master')">Close</button>
     </div>
     <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6;">
@@ -6884,7 +6940,7 @@ window.addEventListener('load',()=>{
     </div>
     <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;">Select Level / Option to Print</label>
     <select class="inp" id="print-master-select" style="margin-bottom:16px;font-size:13px;">
-      <option value="all">📋 All Students (grouped by level)</option>
+      <option value="all">All Students (grouped by level)</option>
       <option value="ND 1">ND 1 — General</option>
       <option value="ND 2">ND 2 — General</option>
       <option value="HND 1|Power and Machines">HND 1 — Power and Machines</option>
@@ -6892,7 +6948,7 @@ window.addEventListener('load',()=>{
       <option value="HND 2|Power and Machines">HND 2 — Power and Machines</option>
       <option value="HND 2|Electronics and Telecommunication">HND 2 — Electronics &amp; Telecommunication</option>
     </select>
-    <button class="mbtn s" onclick="executePrintMasterList()" style="width:100%">🖨️ Print Now</button>
+    <button class="mbtn s" onclick="executePrintMasterList()" style="width:100%"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Now</button>
   </div>
 </div>
 
