@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#003DCC">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22GAPOSA%20EEE%20Attendance%22%2C%20%22short_name%22%3A%20%22EEE%20Attend%22%2C%20%22description%22%3A%20%22The%20Gateway%20Polytechnic%20Saapade%20%5Cu2014%20EEE%20Face%20Attendance%20System%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22scope%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%231a3a6b%22%2C%20%22theme_color%22%3A%20%22%231a3a6b%22%2C%20%22orientation%22%3A%20%22portrait-primary%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D">
-<title>GAPOSA ELECT/ELECT — Attendance System</title>
+<title>GAPOSA EEE — Attendance System</title>
 
 <!-- Firebase v9 compat -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -69,7 +69,7 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
 #app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(240,245,255,0.96);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:flex;flex-direction:column;min-height:100vh;min-height:100svh;position:relative;z-index:2;box-shadow:0 0 100px rgba(0,30,100,.6);}
 
 /* LOADING */
-#ld{position:fixed;inset:0;z-index:8888;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
+#ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(150deg,rgba(0,17,51,1) 0%,rgba(0,40,120,1) 50%,rgba(0,87,255,.95) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
 .ld-ring{width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:#00C6A7;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ld-logo-row{display:flex;align-items:center;gap:12px;}
@@ -87,7 +87,7 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:7777;background:linear-gradient(160deg,#050E2A 0%,#0A2266 45%,#0057FF 100%);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+#login-screen{position:fixed;inset:0;z-index:7777;background:linear-gradient(160deg,#050E2A 0%,#0A2266 45%,#0057FF 100%);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
 #login-screen.show{display:flex;}
 .login-card{background:rgba(0,17,60,0.58);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.15);border-radius:28px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.12);}
 .login-logo{width:60px;height:60px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,0.15);padding:5px;display:block;margin:0 auto 10px;box-shadow:0 4px 20px rgba(0,87,255,.35);}
@@ -990,7 +990,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 .nav-item.active svg { filter: drop-shadow(0 2px 7px rgba(19,102,245,.50)); transform: translateY(-1px); }
 /* Loading screen background fix */
 #ld {
-  background: linear-gradient(150deg,rgba(0,17,51,.95) 0%,rgba(0,40,120,.88) 50%,rgba(0,87,255,.60) 100%) !important;
+  background: linear-gradient(150deg,#000F33 0%,#002878 50%,#0057CC 100%) !important;
 }
 /* pw-eye button reset for SVG */
 .pw-eye { background:none;border:none;cursor:pointer;padding:0 6px;display:flex;align-items:center;color:#8FA3C0; }
