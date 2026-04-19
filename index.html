@@ -1150,7 +1150,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- === MY ATTENDANCE SECTION === -->
       <div id="st-record-section" style="display:none;">
         <div class="info-box info-blue" style="margin-bottom:12px;">
-          📊 Enter your matric number to view your attendance and submit an absence excuse.
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Enter your matric number to view your attendance and submit an absence excuse.
         </div>
         <label class="llbl">Matric Number</label>
         <input class="linp" id="mr-matric" placeholder="e.g. 24013631001" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="loadMyRecord(this.value)">
@@ -1166,10 +1166,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <label class="llbl">Type of Absence</label>
           <select class="linp" id="mr-excuse-type" style="margin-bottom:8px;" onchange="updateExcuseDocLabel()">
             <option value="">— Select reason type —</option>
-            <option value="Medical">🏥 Medical / Sickness (Hospital Report)</option>
-            <option value="Legal">🚔 Legal / Crime-related (Police Report)</option>
-            <option value="Family">👨‍👩‍👦 Family Emergency</option>
-            <option value="Academic">📚 Academic Clash / Approved Activity</option>
+            <option value="Medical">Medical / Sickness (Hospital Report)</option>
+            <option value="Legal">Legal / Crime-related (Police Report)</option>
+            <option value="Family">Family Emergency</option>
+            <option value="Academic">Academic Clash / Approved Activity</option>
             <option value="Other">📄 Other (Attach supporting document)</option>
           </select>
           <label class="llbl">Reason / Details</label>
@@ -1195,7 +1195,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 
     <div class="lerr" id="lerr"></div>
     <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> inside the Lecturer tab to create your account.</div>
-    <div class="lnote" id="lnote2" style="margin-top:4px;color:#92400E;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
+    <div class="lnote" id="lnote2" style="margin-top:4px;color:#92400E;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
   </div>
 </div>
 
@@ -1307,14 +1307,14 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           </div>
         </div>
         <div class="row2">
-          <button class="btn bb" id="bcam" onclick="toggleCam()" disabled>▶ Start Camera</button>
+          <button class="btn bb" id="bcam" onclick="toggleCam()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera</button>
           <button class="btn bo" id="bflip" onclick="flipCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 7h-3.5l-2-3h-5l-2 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/><path d="M18 9h1"/></svg></button>
-          <button class="btn bo" id="blive" onclick="toggleLive()" disabled>◉ Live</button>
+          <button class="btn bo" id="blive" onclick="toggleLive()" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="11" opacity=".3"/></svg> Live</button>
         </div>
         <div class="st" id="sbox">Loading AI models...</div>
         <!-- ── IDENTITY MISMATCH ALERT ──────────────────────────── -->
         <div id="mismatch-banner" style="display:none;background:rgba(255,59,92,.15);border:2px solid rgba(255,59,92,.5);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px;text-align:center;animation:pulse-red .8s infinite alternate;">
-          <div style="font-size:20px;font-weight:900;color:#FF3B5C;letter-spacing:-.3px;">🚨 IDENTITY MISMATCH</div>
+          <div style="font-size:16px;font-weight:900;color:#FF3B5C;letter-spacing:-.3px;display:flex;align-items:center;gap:6px;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF3B5C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> IDENTITY MISMATCH</div>
           <div id="mismatch-detail" style="font-size:12px;color:#FF8FA3;margin-top:4px;line-height:1.5;font-weight:600;"></div>
         </div>
         <!-- ── APPROVAL OVERLAY ─────────────────────────────────── -->
@@ -1415,12 +1415,12 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <!-- Enroll camera controls (HOD only) -->
         <div style="display:flex;gap:8px;margin-bottom:10px;" id="enroll-cam-controls">
-          <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1">▶ Start Camera</button>
+          <button class="btn bb" id="benroll-cam" onclick="toggleEnrollCam()" style="flex:1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Camera</button>
           <button class="btn bo" id="benroll-flip" onclick="flipEnrollCam()" disabled title="Switch front/rear camera" style="min-width:44px;padding:0 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 7h-3.5l-2-3h-5l-2 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/><path d="M18 9h1"/></svg></button>
         </div>
         <!-- ── LIVENESS CHALLENGE UI ─────────────────────────────── -->
         <div id="enroll-liveness-banner" style="display:none;border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center;line-height:1.6;">
-          <div id="enroll-liveness-icon" style="font-size:28px;margin-bottom:4px;">👁</div>
+          <div id="enroll-liveness-icon" style="display:flex;justify-content:center;margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4B5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
           <div id="enroll-liveness-msg" style="font-size:13px;font-weight:700;color:#C4B5FD;">Waiting...</div>
           <!-- Circular progress bar -->
           <svg viewBox="0 0 80 80" width="80" height="80" style="margin:8px auto;display:block;">
@@ -1436,7 +1436,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="sdots" id="enroll-sdots">
           <div class="sdot" id="sd0" title="Sample 1 — Neutral">1</div>
           <div class="sdot" id="sd1" title="Sample 2 — Neutral">2</div>
-          <div class="sdot" id="sd2" title="Eye Blink">👁</div>
+          <div class="sdot" id="sd2" title="Eye Blink"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
           <div class="sdot" id="sd3" title="Head Left">←</div>
         </div>
         <div style="display:flex;gap:6px;font-size:10px;color:var(--txt3);justify-content:center;margin-bottom:10px;">
@@ -1497,7 +1497,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <button onclick="setEnrollTab('HND 1')" id="etab-HND1" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 1</button>
           <button onclick="setEnrollTab('HND 2')" id="etab-HND2" style="padding:5px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg);color:var(--txt2);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">HND 2</button>
         </div>
-        <input class="inp" id="enroll-search" placeholder="🔍 Search name or matric..." oninput="renderList()" style="margin-bottom:8px;font-size:13px;padding:10px 13px;">
+        <input class="inp" id="enroll-search" placeholder="Search name or matric..." oninput="renderList()" style="margin-bottom:8px;font-size:13px;padding:10px 13px;">
         <div id="elist"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">No students enrolled yet</div></div>
       </div>
     </div>
@@ -1510,8 +1510,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <button class="atab active" id="atab-dash" onclick="setAdminTab('dash')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Dashboard</span></button>
       <button class="atab" id="atab-students" onclick="setAdminTab('students')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Students</span></button>
       <button class="atab" id="atab-master" onclick="setAdminTab('master')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg><span>Master List</span></button>
-      <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')">👨‍🏫<span>Lecturers</span></button>
-      <button class="atab" id="atab-settings" onclick="setAdminTab('settings')">⚙️<span>Settings</span></button>
+      <button class="atab" id="atab-lecturers" onclick="setAdminTab('lecturers')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Lecturers</span></button>
+      <button class="atab" id="atab-settings" onclick="setAdminTab('settings')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
     </div>
 
     <!-- ── DASHBOARD ── -->
@@ -1564,10 +1564,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- At-risk students -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--red-l)">🚨</div>
+          <div class="card-hdr-ico" style="background:var(--red-l)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <span class="card-ttl">Students At Risk</span>
           <span class="cbadge" id="atrisk-badge" style="background:var(--red-l);color:var(--red);border-color:var(--red-b);">0</span>
-          <button class="smbtn" style="margin-left:auto" onclick="exportAtRiskCSV()">⤓ Export</button>
+          <button class="smbtn" style="margin-left:auto" onclick="exportAtRiskCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div id="atrisk-list" style="max-height:220px;overflow-y:auto;font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Select a course to see at-risk students</div>
@@ -1575,7 +1575,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <!-- Course attendance chart -->
       <div class="card" style="margin-bottom:14px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)">📈</div><span class="card-ttl">Attendance Overview</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--purple-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><span class="card-ttl">Attendance Overview</span></div>
         <div class="card-body">
           <div id="course-summary-list" style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Loading...</div>
         </div>
@@ -1592,10 +1592,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="card-hdr">
           <div class="card-hdr-ico" style="background:var(--orange-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg></div>
           <span class="card-ttl">Excuse Requests</span>
-          <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="loadPendingExcuses()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
-          <div id="excuse-review-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Tap ↻ Refresh to load</div></div>
+          <div id="excuse-review-list"><div style="font-size:12px;color:var(--txt3);text-align:center;padding:10px;">Tap <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh to load</div></div>
         </div>
       </div>
       <div class="pb"></div>
@@ -1605,9 +1605,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div id="apane-students" class="apane">
       <!-- Search + actions -->
       <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <input class="inp" id="admin-student-search" placeholder="🔍 Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
+        <input class="inp" id="admin-student-search" placeholder="Search name or matric..." oninput="renderAdminStudents()" style="font-size:13px;padding:10px 13px;flex:1;">
         <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;" onclick="printAdminStudents()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
-        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="exportFullDB()">⤓ DB</button>
+        <button class="btn bb" style="flex:none;padding:10px 12px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="exportFullDB()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> DB</button>
       </div>
       <!-- Level tabs -->
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
@@ -1631,15 +1631,15 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         </div>
         <div class="card-body">
           <div style="background:var(--blue-l);border:1.5px solid var(--blue-b);border-radius:var(--rs);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:12px;line-height:1.6;">
-            📌 Upload the official CSV list. Students can only self-enroll if their matric exists here. Uploading again only <b>adds new names</b> — nothing is deleted.
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Upload the official CSV list. Students can only self-enroll if their matric exists here. Uploading again only <b>adds new names</b> — nothing is deleted.
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-            <button class="btn bb" style="font-size:12px;padding:11px" onclick="document.getElementById('csv-upload').click()">📁 Upload CSV</button>
-            <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()">⤓ Template</button>
+            <button class="btn bb" style="font-size:12px;padding:11px" onclick="document.getElementById('csv-upload').click()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload CSV</button>
+            <button class="btn bo" style="font-size:12px;padding:11px" onclick="downloadMasterTemplate()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Template</button>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
             <button class="btn bb" style="font-size:12px;padding:11px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="openPrintMasterModal()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print List</button>
-            <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()">🗑️ Clear All</button>
+            <button class="btn bo" style="font-size:12px;padding:11px;color:var(--red);" onclick="clearMasterList()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Clear All</button>
           </div>
           <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importMasterCSV(this)">
           <div class="st" id="master-st" style="margin-bottom:10px;"></div>
@@ -1653,7 +1653,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
             <button onclick="setMasterTab('HND 2|Power')" id="mtab-HND2P" class="mtab-btn">HND 2 · Power</button>
             <button onclick="setMasterTab('HND 2|Elec')" id="mtab-HND2E" class="mtab-btn">HND 2 · E&amp;T</button>
           </div>
-          <input class="inp" id="master-filter" placeholder="🔍 Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
+          <input class="inp" id="master-filter" placeholder="Search matric or name..." oninput="renderMasterList()" style="margin-bottom:10px;font-size:13px;padding:10px 13px;">
           <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;">Total: <span id="master-list-count">0</span> students</div>
           <div id="master-list-body" style="max-height:350px;overflow-y:auto;"></div>
         </div>
@@ -1666,10 +1666,10 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Pending Approvals -->
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--amber-l)">⏳</div>
+          <div class="card-hdr-ico" style="background:var(--amber-l)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <span class="card-ttl">Pending Approvals</span>
           <span class="cbadge" id="pending-badge" style="background:var(--amber-l);color:var(--amber);border-color:var(--amber-b)">0</span>
-          <button class="smbtn" style="margin-left:auto" onclick="renderPendingLecturers()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="renderPendingLecturers()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border:1px solid var(--amber-b);border-radius:7px;padding:7px 10px;margin-bottom:10px;line-height:1.5;">
@@ -1697,9 +1697,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       </div>
       <div class="card" style="margin-bottom:12px;">
         <div class="card-hdr">
-          <div class="card-hdr-ico" style="background:var(--blue-l)">👨‍🏫</div>
+          <div class="card-hdr-ico" style="background:var(--blue-l)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
           <span class="card-ttl">Registered Lecturers</span>
-          <button class="smbtn" style="margin-left:auto" onclick="renderLecturerList()">↻ Refresh</button>
+          <button class="smbtn" style="margin-left:auto" onclick="renderLecturerList()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
         </div>
         <div class="card-body" style="padding:10px;">
           <div id="lec-list"></div>
@@ -1712,11 +1712,11 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div id="apane-settings" class="apane">
       <!-- Academic session -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)">🗓️</div><span class="card-ttl">Academic Session</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--teal-l)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="card-ttl">Academic Session</span></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-            <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()">🗓️ Change Session</button>
-            <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5A40E0);" onclick="openArchive()">🗂️ Historical Records</button>
+            <button class="btn bb" style="padding:13px;font-size:13px;" onclick="openSessionManager()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Change Session</button>
+            <button class="btn bb" style="padding:13px;font-size:13px;background:linear-gradient(135deg,var(--purple),#5A40E0);" onclick="openArchive()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Historical Records</button>
           </div>
           <!-- FIX 7: HOD-configurable max weeks -->
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
@@ -1745,7 +1745,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--green),#008F4E);" onclick="printFullSemesterReport()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Full Semester Report</button>
-            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()">🗄️ Full Database Backup</button>
+            <button class="btn bb" style="padding:13px;font-size:12px;background:linear-gradient(135deg,var(--teal),#0e7490);" onclick="exportFullDB()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> Full Database Backup</button>
           </div>
         </div>
       </div>
@@ -1755,26 +1755,26 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
           <div class="card-hdr-ico" style="background:var(--red-l)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg></div>
           <span class="card-ttl">Audit Log</span>
           <div style="display:flex;gap:6px;margin-left:auto">
-            <button class="smbtn" onclick="exportAuditLogCSV()">⤓ CSV</button>
-            <button class="smbtn" onclick="loadAuditLog()">↻ Load</button>
+            <button class="smbtn" onclick="exportAuditLogCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> CSV</button>
+            <button class="smbtn" onclick="loadAuditLog()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Load</button>
           </div>
         </div>
         <div class="card-body" style="padding:10px;">
           <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;line-height:1.5;">All attendance corrections, week changes, master list wipes, and lecturer approvals are permanently recorded here in the cloud.</div>
           <div id="audit-log-list" style="max-height:280px;overflow-y:auto;">
-            <div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Tap ↻ Load to view recent entries</div>
+            <div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px;">Tap <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Load to view recent entries</div>
           </div>
         </div>
       </div>
       <!-- School Logo for Reports -->
       <div class="card" style="margin-bottom:12px;">
-        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)">🖼️</div><span class="card-ttl">School Logo for Reports</span></div>
+        <div class="card-hdr"><div class="card-hdr-ico" style="background:var(--orange-l)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="card-ttl">School Logo for Reports</span></div>
         <div class="card-body">
           <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.6;">
             Upload your school logo to appear on all printed reports (Master List, Student Reports, etc). Saved locally on this device.
           </div>
           <div id="logo-preview-area" style="margin-bottom:10px;"></div>
-          <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()">🖼️ Upload School Logo (PNG/JPG, max 500KB)</button>
+          <button class="btn bb" style="width:100%;padding:12px;font-size:13px;" onclick="triggerLogoUpload()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload School Logo (PNG/JPG, max 500KB)</button>
         </div>
       </div>
       <!-- Auto-logout + Offline Queue settings -->
@@ -1809,7 +1809,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
               <option value="0">Off</option>
             </select>
           </div>
-          <button class="btn br" style="width:100%;padding:12px;" onclick="doLogout()">🚪 Logout Now</button>
+          <button class="btn br" style="width:100%;padding:12px;" onclick="doLogout()"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout Now</button>
         </div>
       </div>
       <div class="pb"></div>
@@ -1855,15 +1855,15 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <!-- Camera box -->
       <div style="flex:1;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.2);position:relative;aspect-ratio:1/1;box-shadow:0 8px 32px rgba(0,0,0,.4);" id="sp-cam-box">
         <div id="sp-cam-ph" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(0,0,0,.5);">
-          <div style="font-size:36px;">📷</div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-align:center;padding:0 8px;">Camera not started</div>
         </div>
         <video id="sp-vid" autoplay muted playsinline webkit-playsinline style="width:100%;height:100%;object-fit:cover;display:none;"></video>
       </div>
       <!-- Right-side buttons -->
       <div style="display:flex;flex-direction:column;gap:8px;width:110px;flex-shrink:0;">
-        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);">▶ Start Camera</button>
-        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);">📷 Capture Face Sample</button>
+        <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);"><svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' style='vertical-align:middle;margin-right:4px'><polygon points='5 3 19 12 5 21 5 3'/></svg> Start Camera</button>
+        <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Face Sample</button>
         <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 7h-3.5l-2-3h-5l-2 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/><path d="M18 9h1"/></svg> Retake</button>
         <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#00C06A,#008F4E);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(0,192,106,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit &amp; Enroll</button>
       </div>
@@ -1880,9 +1880,9 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     </div>
     <!-- Sample dots -->
     <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;">
-      <div id="sp-dot0" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">😐</div>
-      <div id="sp-dot1" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">😐</div>
-      <div id="sp-dot2" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">👁</div>
+      <div id="sp-dot0" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div id="sp-dot1" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div id="sp-dot2" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
       <div id="sp-dot3" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">←</div>
     </div>
 
@@ -1948,7 +1948,7 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div style="font-size:17px;font-weight:900;color:var(--navy)">Select Course</div>
     <button class="smbtn" onclick="closeM('mc')">Close</button>
   </div>
-  <input class="inp" id="csearch" placeholder="🔍 Search by code, title or level..." oninput="filterCourses()" style="font-size:13px;padding:11px;margin-bottom:10px">
+  <input class="inp" id="csearch" placeholder="Search by code, title or level..." oninput="filterCourses()" style="font-size:13px;padding:11px;margin-bottom:10px">
   <div class="clist-modal" id="clist"></div>
   <button class="mbtn en" id="mc-confirm-btn" onclick="confirmCourse()">✓ Confirm Course</button>
 </div></div>
@@ -2634,7 +2634,7 @@ function showWelcome(){
         const parts=k.split('_');
         return parts[0]+(parts[1]?' '+parts[1]:'');
       });
-      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);">📚 <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
+      wlcExtra.innerHTML='<div style="font-size:11px;color:var(--txt2);background:var(--blue-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--blue-b);"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> <b>Your Courses:</b> '+names.join(', ')+(lecturerCourses.length>5?' + '+(lecturerCourses.length-5)+' more':'')+' </div>';
     } else if(currentUserRole==='admin'){
       wlcExtra.innerHTML='<div style="font-size:11px;color:var(--teal);background:var(--teal-l);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;border:1px solid var(--teal-b);">Full system access — all courses visible</div>';
     } else {wlcExtra.innerHTML='';}
@@ -3299,7 +3299,7 @@ let currentFacingMode = 'user'; // 'user' = front, 'environment' = rear
 async function toggleCam(){
   if(stream){stopCam();return;}
   const btn=document.getElementById('bcam');
-  btn.textContent='⏳ Starting...';btn.disabled=true;
+  btn.textContent='Starting...';btn.disabled=true;
   try{
     let s=null;
     for(const c of[
@@ -3352,7 +3352,7 @@ async function flipCam(){
   if(!stream){addLog('warn','Start camera first before flipping.'); return;}
   currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
   const btn = document.getElementById('bflip');
-  if(btn){btn.textContent='⏳';btn.disabled=true;}
+  if(btn){btn.textContent='...';btn.disabled=true;}
   stream.getTracks().forEach(t=>t.stop()); stream=null;
   const vid=document.getElementById('vid');
   try{
@@ -3399,7 +3399,7 @@ async function toggleEnrollCam(){
     setER('Camera stopped.','');
     return;
   }
-  if(btn){btn.textContent='⏳ Starting...';btn.disabled=true;}
+  if(btn){btn.textContent='Starting...';btn.disabled=true;}
   try{
     let s=null;
     const constraints=[
@@ -3431,7 +3431,7 @@ async function flipEnrollCam(){
   if(!enrollStream){ return; }
   enrollFacingMode = enrollFacingMode === 'environment' ? 'user' : 'environment';
   const flipBtn = document.getElementById('benroll-flip');
-  if(flipBtn){flipBtn.textContent='⏳';flipBtn.disabled=true;}
+  if(flipBtn){flipBtn.textContent='...';flipBtn.disabled=true;}
   enrollStream.getTracks().forEach(t=>t.stop()); enrollStream=null;
   const evid = document.getElementById('evid');
   try{
@@ -3521,7 +3521,7 @@ async function doScan(){
   if(!loaded){setS('Models loading...','warn');return;}
   if(!activeCourse){setS('Select a course first — tap the course banner.','warn');openCourseModal();return;}
   const btn=document.getElementById('bscan');
-  btn.disabled=true;btn.textContent='⏳ Scanning...';
+  btn.disabled=true;btn.textContent='Scanning...';
   document.getElementById('bmulti').disabled=true;
   setS('Scanning...','info');
   document.getElementById('confwrap').classList.remove('show');
@@ -3584,7 +3584,7 @@ async function doMultiScan(){
 
   const btn=document.getElementById('bmulti');
   const sBtn=document.getElementById('bscan');
-  btn.disabled=true;btn.textContent='⏳ Detecting faces...';
+  btn.disabled=true;btn.textContent='Detecting faces...';
   sBtn.disabled=true;
   document.getElementById('confwrap').classList.remove('show');
   setS('Multi-scan: detecting all faces in frame...','info');
@@ -4013,7 +4013,7 @@ async function doEnroll(){
   // ── LIVE DUPLICATE FACE CHECK ────────────────────────────────────
   const btn=document.getElementById('breg');
   btn.disabled=true;
-  btn.textContent='🔍 Checking for duplicate face...';
+  btn.textContent='Checking for duplicate face...';
   setER('Scanning database for duplicate face — please wait...','info');
   const isFaceUpdate = (faceUpdateMatric !== null && faceUpdateMatric === matric);
   const dupeResult = await checkFaceDuplicateLive(samples, isFaceUpdate ? matric : null);
@@ -4083,7 +4083,7 @@ function retakeEnrollSamples(){
   if(lbl) lbl.textContent='0/4';
   for(let i=0;i<SAMPLES_NEEDED;i++){
     const s=document.getElementById('sd'+i);
-    if(s){s.innerHTML=[1,2,'👁','←'][i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}
+    if(s){const dotIcons=[1,2,'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>','←'];s.innerHTML=dotIcons[i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}
   }
   document.getElementById('slbl').textContent='0 / '+SAMPLES_NEEDED;
   document.getElementById('sprog').style.width='0%';
@@ -4113,7 +4113,7 @@ function resetEnrollForm(){
   document.getElementById('sprog').style.width='0%';
   document.getElementById('breg').disabled=true;
   document.getElementById('breg').textContent='Enroll Student & Save to Cloud';
-  for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);if(s){s.innerHTML=[1,2,'👁','←'][i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}}
+  for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);if(s){const dotIcons=[1,2,'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>','←'];s.innerHTML=dotIcons[i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}}
   setER('Capture '+SAMPLES_NEEDED+' samples to enroll another student.','');
 }
 
@@ -4724,8 +4724,8 @@ function buildStudentCard(u,i){
     <div class="stu-actions">
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="viewStudentReport('${u.matric}')" title="View report">Chart</button>
       <button class="stu-btn" style="background:var(--teal-l);color:var(--teal);" onclick="viewStudentHistory('${u.matric}')" title="Full history all sessions">History</button>
-      <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face">📷</button>
-      <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only">🗑️</button>
+      <button class="stu-btn" style="background:var(--amber-l);color:var(--amber);" onclick="updateStudentFace('${u.matric}')" title="Update face"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+      <button class="stu-btn" style="background:var(--purple-l);color:var(--purple);" onclick="removeBiometricData('${u.matric}')" title="Remove face data only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
       <button class="stu-btn" style="background:var(--blue-l);color:var(--blue);" onclick="editStudent('${u.matric}')" title="Edit">✏️</button>
       <button class="stu-btn" style="background:var(--red-l);color:var(--red);" onclick="deleteStudent('${u.matric}')" title="Delete student entirely">✕</button>
     </div>
@@ -4886,7 +4886,7 @@ function updateStudentFace(matric){
   if(u.option)document.getElementById('roption').value=u.option;
   // Clear existing samples
   samples=[];
-  for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);if(s){s.innerHTML=[1,2,'👁','←'][i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}}
+  for(let i=0;i<SAMPLES_NEEDED;i++){const s=document.getElementById('sd'+i);if(s){const dotIcons=[1,2,'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>','←'];s.innerHTML=dotIcons[i]||String(i+1);s.style.border='';s.style.boxShadow='';s.classList.remove('done');}}
   document.getElementById('slbl').textContent='0 / '+SAMPLES_NEEDED;
   document.getElementById('sprog').style.width='0%';
   document.getElementById('breg').disabled=true;
@@ -5601,7 +5601,7 @@ async function renderPendingLecturers(){
     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
   allow create: if request.auth != null;
 }</code>
-    After publishing those rules, tap <b>↻ Refresh</b> to load approvals.
+    After publishing those rules, tap <b><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</b> to load approvals.
   </div>`;
   addLog('warn','Pending lecturers: Firestore rules need update for admin to read all users');
 }
@@ -6979,7 +6979,7 @@ function spRetake() {
   spSamples = []; spChallenge = 0; spLivenessActive = false; spBestThumb = null;
   clearInterval(spLivenessInterval);
   stopLivenessMonitor();
-  const labels = ['1','2','👁','←'];
+  const labels = ['1','2','<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>','←'];
   for (let i = 0; i < SP_SAMPLES_NEEDED; i++) {
     const dot = document.getElementById('sp-dot' + i);
     if (dot) { dot.innerHTML = labels[i]||String(i+1); dot.style.border = '2px dashed rgba(255,255,255,.3)'; dot.style.boxShadow = ''; }
@@ -7277,7 +7277,7 @@ window.addEventListener('load',()=>{
 <!-- SESSION MANAGER MODAL -->
 <div class="mbg" id="msession">
   <div class="mbox">
-    <div class="mico w">🗓️</div>
+    <div class="mico w"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
     <div class="mtt w">Set Academic Session</div>
     <div class="mb">
       <div style="font-size:11px;color:var(--amber);background:var(--amber-l);border-radius:6px;padding:7px 10px;border:1px solid var(--amber-b);margin-bottom:14px;line-height:1.5">
@@ -7303,7 +7303,7 @@ window.addEventListener('load',()=>{
 <div class="mbg" id="marchive">
   <div class="mbox" style="max-height:85vh;overflow-y:auto">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="font-size:17px;font-weight:900;color:var(--navy)">🗂️ Historical Records</div>
+      <div style="font-size:17px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Historical Records</div>
       <button class="smbtn" onclick="closeM('marchive')">Close</button>
     </div>
     <label style="font-size:11px;font-weight:700;color:var(--txt2);display:block;margin-bottom:4px">Academic Session · Semester</label>
@@ -7378,7 +7378,7 @@ async function doScan(){
   if(!loaded){setS('Models loading...','warn');return;}
   if(!activeCourse){setS('Select a course first — tap the course banner.','warn');openCourseModal();return;}
   const btn=document.getElementById('bscan');
-  btn.disabled=true;btn.textContent='⏳ Scanning...';
+  btn.disabled=true;btn.textContent='Scanning...';
   document.getElementById('bmulti').disabled=true;
   setS('Scanning...','info');
   document.getElementById('confwrap').classList.remove('show');
@@ -7495,7 +7495,7 @@ async function _triggerMismatchAlert(u, dist){
     banner.style.display = 'block';
     setTimeout(() => { if(banner) banner.style.display='none'; }, 6000);
   }
-  setS('🚨 IDENTITY MISMATCH — Matric: '+u.matric+' | Dist: '+dist.toFixed(3),'err');
+  setS('⚠ IDENTITY MISMATCH — Matric: '+u.matric+' | Dist: '+dist.toFixed(3),'err');
   addLog('err','IDENTITY MISMATCH: '+u.matric+' dist:'+dist.toFixed(3));
   speak('Verification failed. Unauthorised user detected.');
   // Log to security_breach_logs
