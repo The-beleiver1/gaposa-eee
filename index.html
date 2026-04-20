@@ -51,7 +51,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{height:100%;}
-body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;color:var(--txt);display:flex;flex-direction:column;align-items:center;min-height:100%;min-height:100svh;}
+body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;color:var(--txt);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100%;min-height:100svh;}
 /* BACKGROUND SLIDESHOW — fixed on desktop, absolute fallback for iOS */
 @keyframes bgSlide{0%,25%{opacity:1}33%,91%{opacity:0}100%{opacity:1}}
 .bg-slide{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;animation:bgSlide 30s infinite;will-change:opacity;}
@@ -66,7 +66,7 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
   .bg-slide{position:absolute;height:100vh;}
   .bg-overlay{position:absolute;height:100vh;}
 }
-#app-shell{width:95%;max-width:1200px;margin:0 auto;background:rgba(240,245,255,0.97);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:flex;flex-direction:column;min-height:100vh;min-height:100svh;position:relative;z-index:2;box-shadow:0 0 100px rgba(0,30,100,.6);border-radius:0;align-self:center;}
+#app-shell{width:100%;max-width:680px;margin:0 auto;background:rgba(240,245,255,0.97);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:flex;flex-direction:column;min-height:100vh;min-height:100svh;position:relative;z-index:2;box-shadow:0 0 100px rgba(0,30,100,.6);border-radius:0;align-self:center;}
 
 /* LOADING */
 #ld{position:fixed;inset:0;z-index:8888;background:linear-gradient(150deg,rgba(0,17,51,1) 0%,rgba(0,40,120,1) 50%,rgba(0,87,255,.95) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;transition:opacity .6s;}
@@ -87,8 +87,9 @@ body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:#001133;c
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:7777;background:linear-gradient(160deg,#050E2A 0%,#0A2266 45%,#0057FF 100%);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+#login-screen{position:fixed;inset:0;z-index:7777;background:linear-gradient(160deg,#050E2A 0%,#0A2266 45%,#0057FF 100%);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
 #login-screen.show{display:flex;}
+#login-screen > .login-card{margin:auto;}
 .login-card{background:rgba(0,17,60,0.58);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.15);border-radius:28px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.12);}
 .login-logo{width:60px;height:60px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,0.15);padding:5px;display:block;margin:0 auto 10px;box-shadow:0 4px 20px rgba(0,87,255,.35);}
 .login-school{font-size:15px;font-weight:900;color:#ffffff;text-align:center;line-height:1.3;}
@@ -457,7 +458,7 @@ hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
 }
 /* Fix the app shell background to not look grey on desktop */
 @media (min-width:768px){
-  body{align-items:center;justify-content:center;}
+  body{align-items:center;justify-content:flex-start;}
   #app-shell{background:rgba(240,245,255,0.97);}
 }
 
@@ -1021,6 +1022,79 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 .login-card .lnote, .login-card .lnote2 { color: #3D5278 !important; }
 /* pwa-icon size fix */
 .pwa-icon { display:flex;align-items:center;justify-content:center;font-size:inherit; }
+
+/* ══════════════════════════════════════════════════
+   FLUID RESPONSIVE LAYOUT — phone / tablet / laptop
+   All screens get a properly centred, full-height shell
+══════════════════════════════════════════════════ */
+html, body { width:100%; overflow-x:hidden; }
+body {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:100vh; min-height:100svh;
+}
+#app-shell {
+  width:100% !important;
+  max-width:680px !important;
+  min-height:100vh; min-height:100svh;
+  margin:0 auto !important;
+  align-self:center !important;
+  flex-shrink:0;
+}
+/* Loading screen: always covers full viewport */
+#ld { position:fixed; inset:0; width:100%; max-width:100%; }
+
+/* Login screen: always covers full viewport, card centred */
+#login-screen {
+  position:fixed; inset:0;
+  display:none;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:16px;
+  overflow-y:auto;
+}
+#login-screen.show { display:flex; }
+#login-screen > .login-card { margin:auto; width:100%; max-width:460px; }
+
+/* Student portal: full viewport, light background */
+#student-portal {
+  background:#F2F6FF !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+#student-portal > div {
+  max-width:480px;
+  width:100%;
+  margin:0 auto;
+  padding:20px 16px;
+}
+
+/* Bottom login notes — always visible */
+#lnote, #lnote2, .lnote, .lnote2 {
+  color:#1366F5 !important;
+  font-weight:700 !important;
+}
+#lnote b, #lnote2 b, .lnote b, .lnote2 b {
+  color:#003DCC !important;
+}
+
+/* Phone overrides */
+@media (max-width:480px) {
+  #app-shell { border-radius:0 !important; box-shadow:none !important; }
+  .login-card { padding:22px 16px; }
+  .pane { padding:10px 12px !important; }
+}
+/* Tablet */
+@media (min-width:481px) and (max-width:1023px) {
+  #app-shell { box-shadow:0 0 60px rgba(0,20,80,.5) !important; }
+}
+/* Desktop / laptop */
+@media (min-width:1024px) {
+  #app-shell { box-shadow:0 0 100px rgba(0,20,80,.6) !important; }
+  .pane { padding:18px 24px !important; }
+}
 </style>
 </head>
 <body>
@@ -1217,8 +1291,8 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
     <div class="lform" id="lf-myrecord" style="display:none!important;"></div>
 
     <div class="lerr" id="lerr"></div>
-    <div class="lnote" id="lnote">New lecturer? Tap <b>Register</b> inside the Lecturer tab to create your account.</div>
-    <div class="lnote" id="lnote2" style="margin-top:4px;color:#334155;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Student? Tap <b>Student</b> to enroll your face <i>or</i> check your attendance record.</div>
+    <div class="lnote" id="lnote" style="color:#1366F5 !important;font-weight:700;">New lecturer? Tap <b style="color:#003DCC">Register</b> inside the Lecturer tab to create your account.</div>
+    <div class="lnote" id="lnote2" style="margin-top:4px;color:#1366F5 !important;font-weight:700;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> <b style="color:#003DCC">Student</b>? Tap <b style="color:#003DCC">Student</b> to enroll your face <i>or</i> check your attendance record.</div>
   </div>
 </div>
 
@@ -1856,29 +1930,29 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
 <!-- STUDENT SELF-ENROLLMENT PORTAL                    -->
 <!-- Shown after student verifies matric number        -->
 <!-- ══════════════════════════════════════════════════ -->
-<div id="student-portal" style="display:none;position:fixed;inset:0;z-index:6000;background:rgba(10,25,55,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);flex-direction:column;overflow-y:auto;">
-  <div style="padding:20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;max-width:480px;margin:0 auto;width:100%;">
+<div id="student-portal" style="display:none;position:fixed;inset:0;z-index:6000;background:#F2F6FF;flex-direction:column;overflow-y:auto;">
+  <div style="padding:20px 16px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;max-width:480px;margin:0 auto;width:100%;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));">
     <!-- Header -->
     <div style="text-align:center;margin-bottom:20px;padding-top:16px;">
-      <img id="sp-logo" src="" style="width:56px;height:56px;object-fit:contain;border-radius:10px;background:white;padding:4px;margin-bottom:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);">
-      <div style="font-size:16px;font-weight:900;color:white;text-shadow:0 2px 8px rgba(0,0,0,.4);">Face Enrollment Portal</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:3px;">The Gateway Polytechnic — EEE Department</div>
+      <img id="sp-logo" src="" style="width:56px;height:56px;object-fit:contain;border-radius:10px;background:white;padding:4px;margin-bottom:10px;box-shadow:0 4px 16px rgba(0,57,204,.15);border:1.5px solid rgba(0,57,204,.1);">
+      <div style="font-size:16px;font-weight:900;color:#0A1628;text-shadow:none;">Face Enrollment Portal</div>
+      <div style="font-size:11px;color:#3D5278;margin-top:3px;">The Gateway Polytechnic — EEE Department</div>
     </div>
 
     <!-- Student info card -->
-    <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px;width:100%;margin-bottom:16px;backdrop-filter:blur(4px);">
-      <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Enrolling As</div>
-      <div style="font-size:16px;font-weight:900;color:white;" id="sp-name">--</div>
-      <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;" id="sp-details">--</div>
+    <div style="background:#fff;border:1.5px solid rgba(0,57,204,.12);border-radius:14px;padding:14px;width:100%;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,30,90,.08);">
+      <div style="font-size:10px;color:#3D5278;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Enrolling As</div>
+      <div style="font-size:16px;font-weight:900;color:#0A1628;" id="sp-name">--</div>
+      <div style="font-size:11px;color:#3D5278;margin-top:3px;" id="sp-details">--</div>
     </div>
 
     <!-- Back to login button -->
-    <button onclick="spGoBackToLogin()" style="width:100%;padding:11px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;backdrop-filter:blur(4px);transition:all .2s;">← Back to Login</button>
+    <button onclick="spGoBackToLogin()" style="width:100%;padding:11px;background:#fff;color:#0057FF;border:1.5px solid rgba(0,87,255,.25);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;transition:all .2s;">← Back to Login</button>
 
     <!-- Camera + Side Buttons row -->
     <div style="display:flex;gap:12px;width:100%;margin-bottom:14px;align-items:flex-start;">
       <!-- Camera box -->
-      <div style="flex:1;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.2);position:relative;aspect-ratio:1/1;box-shadow:0 8px 32px rgba(0,0,0,.4);" id="sp-cam-box">
+      <div style="flex:1;border-radius:14px;overflow:hidden;background:#0A1628;border:2px solid rgba(0,87,255,.2);position:relative;aspect-ratio:1/1;box-shadow:0 4px 20px rgba(0,30,90,.15);" id="sp-cam-box">
         <div id="sp-cam-ph" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(0,0,0,.5);">
           <div><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
           <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-align:center;padding:0 8px;">Camera not started</div>
@@ -1889,38 +1963,38 @@ div[style*="background:linear-gradient(135deg,var(--teal)"]{
       <div style="display:flex;flex-direction:column;gap:8px;width:110px;flex-shrink:0;">
         <button id="sp-cam-btn" onclick="spToggleCam()" style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#0057FF,#003DCC);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;line-height:1.3;box-shadow:0 4px 12px rgba(0,87,255,.4);">▶ Start Camera</button>
         <button id="sp-cap-btn" onclick="spCapture()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#FF9500,#CC7700);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(217,119,6,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Face Sample</button>
-        <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 7h-3.5l-2-3h-5l-2 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/><path d="M18 9h1"/></svg> Retake</button>
+        <button id="sp-retake-btn" onclick="spRetake()" style="width:100%;padding:10px 6px;background:#fff;color:#F03A5F;border:1.5px solid rgba(240,58,95,.3);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:none;line-height:1.3;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M20 7h-3.5l-2-3h-5l-2 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="13" r="3"/><path d="M18 9h1"/></svg> Retake</button>
         <button id="sp-save-btn" onclick="spSaveEnrollment()" disabled style="width:100%;padding:12px 6px;background:linear-gradient(135deg,#00C06A,#008F4E);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:12px;cursor:pointer;opacity:.4;line-height:1.3;box-shadow:0 4px 12px rgba(0,192,106,.3);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-glow"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Submit &amp; Enroll</button>
       </div>
     </div>
 
     <!-- Progress -->
     <div style="width:100%;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#3D5278;margin-bottom:6px;">
         <span>Face Samples</span><span id="sp-prog-lbl">0 / 4</span>
       </div>
-      <div style="height:6px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;">
+      <div style="height:6px;background:rgba(0,57,204,.1);border-radius:5px;overflow:hidden;">
         <div id="sp-prog-bar" style="height:100%;background:linear-gradient(90deg,#0057FF,#00C6A7);border-radius:5px;transition:width .3s;width:0%;"></div>
       </div>
     </div>
     <!-- Sample dots -->
     <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;">
-      <div id="sp-dot0" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="9" cy="9" r="1" fill="rgba(255,255,255,.4)"/><circle cx="15" cy="9" r="1" fill="rgba(255,255,255,.4)"/></svg></div>
-      <div id="sp-dot1" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="9" cy="9" r="1" fill="rgba(255,255,255,.4)"/><circle cx="15" cy="9" r="1" fill="rgba(255,255,255,.4)"/></svg></div>
-      <div id="sp-dot2" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <div id="sp-dot3" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.4);overflow:hidden;position:relative;transition:all .3s;">←</div>
+      <div id="sp-dot0" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(0,57,204,.25);background:#EEF3FF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(0,87,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0,87,255,.4)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="9" cy="9" r="1" fill="rgba(0,87,255,.4)"/><circle cx="15" cy="9" r="1" fill="rgba(0,87,255,.4)"/></svg></div>
+      <div id="sp-dot1" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(0,57,204,.25);background:#EEF3FF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(0,87,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0,87,255,.4)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="9" cy="9" r="1" fill="rgba(0,87,255,.4)"/><circle cx="15" cy="9" r="1" fill="rgba(0,87,255,.4)"/></svg></div>
+      <div id="sp-dot2" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(0,57,204,.25);background:#EEF3FF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(0,87,255,.4);overflow:hidden;position:relative;transition:all .3s;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0,87,255,.4)" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div id="sp-dot3" style="width:56px;height:56px;border-radius:10px;border:2px dashed rgba(0,57,204,.25);background:#EEF3FF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(0,87,255,.5);overflow:hidden;position:relative;transition:all .3s;">←</div>
     </div>
 
     <!-- Status -->
-    <div id="sp-status" style="width:100%;padding:10px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,.85);font-weight:500;margin-bottom:8px;text-align:center;line-height:1.5;backdrop-filter:blur(4px);">
+    <div id="sp-status" style="width:100%;padding:10px 14px;background:#fff;border:1.5px solid rgba(0,57,204,.12);border-radius:10px;font-size:12px;color:#3D5278;font-weight:500;margin-bottom:8px;text-align:center;line-height:1.5;box-shadow:0 2px 8px rgba(0,30,90,.06);">
       Tap Start Camera to begin enrollment
     </div>
     <!-- FIX 4: Liveness instruction banner -->
-    <div id="sp-liveness-banner" style="display:none;width:100%;padding:10px 12px;background:rgba(123,97,255,.25);border:1.5px solid rgba(180,168,255,.4);border-radius:8px;font-size:12px;color:#C4B5FD;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
+    <div id="sp-liveness-banner" style="display:none;width:100%;padding:10px 12px;background:rgba(123,97,255,.1);border:1.5px solid rgba(123,97,255,.25);border-radius:8px;font-size:12px;color:#6E5BF0;font-weight:700;margin-bottom:8px;text-align:center;line-height:1.5;">
       <span id="sp-liveness-msg">Challenge 1/4: Look straight — Neutral Face 1</span>
     </div>
 
-    <div style="font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;">
+    <div style="font-size:11px;color:#8FA3C0;text-align:center;line-height:1.6;">
       Your face data is stored securely in the cloud.<br>
       It will only be used for attendance verification.<br>
       You will be automatically signed out after enrollment.
@@ -6997,6 +7071,10 @@ function _spRunBlink(vid, capBtn) {
             if (d2) spSamples.push(d2.descriptor);
             _spMarkDot(spChallenge, vid, d2||d);
             spChallenge++; spUpdateProgress(); spUpdateLivenessBanner(spChallenge);
+            if (spChallenge >= SP_SAMPLES_NEEDED) {
+              document.getElementById('sp-save-btn').disabled=false;
+              document.getElementById('sp-save-btn').style.opacity='1';
+            }
             if (capBtn) { capBtn.disabled=false; capBtn.style.opacity='1'; capBtn.textContent='Capture Face Sample'; }
             resolve();
           }, 300);
@@ -7060,6 +7138,17 @@ function spUpdateProgress() {
   // Show retake button once at least 1 sample taken
   const retakeBtn = document.getElementById('sp-retake-btn');
   if (retakeBtn) retakeBtn.style.display = spSamples.length > 0 ? 'block' : 'none';
+  // Enable submit button when ALL challenges complete
+  const saveBtn = document.getElementById('sp-save-btn');
+  if (saveBtn) {
+    if (spSamples.length >= SP_SAMPLES_NEEDED && spChallenge >= SP_SAMPLES_NEEDED) {
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+    } else {
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '.4';
+    }
+  }
 }
 
 function spRetake() {
