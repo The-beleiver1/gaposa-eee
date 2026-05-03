@@ -274,39 +274,3 @@ html, body { font-family: 'Plus Jakarta Sans', sans-serif !important; background
 /* ── PROGRESS BARS ── */
 .prog-bar { height: 6px !important; background: #E8EDF5 !important; border-radius: 6px !important; overflow: hidden !important; }
 .prog-f { height: 100% !important; background: linear-gradient(90deg,#0057FF,#00C6A7) !important; border-radius: 6px !important; }
-
-/* ── LOADING STEP ANIMATIONS ── */
-@keyframes ldSpin { to { transform: rotate(360deg); } }
-@keyframes ldPulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
-
-/* ── MEDIA QUERIES — Device Adaptive ── */
-/* Mobile first (default styles apply to all) */
-
-/* Small phones < 375px */
-@media (max-width: 374px) {
-  #ld > img { width: 70px !important; height: 70px !important; }
-  #login-screen img[alt="GAPOSA"] { width: 64px !important; height: 64px !important; }
-}
-
-/* Tablet portrait 600px–900px */
-@media (min-width: 600px) {
-  #app-shell { border-radius: 0 !important; }
-  #login-screen > div { padding-left: 40px !important; padding-right: 40px !important; }
-  #ld { padding: 40px !important; }
-}
-
-/* Laptop/desktop > 900px — show centered card */
-@media (min-width: 900px) {
-  body { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 100vh !important; }
-  #app-shell { border-radius: 24px !important; max-height: 900px !important; overflow: hidden !important; position: relative !important; }
-  #ld { border-radius: 24px !important; }
-  #login-screen { border-radius: 24px !important; overflow: hidden !important; }
-  #login-screen > div { border-radius: 24px !important; min-height: auto !important; max-height: 90vh !important; overflow-y: auto !important; }
-  .nav { border-radius: 0 0 24px 24px !important; }
-}
-
-/* Landscape phones */
-@media (max-height: 600px) and (orientation: landscape) {
-  #ld { justify-content: flex-start !important; padding-top: 12px !important; overflow-y: auto !important; }
-  #ld > img { width: 56px !important; height: 56px !important; margin-bottom: 8px !important; }
-}
