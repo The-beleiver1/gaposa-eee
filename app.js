@@ -1,9 +1,47 @@
-// UI SHIM v10
+// UI SHIM v11
 function acceptScan(){var btn=document.getElementById('btn-accept');if(btn)btn.disabled=true;if(typeof confirmAttendance==='function')confirmAttendance();}
 function rejectScan(){var btn=document.getElementById('btn-reject');if(btn)btn.disabled=true;if(typeof rejectAttendance==='function')rejectAttendance();hideScanApproval();}
 function showScanApproval(name,meta,pct,initials){var el=document.getElementById('scan-approval');if(el)el.style.display='block';var n=document.getElementById('approval-name');if(n)n.textContent=name||'--';var m2=document.getElementById('approval-meta');if(m2)m2.textContent=meta||'--';var t=document.getElementById('approval-thumb');if(t)t.textContent=initials||'?';var fill=document.getElementById('cfill');if(fill)fill.style.width=pct+'%';var pctEl=document.getElementById('cpct');if(pctEl)pctEl.textContent=pct+'%';}
 function hideScanApproval(){var el=document.getElementById('scan-approval');if(el)el.style.display='none';}
 function showMismatchBanner(name,matric,distance){var el=document.getElementById('mismatch-banner');if(!el)return;el.style.display='block';var d=document.getElementById('mismatch-detail');if(d)d.textContent=(name||'Unknown')+' - '+(matric||'--')+' - Distance: '+(distance||'--');setTimeout(function(){el.style.display='none';},6000);}
+
+// Loading step visual updater — patches original mk() function output to new UI
+(function patchLoadingUI(){
+  var _origSetInterval = window.setInterval;
+  // Watch for step changes and update check icons
+  function updateCheck(stepId, state) {
+    var id = stepId.replace('ls','ls') + '-check';
+    // Check divs don't have ids — find by step row
+    var row = document.getElementById(stepId);
+    if(!row) return;
+    var check = row.querySelector('[id$="-check"]') || row.lastElementChild;
+    if(!check) return;
+    if(state==='done'){
+      check.style.background='#00C06A';
+      check.style.borderColor='#00C06A';
+      check.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else if(state==='active'){
+      check.style.background='transparent';
+      check.style.borderColor='#00C6A7';
+      check.innerHTML='<div style="width:10px;height:10px;border:2px solid rgba(0,198,167,.3);border-top-color:#00C6A7;border-radius:50%;animation:ldSpin .8s linear infinite"></div>';
+    }
+  }
+  // Override the mk function once DOM is ready
+  document.addEventListener('DOMContentLoaded', function(){
+    var origMk = window.mk;
+    window.mk = function(i){
+      if(origMk) origMk(i);
+      ['ls1','ls2','ls3','ls4'].forEach(function(id,j){
+        if(j < i) updateCheck(id,'done');
+        else if(j===i) updateCheck(id,'active');
+      });
+      // Update percent
+      var pct = Math.round(i/4*100);
+      var el = document.getElementById('lbar-pct');
+      if(el) el.textContent = pct+'%';
+    };
+  });
+})();
 
 
 // ═══════════════════════════════════════════════════════════════════
